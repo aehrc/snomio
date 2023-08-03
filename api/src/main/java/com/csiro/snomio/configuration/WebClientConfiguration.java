@@ -32,12 +32,12 @@ public class WebClientConfiguration {
     return webClientBuilder
         .baseUrl(authoringServiceUrl)
         .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .filter(addCookieAuth) // Cookies are injected through filter
+        .filter(addImsAuthCookie) // Cookies are injected through filter
         .build();
   }
 
   /** Adding a filter to inject the auth cookies. */
-  private ExchangeFilterFunction addCookieAuth =
+  private ExchangeFilterFunction addImsAuthCookie =
       (clientRequest, nextFilter) -> {
         ClientRequest filteredRequest =
             ClientRequest.from(clientRequest)
