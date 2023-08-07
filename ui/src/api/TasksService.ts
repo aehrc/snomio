@@ -24,3 +24,5 @@ const TasksServices = {
     return response.data as Task[];
   },
 };
+
+export default TasksServices;
