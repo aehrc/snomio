@@ -11,6 +11,8 @@ function AuthorisationLayout() {
   const authStore = useAuthStore();
   const navigate = useNavigate();
 
+  console.log(authStore.desiredRoute);
+
   useEffect(() => {
     authStore.updateFetching(true);
 
