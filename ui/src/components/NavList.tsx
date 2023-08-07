@@ -36,7 +36,7 @@ const items: NavItem[] = [
   {
     title: 'Tasks',
     icon: <AssignmentIcon />,
-    href: '/dashboard/tasks/allTasks',
+    href: '/dashboard/tasks/all',
   },
   {
     title: 'My Tasks',
