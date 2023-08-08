@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import DrawerHeader from './DrawerHeader';
 
@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import NavList from './NavList';
+import { useLocation } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -43,13 +44,16 @@ interface AppContainerProps {
 function AppContainer(props: AppContainerProps) {
   const { children } = props;
   const [open, setOpen] = useState(false);
+   
 
   const toggleDrawerOpen = () => {
     setOpen(!open);
   };
 
+  
+
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' , height: '100%', width: '100%'}}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -71,7 +75,7 @@ function AppContainer(props: AppContainerProps) {
         </Toolbar>
       </AppBar>
       <NavList open={open} toggleDrawerOpen={toggleDrawerOpen} />
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
         <DrawerHeader />
         {children}
       </Box>

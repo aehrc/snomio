@@ -1,5 +1,5 @@
 export interface Task {
-  assignee: object;
+  assignee: Assignee;
   branchBaseTimeStamp: number;
   branchHeadTimeStamp: number;
   branchPath: string;
@@ -13,4 +13,10 @@ export interface Task {
   status: string;
   summary: string;
   updated: string;
+}
+
+interface Assignee {
+  displayName: string;
+  email: string;
+  username: string;
 }

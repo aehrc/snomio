@@ -7,9 +7,10 @@ interface TaskStoreConfig {
   allTasks: Task[];
   fetchTasks: () => Promise<void>;
   fetchAllTasks: () => Promise<void>;
+  getTaskById: (taskId: string | undefined) => Task | null;
 }
 
-const useTaskStore = create<TaskStoreConfig>()(set => ({
+const useTaskStore = create<TaskStoreConfig>()((set, get) => ({
   fetching: false,
   tasks: [],
   allTasks: [],
@@ -39,6 +40,18 @@ const useTaskStore = create<TaskStoreConfig>()(set => ({
       console.log(error);
     }
   },
+  getTaskById: (taskId: string | undefined) => {
+
+    if(taskId === undefined) return null;
+
+    let tasks = get().allTasks;
+
+    tasks = tasks?.filter( task => {
+      return task.key === taskId;
+    })
+
+    return tasks.length === 1 ? tasks[0] : null;
+  }
 }));
 
 export default useTaskStore;

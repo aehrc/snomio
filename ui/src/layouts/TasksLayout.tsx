@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import useTaskStore from '../stores/TaskStore';
 import TasksList from '../components/TasksList';
+import TaskEditLayout from './TaskEditLayout';
 import { Route, Routes } from 'react-router-dom';
 
 function TasksLayout() {
@@ -34,7 +35,7 @@ function TasksLayout() {
           />
         <Route path="edit/:id"
           element={
-            <>edit</>
+            <TaskEditLayout />
           }
         />
         {/* not sure about this? Something that chris mentioned - you need to be able to look at the products task?
