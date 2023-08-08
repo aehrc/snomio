@@ -1,5 +1,11 @@
 import useTaskStore from '../stores/TaskStore';
-import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridColDef,
+  GridToolbar,
+  GridToolbarQuickFilter,
+} from '@mui/x-data-grid';
+import Box from '@mui/material/Box';
 
 interface TaskListProps {
   listAllTasks?: boolean;
@@ -23,22 +29,41 @@ const columns: GridColDef[] = [
   },
 ];
 
+function QuickSearchToolbar() {
+  return (
+    <Box
+      sx={{
+        p: 0.5,
+        pb: 0,
+      }}
+    >
+      <GridToolbarQuickFilter
+        quickFilterParser={(searchInput: string) =>
+          searchInput
+            .split(',')
+            .map(value => value.trim())
+            .filter(value => value !== '')
+        }
+      />
+    </Box>
+  );
+}
+
 function TasksList({ listAllTasks, heading }: TaskListProps) {
   const { tasks, allTasks } = useTaskStore();
   const taskData = listAllTasks ? allTasks : tasks;
 
   return (
     <>
-      <div style={{ height: 400, width: '100%' }}>
+      <Box sx={{ height: 400, width: 1 }}>
         <h1>{heading}</h1>
         <DataGrid
           getRowId={row => row.key}
           rows={taskData}
           columns={columns}
-          disableColumnFilter
           disableColumnSelector
           disableDensitySelector
-          slots={{ toolbar: GridToolbar }}
+          slots={{ toolbar: QuickSearchToolbar }}
           slotProps={{
             toolbar: {
               showQuickFilter: true,
@@ -52,7 +77,7 @@ function TasksList({ listAllTasks, heading }: TaskListProps) {
           }}
           //checkboxSelection
         />
-      </div>
+      </Box>
     </>
   );
 }
