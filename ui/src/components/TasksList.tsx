@@ -1,6 +1,5 @@
 import useTaskStore from '../stores/TaskStore';
-import TaskItem from './TaskItem';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 
 interface TaskListProps {
   listAllTasks?: boolean;
@@ -30,18 +29,27 @@ function TasksList({ listAllTasks, heading }: TaskListProps) {
 
   return (
     <>
-      <h1>{heading}</h1>
       <div style={{ height: 400, width: '100%' }}>
+        <h1>{heading}</h1>
         <DataGrid
           getRowId={row => row.key}
           rows={taskData}
           columns={columns}
+          disableColumnFilter
+          disableColumnSelector
+          disableDensitySelector
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 500 },
+            },
+          }}
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },
             },
           }}
-          pageSizeOptions={[5, 10]}
           //checkboxSelection
         />
       </div>
