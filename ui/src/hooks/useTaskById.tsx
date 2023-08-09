@@ -10,7 +10,7 @@ function useTaskById(){
     const {id} = useParams();
 
     useEffect(() => {
-        let tempTask : Task | null = taskStore.getTaskById(id);
+        const tempTask : Task | null = taskStore.getTaskById(id);
         setTask(tempTask);
     }, [id]);
 

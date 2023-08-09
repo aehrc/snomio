@@ -7,17 +7,61 @@ import CallMergeIcon from '@mui/icons-material/CallMerge';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import axios from "axios";
+import SockJs from 'sockjs-client';
+import Stomp from 'stompjs';
 
 import { io } from "socket.io-client";
+import { useState } from "react";
+import useUserStore from "../../stores/UserStore";
 
 const customSx: SxProps = {
     justifyContent: 'flex-start'
 }
 function TaskDetailsActions(){
     const task = useTaskById();
+    // const [stompClient, setStompClient] = useState<Stomp.Client>();
+    let stompClient : Stomp.Client;
+    let user = useUserStore();
+    console.log('rendering task details actions')
 
     const handleStartClassification = async () => {
-        const socket = io("https://snomio.ihtsdotools.org:5173/authoring-services-websocket");
+        stompConnect();
+        // setStompClient(stompyBoi);
+        // const socket = io("https://dev-integration.ihtsdotools.org/authoring-services/authoring-services-websocket");
+
+        const res = await axios.get('/authoring-services/projects?lightweight=false');
+
+    }
+
+    const stompSuccessCallback = (frame) => {
+        let username = frame.headers['user-name'];
+        console.log(stompClient);
+        if(username !== null){
+            stompClient.subscribe('/topic/user/' + user.login + '/notifications', subscriptionHandler, {id : 'sca-subscription-id-' + user.login});
+        }
+    }
+
+    const stompConnect = () => {
+        let sockJsProtocols = ["websocket"];
+        var socketProvider = new SockJs('/authoring-services/' + 'authoring-services-websocket', null, {transports: sockJsProtocols});
+
+        const stompyBoi : Stomp.Client = Stomp.over(socketProvider)
+        
+        stompyBoi.connect({}, stompSuccessCallback, stompFailureCallback)
+
+        stompClient = stompyBoi;
+    };
+    const subscriptionHandler = (message) => {
+        console.log(message);
+        console.log('wft');
+    }
+
+    const stompFailureCallback = () => {
+        stompClient.disconnect();
+          setTimeout(function() {
+            stompConnect();
+          }, 5000);
+          console.log('STOMP: Reconnecting in 5 seconds');
     }
 
     return (

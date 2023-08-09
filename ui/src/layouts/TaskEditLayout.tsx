@@ -1,11 +1,6 @@
-import { ReactNode, useEffect, useState } from "react";
-import { Box, Drawer, Tab, Tabs } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
-import InfoIcon from '@mui/icons-material/Info';
-import EmailIcon from '@mui/icons-material/Email';
-import ListIcon from '@mui/icons-material/List';
-import { useParams } from "react-router-dom";
-import useTaskStore from "../stores/TaskStore";
+import { ReactNode,  useState } from "react";
+import { Card,  Tab, Tabs } from "@mui/material";
+
 import TaskDetails from "../components/tasks/TaskDetails";
 import useTaskById from "../hooks/useTaskById";
 
@@ -61,41 +56,46 @@ function TaskEditLayout(){
     }
 
     return (
-        <div style={{position: 'relative', height: 'calc(100% - 64px)'}}>
-            <Drawer
-                anchor="left"
-                open={open}
-                variant="permanent"
-                // to make the drawer relative to the div, not the page
+        
+            <>
+            <Card
                 sx={{
-                    '& .MuiDrawer-root': {
-                        position: 'absolute'
-                    },
-                    '& .MuiPaper-root': {
-                        position: 'absolute'
-                    }
+                    width: '500px',
+                    marginLeft: '1em',
+                    marginTop: '1em',
+                    padding: '1em'
                 }}
             >
-                <Box 
+                
+                    <Tabs
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    textColor="primary"
+                    indicatorColor="primary"
+                    value={openTab}
+                    onChange={handleTabChange}
+                    aria-label="Tabs for individual task"
                     sx={{
-                        borderBottom: 1, borderColor: 'divider'
+                        display: 'flex',
+                        alignItems: 'center'
                     }}
-                >
-                    <Tabs value={openTab} onChange={handleTabChange}>
-                        <Tab label="Search" icon={<SearchIcon/>}/>
-                        <Tab label="List" icon={<ListIcon/>}/>
-                        <Tab label="Reviews" icon={<EmailIcon/>}/>
-                        <Tab label="Info" icon={<InfoIcon/>}/>
+                  >
+                        <Tab label="Search" />
+                        <Tab label="List" />
+                        <Tab label="Reviews" />
+                        <Tab label="Info" />
                     </Tabs>
-                </Box>
+                
                 <TabPanel index={0} value={openTab}
                 />
                 <TabPanel index={1} value={openTab}/>
                 <TabPanel index={2} value={openTab}/>
                 <TabPanel index={3} value={openTab}/>
-            </Drawer>
+            </Card>
+                </>
+            // </Drawer>
             
-        </div>
+        
             
         
     )

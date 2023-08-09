@@ -32,12 +32,18 @@ export default ({ mode }) => {
           changeOrigin: false,
           secure: false,
         },
-        '/authoring-services/authoring-services-websocket': {
-          target: apUrl + '/authoring-services/authoring-services-websocket',
-          changeOrigin: false,
-          secure: false,
+        '/authoring-services': {
+          target: apUrl,
+          changeOrigin: true,
+          secure: true,
+          rewrite: path => path.replace(/^\/authoring-services/, '/authoring-services'),
+          ws: true
         }
       },
     },
+    // needed for SockJs
+    define: {
+      global: 'window'
+    }
   });
 };

@@ -11,7 +11,7 @@ function TaskDetails(){
         <>
         <List>
             <ListItem>
-                <ListItemIcon>
+                <ListItemIcon >
                     <BadgeIcon />
                 </ListItemIcon>
                 <ListItemText primary={`${task?.assignee.displayName}`}/>
