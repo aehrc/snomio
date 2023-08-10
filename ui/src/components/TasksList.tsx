@@ -2,19 +2,19 @@ import useTaskStore from '../stores/TaskStore';
 import TaskItem from './TaskItem';
 
 interface TaskListProps {
-  listAllTasks?:boolean;
+  listAllTasks?: boolean;
 }
 function TasksList({ listAllTasks }: TaskListProps) {
   const { tasks, allTasks } = useTaskStore();
-   if(listAllTasks){
+  if (listAllTasks) {
     return (
       <>
         {allTasks?.map(task => {
-          return <TaskItem task={task} key={task.key}/>;
+          return <TaskItem task={task} key={task.key} />;
         })}
       </>
     );
-   }
+  }
   return (
     <>
       {tasks?.map(task => {
@@ -22,8 +22,6 @@ function TasksList({ listAllTasks }: TaskListProps) {
       })}
     </>
   );
-
-  
 }
 
 export default TasksList;

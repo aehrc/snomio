@@ -25,7 +25,7 @@ interface NavItem {
   title: string;
   icon: ReactNode;
   href: string;
-  index: number,
+  index: number;
 }
 
 const items: NavItem[] = [
@@ -45,7 +45,7 @@ const items: NavItem[] = [
     title: 'My Tasks',
     icon: <AssignmentIndIcon />,
     href: '/dashboard/tasks',
-    index: 2
+    index: 2,
   },
 ];
 
@@ -96,18 +96,18 @@ const Drawer = styled(MuiDrawer, {
 
 function NavList({ open, toggleDrawerOpen }: NavListProps) {
   const theme = useTheme();
-    const url = useLocation();
-    const [active, setActive] = useState(0);
+  const url = useLocation();
+  const [active, setActive] = useState(0);
 
-    // a naive solution, i'm not sure how to handle this in the long run when there's a lot of routes
-    // need some thunking
+  // a naive solution, i'm not sure how to handle this in the long run when there's a lot of routes
+  // need some thunking
   useEffect(() => {
     items.forEach(item => {
-        console.log(url.pathname);
-        if(url.pathname.startsWith(item.href)){
-            setActive(item.index);
-        }
-    })
+      console.log(url.pathname);
+      if (url.pathname.startsWith(item.href)) {
+        setActive(item.index);
+      }
+    });
   }, [url]);
 
   return (
@@ -124,7 +124,11 @@ function NavList({ open, toggleDrawerOpen }: NavListProps) {
       <Divider />
       <List>
         {items.map((item: NavItem, index) => (
-          <Link to={item.href} key={item.title} style={{textDecoration: 'none', color: 'inherit'}}>
+          <Link
+            to={item.href}
+            key={item.title}
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
@@ -140,9 +144,8 @@ function NavList({ open, toggleDrawerOpen }: NavListProps) {
                     mr: open ? 3 : 'auto',
                     justifyContent: 'center',
                   }}
-                  
                 >
-                    {item.icon}
+                  {item.icon}
                   {/* {index % 2 === 0 ? item.icon : item.icon} */}
                 </ListItemIcon>
                 <ListItemText

@@ -41,17 +41,16 @@ const useTaskStore = create<TaskStoreConfig>()((set, get) => ({
     }
   },
   getTaskById: (taskId: string | undefined) => {
-
-    if(taskId === undefined) return null;
+    if (taskId === undefined) return null;
 
     let tasks = get().allTasks;
 
-    tasks = tasks?.filter( task => {
+    tasks = tasks?.filter(task => {
       return task.key === taskId;
-    })
+    });
 
     return tasks.length === 1 ? tasks[0] : null;
-  }
+  },
 }));
 
 export default useTaskStore;

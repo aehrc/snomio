@@ -36,14 +36,15 @@ export default ({ mode }) => {
           target: apUrl,
           changeOrigin: true,
           secure: true,
-          rewrite: path => path.replace(/^\/authoring-services/, '/authoring-services'),
-          ws: true
-        }
+          rewrite: path =>
+            path.replace(/^\/authoring-services/, '/authoring-services'),
+          ws: true,
+        },
       },
     },
     // needed for SockJs
     define: {
-      global: 'window'
-    }
+      global: 'window',
+    },
   });
 };

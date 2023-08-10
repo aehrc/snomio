@@ -37,7 +37,7 @@ module.exports = {
         allowNumber: true,
         /** Whether to allow `regexp` typed values in template expressions. */
         allowRegExp: true,
-      }
+      },
     ],
     '@typescript-eslint/no-non-null-assertion': 'off',
   },
