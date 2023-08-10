@@ -49,7 +49,7 @@ const useStyles = createStyles(theme => ({
 }));
 
 interface NavbarLinkProps {
-  icon: React.FC<any>;
+  icon: React.FC<string>;
   link: string;
   label: string;
   active?: boolean;
