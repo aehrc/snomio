@@ -16,6 +16,8 @@ cypress.env.json
 target/*
 node/*
 
+package.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
