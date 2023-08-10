@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+package-lock.json
 
 node_modules
 dist
@@ -15,8 +16,6 @@ dist-ssr
 cypress.env.json
 target/*
 node/*
-
-package.json
 
 # Editor directories and files
 .vscode/*

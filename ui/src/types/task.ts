@@ -14,9 +14,9 @@ export interface Task {
   summary: string;
   updated: string;
 }
-
 interface Assignee {
-  displayName: string;
   email: string;
+  displayName: string;
   username: string;
+  avatarUrl: string;
 }

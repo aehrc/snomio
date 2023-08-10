@@ -14,6 +14,7 @@ function TasksLayout() {
     taskStore.fetchTasks().catch(err => {
       console.log(err);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (taskStore.fetching) {
@@ -21,9 +22,12 @@ function TasksLayout() {
   } else {
     return (
       <Routes>
-        <Route path="" element={<TasksList />} />
-        <Route path="all" element={<TasksList listAllTasks={true} />} />
-        <Route path="edit/:id" element={<TaskEditLayout />} />
+        <Route path="" element={<TasksList heading={'My Tasks'} />} />
+        <Route
+          path="all"
+          element={<TasksList listAllTasks={true} heading={'Tasks'} />}
+        />
+        <Route path="edit/:id" element={<>edit</>} />
         {/* not sure about this? Something that chris mentioned - you need to be able to look at the products task?
           dunno how that's different to just a regular task
         */}
