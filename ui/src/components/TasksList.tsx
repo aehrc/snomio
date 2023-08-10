@@ -1,10 +1,5 @@
 import useTaskStore from '../stores/TaskStore';
-import {
-  DataGrid,
-  GridColDef,
-  GridToolbar,
-  GridToolbarQuickFilter,
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 
 interface TaskListProps {
