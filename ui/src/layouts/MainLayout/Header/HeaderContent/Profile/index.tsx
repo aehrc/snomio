@@ -143,7 +143,7 @@ const Profile = () => {
             rating="pg"
             default="monsterid"
             style={{ borderRadius: '50px' }}
-            size="30px"
+            size={30}
             className="CustomAvatar-image"
           />
           <Typography variant="subtitle1">{`${user?.firstName} ${user.lastName}`}</Typography>

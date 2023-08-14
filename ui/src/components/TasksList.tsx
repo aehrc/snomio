@@ -82,7 +82,7 @@ const columns: GridColDef[] = [
             rating="pg"
             default="monsterid"
             style={{ borderRadius: '50px' }}
-            size="30px"
+            size={30}
             className="CustomAvatar-image"
           />
         </Stack>
@@ -104,9 +104,9 @@ const columns: GridColDef[] = [
               rating="pg"
               default="monsterid"
               style={{ borderRadius: '50px' }}
-              size="30px"
+              size={30}
               className="CustomAvatar-image"
-            />{' '}
+            />
           </Tooltip>
         ));
         return ordersWithLinks;
