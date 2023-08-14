@@ -17,7 +17,7 @@ import { ReactNode } from 'react';
 import Gravatar from 'react-gravatar';
 
 interface TaskListProps {
-  listAllTasks?: boolean;
+  tasks: Task[];
   heading: string;
 }
 
@@ -173,10 +173,7 @@ function ValidationBadge(formattedValue: { params: string | undefined }) {
   );
 }
 
-function TasksList({ listAllTasks, heading }: TaskListProps) {
-  const { tasks, allTasks } = useTaskStore();
-  const taskData = listAllTasks ? allTasks : tasks;
-
+function TasksList({ tasks, heading }: TaskListProps) {
   return (
     <>
       <Grid container sx={{ backgroundColor: 'black' }}>
@@ -184,7 +181,7 @@ function TasksList({ listAllTasks, heading }: TaskListProps) {
           <MainCard title={heading} sx={{ width: '100%' }}>
             <DataGrid
               getRowId={(row: Task) => row.key}
-              rows={taskData}
+              rows={tasks}
               columns={columns}
               disableColumnSelector
               disableDensitySelector

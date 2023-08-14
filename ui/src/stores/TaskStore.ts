@@ -3,7 +3,7 @@ import { Task } from '../types/task';
 import TasksServices from '../api/TasksService';
 interface TaskStoreConfig {
   fetching: boolean;
-  tasks: Task[];
+  myTasks: Task[];
   allTasks: Task[];
   fetchTasks: () => Promise<void>;
   fetchAllTasks: () => Promise<void>;
@@ -12,7 +12,7 @@ interface TaskStoreConfig {
 
 const useTaskStore = create<TaskStoreConfig>()((set, get) => ({
   fetching: false,
-  tasks: [],
+  myTasks: [],
   allTasks: [],
   fetchTasks: async () => {
     set(() => ({
@@ -21,7 +21,7 @@ const useTaskStore = create<TaskStoreConfig>()((set, get) => ({
 
     try {
       const tasks = await TasksServices.getUserTasks();
-      set({ tasks: [...tasks] });
+      set({ myTasks: [...tasks] });
       set({ fetching: false });
     } catch (error) {
       console.log(error);
