@@ -11,62 +11,65 @@ import axios from 'axios';
 import SockJs from 'sockjs-client';
 import Stomp from 'stompjs';
 
+import { authoringPlatformLocation } from '../../utils/externalLocations';
+
 import useUserStore from '../../stores/UserStore';
+import { Link } from 'react-router-dom';
+import { ClassificationStatus, TaskStatus } from '../../types/task';
+import { LoadingButton } from '@mui/lab';
+import TasksServices from '../../api/TasksService';
+import useTaskStore from '../../stores/TaskStore';
+import { useState } from 'react';
 
 const customSx: SxProps = {
   justifyContent: 'flex-start',
 };
+
 function TaskDetailsActions() {
   const task = useTaskById();
-  let stompClient: Stomp.Client;
-  let user = useUserStore();
-  console.log('rendering task details actions');
+  const taskStore = useTaskStore();
+
+  console.log(task);
+
+  const [classifying, setClassifying] = useState(
+    task?.latestClassificationJson?.status === ClassificationStatus.Running,
+  );
+  const [classified, setClassified] = useState(
+    task?.latestClassificationJson?.status === ClassificationStatus.Completed,
+  );
+  const [validating, setValidating] = useState(
+    task?.latestValidationStatus === ClassificationStatus.Scheduled,
+  );
+  const [ableToSubmitForReview, setAbleToSubmitForReview] = useState(
+    task?.status === TaskStatus.InProgress,
+  );
 
   const handleStartClassification = async () => {
-    stompConnect();
-    const res = await axios.get(
-      '/authoring-services/projects?lightweight=false',
-    );
-    console.log(res);
-  };
-
-  const stompSuccessCallback = (frame: any) => {
-    let username = frame.headers['user-name'];
-    console.log(stompClient);
-    if (username !== null) {
-      stompClient.subscribe(
-        '/topic/user/' + user.login + '/notifications',
-        subscriptionHandler,
-        { id: 'sca-subscription-id-' + user.login },
-      );
-    }
-  };
-
-  const stompConnect = () => {
-    let sockJsProtocols = ['websocket'];
-    var socketProvider = new SockJs(
-      '/authoring-services/' + 'authoring-services-websocket',
-      null,
-      { transports: sockJsProtocols },
+    setClassifying(true);
+    const returnedTask = await TasksServices.triggerClassification(
+      task?.projectKey,
+      task?.key,
     );
 
-    const stompyBoi: Stomp.Client = Stomp.over(socketProvider);
-
-    stompyBoi.connect({}, stompSuccessCallback, stompFailureCallback);
-
-    stompClient = stompyBoi;
-  };
-  const subscriptionHandler = (message: any) => {
-    console.log(message);
-    console.log('wft');
+    taskStore.mergeTasks(returnedTask);
   };
 
-  const stompFailureCallback = () => {
-    stompClient.disconnect(stompConnect);
-    setTimeout(function () {
-      stompConnect();
-    }, 5000);
-    console.log('STOMP: Reconnecting in 5 seconds');
+  const handleSubmitForReview = async () => {
+    setAbleToSubmitForReview(false);
+    const returnedTask = await TasksServices.triggerValidation(
+      task?.projectKey,
+      task?.key,
+    );
+    taskStore.mergeTasks(returnedTask);
+  };
+
+  const handleStartValidation = async () => {
+    const returnedTask = await TasksServices.triggerValidation(
+      task?.projectKey,
+      task?.key,
+    );
+    setValidating(true);
+    taskStore.mergeTasks(returnedTask);
   };
 
   return (
@@ -81,37 +84,65 @@ function TaskDetailsActions() {
     >
       <Button
         variant="contained"
-        color="secondary"
+        color="primary"
         startIcon={<SettingsIcon />}
         sx={customSx}
+        href={`${authoringPlatformLocation}/#/tasks/task/${task?.projectKey}/${task?.key}/edit`}
+        target="_blank"
       >
-        Edit Task Details
+        View In Authoring Platform
       </Button>
-      <Button
+
+      <LoadingButton
+        loading={classifying || false}
         variant="contained"
         color="success"
+        loadingPosition="start"
         startIcon={<NotificationsIcon />}
         sx={customSx}
         onClick={handleStartClassification}
       >
-        Classify
-      </Button>
-      <Button variant="contained" startIcon={<SchoolIcon />} sx={customSx}>
-        Validate Without MRCM
-      </Button>
+        {classified ? 'Re-classify' : 'Classify'}
+      </LoadingButton>
+
+      <LoadingButton
+        loading={validating}
+        variant="contained"
+        color="secondary"
+        loadingPosition="start"
+        startIcon={<SchoolIcon />}
+        sx={customSx}
+        onClick={handleStartValidation}
+      >
+        {validating ? 'Validating' : 'Trigger Validation'}
+      </LoadingButton>
+
       <Button
+        disabled={!ableToSubmitForReview}
         variant="contained"
         startIcon={<QuestionAnswerIcon />}
         sx={customSx}
+        color="info"
+        onClick={handleSubmitForReview}
       >
-        Submit For Review
+        {ableToSubmitForReview ? 'Submit For Review' : task?.status}
       </Button>
-      <Button variant="contained" startIcon={<CallMergeIcon />} sx={customSx}>
+      {/* <Button
+        variant="contained"
+        startIcon={<CallMergeIcon />}
+        sx={customSx}
+        color="warning"
+      >
         Promote This Task to the Project
       </Button>
-      <Button variant="contained" startIcon={<ArchiveIcon />} sx={customSx}>
+      <Button
+        variant="contained"
+        startIcon={<ArchiveIcon />}
+        sx={customSx}
+        color="error"
+      >
         Begin Promotion Automation
-      </Button>
+      </Button> */}
     </div>
   );
 }
