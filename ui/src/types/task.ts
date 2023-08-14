@@ -13,10 +13,25 @@ export interface Task {
   status: string;
   summary: string;
   updated: string;
+  reviewers: Reviewer[];
+  latestClassificationJson: ClassificationJson
 }
 export interface Assignee {
   email: string;
   displayName: string;
   username: string;
   avatarUrl: string;
+}
+export interface Reviewer {
+  email: string;
+  displayName: string;
+  username: string;
+  avatarUrl: string;
+}
+export interface ClassificationJson {
+  path: string;
+  reasonerId: string;
+  status: string;
+  userId: string;
+  id: string;
 }
