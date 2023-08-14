@@ -9,13 +9,7 @@ import {
   GridValueFormatterParams,
 } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
-import {
-  Assignee,
-  Classification,
-  ClassificationJson,
-  Reviewer,
-  Task,
-} from '../types/task';
+import { Assignee, Classification, Reviewer, Task } from '../types/task';
 import { Chip, Grid, Link, Stack, Typography, Tooltip } from '@mui/material';
 import MainCard from './MainCard';
 
@@ -84,7 +78,7 @@ const columns: GridColDef[] = [
       <Tooltip title={params.value?.displayName} followCursor>
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
           <Gravatar
-            email={params.value.email}
+            email={params.value?.email}
             rating="pg"
             default="monsterid"
             style={{ borderRadius: '50px' }}
