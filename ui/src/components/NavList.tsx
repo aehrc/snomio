@@ -51,7 +51,7 @@ const items: NavItem[] = [
     title: 'Tasks Requiring review',
     icon: <AssignmentIndIcon />,
     href: '/dashboard/tasks/needReview',
-    index: 2,
+    index: 3,
   },
 ];
 
