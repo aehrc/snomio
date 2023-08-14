@@ -14,7 +14,7 @@ export interface Task {
   summary: string;
   updated: string;
   reviewers: Reviewer[];
-  latestClassificationJson: ClassificationJson
+  latestClassificationJson: ClassificationJson;
 }
 export interface Assignee {
   email: string;

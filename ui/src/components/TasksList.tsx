@@ -1,18 +1,20 @@
 import useTaskStore from '../stores/TaskStore';
 import {
   DataGrid,
-  GridColDef, GridFilterItem, GridFilterOperator,
+  GridColDef,
+  GridFilterItem,
+  GridFilterOperator,
   GridRenderCellParams,
   GridToolbarQuickFilter,
   GridValueFormatterParams,
 } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
-import {Assignee, ClassificationJson, Reviewer, Task} from '../types/task';
-import {Chip, Grid, Link, Stack, Typography, Tooltip} from '@mui/material';
+import { Assignee, ClassificationJson, Reviewer, Task } from '../types/task';
+import { Chip, Grid, Link, Stack, Typography, Tooltip } from '@mui/material';
 import MainCard from './MainCard';
 
 import { ReactNode } from 'react';
-import Gravatar from 'react-gravatar'
+import Gravatar from 'react-gravatar';
 
 interface TaskListProps {
   listAllTasks?: boolean;
@@ -21,10 +23,16 @@ interface TaskListProps {
 
 const columns: GridColDef[] = [
   { field: 'summary', headerName: 'Name', width: 150 },
-  { field: 'key', headerName: 'Task ID', width: 150,
+  {
+    field: 'key',
+    headerName: 'Task ID',
+    width: 150,
     renderCell: (params: GridRenderCellParams<any, string>): ReactNode => (
-        <Link href={`/dashboard/tasks/edit/${params.value}`}>{params.value!.toString()}</Link>
-    )},
+      <Link href={`/dashboard/tasks/edit/${params.value}`}>
+        {params.value!.toString()}
+      </Link>
+    ),
+  },
   {
     field: 'updated',
     headerName: 'Modified',
@@ -37,10 +45,13 @@ const columns: GridColDef[] = [
   },
   { field: 'labels', headerName: 'Tickets', width: 150 },
   { field: 'branchState', headerName: 'Rebase', width: 150 },
-  { field: 'latestClassificationJson', headerName: 'Classification', width: 150,
-    renderCell: (params: GridRenderCellParams<any, ClassificationJson>): ReactNode => (
-        <ValidationBadge params={params.value?.status} />
-    ),
+  {
+    field: 'latestClassificationJson',
+    headerName: 'Classification',
+    width: 150,
+    renderCell: (
+      params: GridRenderCellParams<any, ClassificationJson>,
+    ): ReactNode => <ValidationBadge params={params.value?.status} />,
   },
   {
     field: 'latestValidationStatus',
@@ -51,9 +62,12 @@ const columns: GridColDef[] = [
     ),
   },
 
-  { field: 'status', headerName: 'Status', width: 150,
+  {
+    field: 'status',
+    headerName: 'Status',
+    width: 150,
     renderCell: (params: GridRenderCellParams<any, string>): ReactNode => (
-        <ValidationBadge params={params.formattedValue} />
+      <ValidationBadge params={params.formattedValue} />
     ),
   },
   {
@@ -62,11 +76,18 @@ const columns: GridColDef[] = [
     width: 200,
 
     renderCell: (params: GridRenderCellParams<any, Assignee>): ReactNode => (
-        <Tooltip title={params.value?.displayName} followCursor>
+      <Tooltip title={params.value?.displayName} followCursor>
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-            <Gravatar email={params.value.email} rating="pg" default="monsterid" style={{borderRadius: "50px"} }  size="30px" className="CustomAvatar-image" />
+          <Gravatar
+            email={params.value.email}
+            rating="pg"
+            default="monsterid"
+            style={{ borderRadius: '50px' }}
+            size="30px"
+            className="CustomAvatar-image"
+          />
         </Stack>
-        </Tooltip>
+      </Tooltip>
     ),
   },
   {
@@ -74,15 +95,22 @@ const columns: GridColDef[] = [
     headerName: 'Reviewers',
     width: 200,
 
-
     renderCell: (params: GridRenderCellParams<any, Reviewer[]>): ReactNode => {
       if (params.value) {
         const reviewers = params.value;
-        const ordersWithLinks = reviewers.map(
-            (reviewer, index) =>  <Tooltip title={reviewer.displayName} followCursor>
-              <Gravatar email={reviewer.email} rating="pg" default="monsterid" style={{borderRadius: "50px"} }  size="30px" className="CustomAvatar-image" /> </Tooltip>,
-        )
-        return ordersWithLinks
+        const ordersWithLinks = reviewers.map((reviewer, index) => (
+          <Tooltip title={reviewer.displayName} followCursor>
+            <Gravatar
+              email={reviewer.email}
+              rating="pg"
+              default="monsterid"
+              style={{ borderRadius: '50px' }}
+              size="30px"
+              className="CustomAvatar-image"
+            />{' '}
+          </Tooltip>
+        ));
+        return ordersWithLinks;
       }
     },
   },
@@ -91,7 +119,6 @@ const columns: GridColDef[] = [
     headerName: 'Feedback',
     width: 150,
   },
-
 ];
 
 function QuickSearchToolbar() {
@@ -145,7 +172,6 @@ function ValidationBadge(formattedValue: { params: string | undefined }) {
     </>
   );
 }
-
 
 function TasksList({ listAllTasks, heading }: TaskListProps) {
   const { tasks, allTasks } = useTaskStore();
