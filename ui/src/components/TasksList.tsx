@@ -9,7 +9,13 @@ import {
   GridValueFormatterParams,
 } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
-import { Assignee, ClassificationJson, Reviewer, Task } from '../types/task';
+import {
+  Assignee,
+  Classification,
+  ClassificationJson,
+  Reviewer,
+  Task,
+} from '../types/task';
 import { Chip, Grid, Link, Stack, Typography, Tooltip } from '@mui/material';
 import MainCard from './MainCard';
 
@@ -38,7 +44,6 @@ const columns: GridColDef[] = [
     headerName: 'Modified',
     width: 150,
     valueFormatter: ({ value }: GridValueFormatterParams<string>) => {
-      console.log(value);
       const date = new Date(value);
       return date.toLocaleDateString('en-AU');
     },
@@ -50,7 +55,7 @@ const columns: GridColDef[] = [
     headerName: 'Classification',
     width: 150,
     renderCell: (
-      params: GridRenderCellParams<any, ClassificationJson>,
+      params: GridRenderCellParams<any, Classification>,
     ): ReactNode => <ValidationBadge params={params.value?.status} />,
   },
   {
@@ -176,7 +181,7 @@ function ValidationBadge(formattedValue: { params: string | undefined }) {
 function TasksList({ tasks, heading }: TaskListProps) {
   return (
     <>
-      <Grid container sx={{ backgroundColor: 'black' }}>
+      <Grid container>
         <Grid item xs={12} lg={12}>
           <MainCard title={heading} sx={{ width: '100%' }}>
             <DataGrid
