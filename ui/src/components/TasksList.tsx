@@ -135,6 +135,9 @@ function TasksList({
       field: 'feedbackMessagesStatus',
       headerName: 'Feedback',
       width: 150,
+      renderCell: (params: GridRenderCellParams<any, string>): ReactNode => (
+        <ValidationBadge params={params.formattedValue} />
+      ),
     },
     {
       field: 'assignee',
