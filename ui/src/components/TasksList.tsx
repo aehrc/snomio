@@ -188,6 +188,7 @@ function TasksList({
               density={dense ? 'compact' : 'standard'}
               getRowId={(row: Task) => row.key}
               rows={tasks}
+              rowHeight={70}
               columns={columns}
               disableColumnSelector
               hideFooterSelectedRowCount
