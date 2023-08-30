@@ -148,7 +148,7 @@ function TaskDetailsActions() {
           <Button
             variant="contained"
             color="secondary"
-            sx={{ ...customSx,color:'black' }}
+            sx={{ ...customSx, color: 'black' }}
             href={`${authoringPlatformLocation}/#/tasks/task/${task?.projectKey}/${task?.key}/edit`}
             startIcon={<OpenInNewIcon />}
             target="_blank"

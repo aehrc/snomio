@@ -6,7 +6,7 @@ export default function LoadingButton() {
       styleOverrides: {
         root: {
           padding: '6px 16px',
-          color:'black',
+          color: 'black',
           '&.MuiLoadingButton-loading': {
             opacity: 0.6,
             textShadow: 'none',

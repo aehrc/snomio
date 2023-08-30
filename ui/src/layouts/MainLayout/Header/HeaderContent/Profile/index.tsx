@@ -137,7 +137,7 @@ const Profile = () => {
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }} >
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
           <Gravatar
             email={user?.email !== null ? user?.email : undefined}
             rating="pg"
@@ -146,7 +146,10 @@ const Profile = () => {
             size={30}
             className="CustomAvatar-image"
           />
-          <Typography variant="body1" sx={{fontWeight:"bold"}}>{`${user?.firstName} ${user.lastName}`}</Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontWeight: 'bold' }}
+          >{`${user?.firstName} ${user.lastName}`}</Typography>
         </Stack>
       </ButtonBase>
       <Popper

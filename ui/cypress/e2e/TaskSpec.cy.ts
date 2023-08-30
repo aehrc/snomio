@@ -1,4 +1,4 @@
-import {Task} from "../../src/types/task";
+import { Task } from '../../src/types/task';
 
 describe('Task spec', () => {
   before(() => {
@@ -49,41 +49,40 @@ describe('Task details spec', () => {
     //   .click();
     const taskCreation = createNewTaskIfNotExists();
     taskCreation.then(value => {
-      cy.visit('/dashboard/tasks/edit/'+value);
+      cy.visit('/dashboard/tasks/edit/' + value);
       cy.injectAxe();
       cy.checkPageA11y();
-    })
-
+    });
   });
 });
 
-function createNewTaskIfNotExists(){
+function createNewTaskIfNotExists() {
   const url = Cypress.env('apUrl') + '/authoring-services/projects/my-tasks';
   cy.request(url).as('myTasks');
 
-  const chainable = cy.request(url).then(
-      response => {
-        const tasks = response.body as Task[];
-        if(tasks.length > 0) {
-          return tasks[0].key;
-        }else{
-          createTask("Test task cypress", "test task cypress").then(taskId=> taskId);
-        }
-
-      },
-  );
+  const chainable = cy.request(url).then(response => {
+    const tasks = response.body as Task[];
+    if (tasks.length > 0) {
+      return tasks[0].key;
+    } else {
+      createTask('Test task cypress', 'test task cypress').then(
+        taskId => taskId,
+      );
+    }
+  });
   return chainable;
 }
-function createTask(description: string, summary: string):Cypress.Chainable<string> {
+function createTask(
+  description: string,
+  summary: string,
+): Cypress.Chainable<string> {
   const url = Cypress.env('apUrl') + '/authoring-services/projects/AU/tasks';
-  const chainable = cy.request('POST', url, { description: description, summary: summary }).then(
-    response => {
+  const chainable = cy
+    .request('POST', url, { description: description, summary: summary })
+    .then(response => {
       expect(response.body).to.have.property('summary', summary); // true
       const task = response.body as Task;
       return task.key;
-
-    },
-  );
+    });
   return chainable;
 }
-
