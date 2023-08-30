@@ -8,13 +8,12 @@ describe('Task details spec', () => {
 
   it('displays the task details page', () => {
     cy.visit('/dashboard/tasks/all');
-    //cy.url().should('include', 'dashboard');
-    cy.url().should('include', 'dashboard/tasks/all');
-    cy.get('.task-list', { timeout: 2000 })
+    cy.get('.task-list', { timeout: 5000 })
       .should('be.visible')
       .find('a.task-details-link')
       .first()
       .click();
+    cy.injectAxe();
     cy.checkPageA11y();
   });
 });

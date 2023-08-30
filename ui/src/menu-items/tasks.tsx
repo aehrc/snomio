@@ -24,6 +24,7 @@ const tasks: NavItemType = {
       type: 'item',
       url: '/dashboard/tasks',
       icon: icons.CalendarOutlined,
+      caption:<FormattedMessage id="my-tasks" />,
     },
     {
       id: 'all-tasks',
@@ -31,6 +32,7 @@ const tasks: NavItemType = {
       type: 'item',
       url: '/dashboard/tasks/all',
       icon: icons.TaskIcon,
+      caption:<FormattedMessage id="all-tasks" />,
     },
     {
       id: 'tasks-need-review',
@@ -38,6 +40,7 @@ const tasks: NavItemType = {
       type: 'item',
       url: '/dashboard/tasks/needReview',
       icon: icons.ExploreIcon,
+      caption:<FormattedMessage id="tasks-need-review" />,
     },
     {
       id: 'tasks-requested-review',
@@ -45,6 +48,7 @@ const tasks: NavItemType = {
       type: 'item',
       url: '/dashboard/tasks/reviewRequested',
       icon: icons.AssignmentIndIcon,
+      caption:<FormattedMessage id="tasks-requested-review" />,
     },
   ],
 };

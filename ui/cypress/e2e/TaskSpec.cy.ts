@@ -7,24 +7,28 @@ describe('Task spec', () => {
     cy.visit('/dashboard/tasks');
     //cy.url().should('include', 'dashboard');
     cy.url().should('include', 'dashboard/tasks');
+    cy.injectAxe();
     cy.checkPageA11y();
   });
   it('displays the all task page', () => {
     cy.visit('/dashboard/tasks/all');
     //cy.url().should('include', 'dashboard');
     cy.url().should('include', 'dashboard/tasks/all');
+    cy.injectAxe();
     cy.checkPageA11y();
   });
   it('displays tasks need review  page', () => {
     cy.visit('/dashboard/tasks/needReview');
     //cy.url().should('include', 'dashboard');
     cy.url().should('include', '/dashboard/tasks/needReview');
+    cy.injectAxe();
     cy.checkPageA11y();
   });
   it('displays tasks requested your review', () => {
     cy.visit('/dashboard/tasks/reviewRequested');
     //cy.url().should('include', 'dashboard');
     cy.url().should('include', '/dashboard/tasks/reviewRequested');
+    cy.injectAxe();
     cy.checkPageA11y();
   });
 });

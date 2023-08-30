@@ -146,7 +146,7 @@ const Profile = () => {
             size={30}
             className="CustomAvatar-image"
           />
-          <Typography variant="subtitle1">{`${user?.firstName} ${user.lastName}`}</Typography>
+          <Typography variant="body1" sx={{fontWeight:"bold"}}>{`${user?.firstName} ${user.lastName}`}</Typography>
         </Stack>
       </ButtonBase>
       <Popper
