@@ -110,7 +110,7 @@ const MainCard = forwardRef(
             titleTypographyProps={{ variant: 'subtitle1' }}
             title={<Typography variant="h1" sx={{fontSize:"1.25rem"}}>{title}</Typography>}
             action={secondary}
-            subheader={subheader}clear
+            subheader={subheader}
           />
         )}
         {darkTitle && title && (
