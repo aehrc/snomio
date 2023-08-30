@@ -1,7 +1,9 @@
+import {Task} from "../../src/types/task";
+
 describe('Task spec', () => {
   before(() => {
     cy.login(Cypress.env('ims_username'), Cypress.env('ims_password'));
-    createTask('Test task cypress', 'Test task cypress');
+    createNewTaskIfNotExists();
   });
   it('displays the my task page', () => {
     cy.visit('/dashboard/tasks');
@@ -32,12 +34,56 @@ describe('Task spec', () => {
     cy.checkPageA11y();
   });
 });
+describe('Task details spec', () => {
+  before(() => {
+    cy.login(Cypress.env('ims_username'), Cypress.env('ims_password'));
+  });
 
-export function createTask(description: string, summary: string) {
+  it('displays the task details page', () => {
+    //commented out below as its taking time to load all the task
+    // cy.visit('/dashboard/tasks/all');
+    // cy.get('.MuiDataGrid-row', { timeout: 20000 })
+    //   .should('be.visible')
+    //   .find('a.task-details-link')
+    //   .first()
+    //   .click();
+    const taskCreation = createNewTaskIfNotExists();
+    taskCreation.then(value => {
+      cy.visit('/dashboard/tasks/edit/'+value);
+      cy.injectAxe();
+      cy.checkPageA11y();
+    })
+
+  });
+});
+
+function createNewTaskIfNotExists(){
+  const url = Cypress.env('apUrl') + '/authoring-services/projects/my-tasks';
+  cy.request(url).as('myTasks');
+
+  const chainable = cy.request(url).then(
+      response => {
+        const tasks = response.body as Task[];
+        if(tasks.length > 0) {
+          return tasks[0].key;
+        }else{
+          createTask("Test task cypress", "test task cypress").then(taskId=> taskId);
+        }
+
+      },
+  );
+  return chainable;
+}
+function createTask(description: string, summary: string):Cypress.Chainable<string> {
   const url = Cypress.env('apUrl') + '/authoring-services/projects/AU/tasks';
-  cy.request('POST', url, { description: description, summary: summary }).then(
+  const chainable = cy.request('POST', url, { description: description, summary: summary }).then(
     response => {
       expect(response.body).to.have.property('summary', summary); // true
+      const task = response.body as Task;
+      return task.key;
+
     },
   );
+  return chainable;
 }
+

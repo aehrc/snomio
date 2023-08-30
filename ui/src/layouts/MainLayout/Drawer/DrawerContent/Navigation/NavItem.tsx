@@ -104,7 +104,7 @@ const NavItem = ({ item, level, title }: Props) => {
       : 'primary.main';
 
   return (
-    <>
+    <><li>
       {menuOrientation === MenuOrientation.VERTICAL || downLG ? (
         <ListItemButton
           {...listItemProps}
@@ -313,6 +313,7 @@ const NavItem = ({ item, level, title }: Props) => {
           )}
         </ListItemButton>
       )}
+    </li>
     </>
   );
 };

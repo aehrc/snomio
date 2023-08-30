@@ -131,13 +131,13 @@ const Profile = () => {
             outlineOffset: 2,
           },
         }}
-        aria-label="open profile"
+        aria-label={`${user?.firstName} ${user.lastName}`}
         ref={anchorRef}
         aria-controls={open ? 'profile-grow' : undefined}
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }} >
           <Gravatar
             email={user?.email !== null ? user?.email : undefined}
             rating="pg"
