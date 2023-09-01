@@ -36,11 +36,12 @@ export default function SearchConcept() {
   const getTermDisplay = (concept: Concept): string => {
     return fsnToggle ? concept.fsn.term : concept.pt.term;
   };
-  const debouncedSearch = useDebounce(inputValue, 500);
+  const debouncedSearch = useDebounce(inputValue, 400);
   useEffect(() => {
     localStorage.setItem('fsn_toggle', fsnToggle.toString());
     async function fetchData() {
       setLoading(true);
+      setResults([]);
       try {
         const concepts = await conceptService.searchConcept(inputValue);
         setResults(concepts);
@@ -62,6 +63,7 @@ export default function SearchConcept() {
     <Grid item xs={12} sm={12} md={12} lg={12}>
       <Stack direction="row" spacing={2}>
         <Autocomplete
+          loading={loading}
           sx={{ width: '400px' }}
           open={open}
           getOptionLabel={option =>
@@ -81,6 +83,7 @@ export default function SearchConcept() {
             setInputValue(value);
             if (!value) {
               setOpen(false);
+              setResults([]);
             }
           }}
           options={results}
