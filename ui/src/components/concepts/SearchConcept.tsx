@@ -11,6 +11,7 @@ import MedicationIcon from '@mui/icons-material/Medication';
 import { Stack } from '@mui/system';
 import IconButton from '../@extended/IconButton.tsx';
 import { Link } from 'react-router-dom';
+import { isValidConceptId } from '../../utils/helpers/conceptUtils.ts';
 
 export default function SearchConcept() {
   const localFsnToggle =
@@ -43,7 +44,9 @@ export default function SearchConcept() {
       setLoading(true);
       setResults([]);
       try {
-        const concepts = await conceptService.searchConcept(inputValue);
+        const concepts = isValidConceptId(inputValue)
+          ? await conceptService.searchConceptById(inputValue)
+          : await conceptService.searchConcept(inputValue);
         setResults(concepts);
         setLoading(false);
       } catch (error) {

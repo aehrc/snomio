@@ -8,15 +8,28 @@ const ConceptService = {
     throw new Error('invalid concept response');
   },
 
-  async searchConcept(debouncedSearch: any): Promise<Concept[]> {
+  async searchConcept(str: string): Promise<Concept[]> {
+    let concepts: Concept[] = [];
     const response = await axios.get(
-      `/snowstorm/snomed-ct/MAIN/concepts?term=${debouncedSearch}`,
+      `/snowstorm/snomed-ct/MAIN/concepts?term=${str}`,
+      //`/snowstorm/snomed-ct/MAIN/concepts?term=${str}&ecl=%5E%20929360051000036108`  //need to enable once data is avaialble
     );
     if (response.status != 200) {
       this.handleErrors();
     }
     const conceptResponse = response.data as ConceptResponse;
-    return conceptResponse.items;
+    concepts = conceptResponse.items;
+    return concepts;
+  },
+  async searchConceptById(id: string): Promise<Concept[]> {
+    const response = await axios.get(
+      `/snowstorm/snomed-ct/MAIN/concepts/${id}`,
+    );
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+    const concept = response.data as Concept;
+    return [concept];
   },
 };
 
