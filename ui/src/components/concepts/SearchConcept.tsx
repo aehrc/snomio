@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import { Autocomplete } from '@mui/lab';
-import { Grid, TextField } from '@mui/material';
+import { Autocomplete, ListItemText } from '@mui/material';
+import {
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  TextField,
+} from '@mui/material';
 import { Concept } from '../../types/concept.ts';
 import useDebounce from '../../hooks/useDebounce.tsx';
 import conceptService from '../../api/ConceptService.ts';
@@ -12,6 +18,7 @@ import { Stack } from '@mui/system';
 import IconButton from '../@extended/IconButton.tsx';
 import { Link } from 'react-router-dom';
 import { isArtgId, isSctId } from '../../utils/helpers/conceptUtils.ts';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 export default function SearchConcept() {
   const localFsnToggle =
@@ -26,6 +33,9 @@ export default function SearchConcept() {
 
   const handleTermDisplayToggleChange = () => {
     setFsnToggle(!fsnToggle);
+  };
+  const handleSearchFilter = (event: SelectChangeEvent) => {
+    setSearchFilter(event.target.value);
   };
 
   const checkItemAlreadyExists = (search: string): boolean => {
@@ -72,43 +82,38 @@ export default function SearchConcept() {
   }, [debouncedSearch, fsnToggle]);
   return (
     <Grid item xs={12} sm={12} md={12} lg={12}>
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{ alignItems: 'center', paddingLeft: '1rem' }}
-      >
-        <Autocomplete
-          style={{ width: '130px' }}
-          //value={searchFilter}
-          autoComplete
-          disableClearable
-          onInputChange={(e, value) => {
-            setSearchFilter(value);
-            setResults([]);
-            setInputValue('');
-          }}
-          options={filterTypes}
-          value={searchFilter}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label="Search Filter"
-              variant="outlined"
-              sx={{
-                fieldset: {
-                  borderRadius: '10px 0 0px 10px',
-                  //boxShadow: "#3c64d0 2px 2px 2px"
-                },
-              }}
-            />
-          )}
-        />
+      <Stack direction="row" spacing={2} alignItems="center" paddingLeft="1rem">
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Search Filter</InputLabel>
+          <Select
+            sx={{
+              width: '120px',
+              height: '36px',
+              borderRadius: '4px 0px 0px 4px',
+            }}
+            // size='small'
+            labelId="concept-search-filter-label"
+            value={searchFilter}
+            label="Filter"
+            onChange={handleSearchFilter}
+          >
+            {filterTypes.map(type => (
+              <MenuItem
+                key={type}
+                value={type}
+                onKeyDown={e => e.stopPropagation()}
+              >
+                {type}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <Autocomplete
           loading={loading}
-          style={{
+          sx={{
             width: '400px',
-            borderRadius: 'border-radius: 0px 10px 10px 0px',
-            marginLeft: '0px',
+            borderRadius: '0px 4px 4px 0px',
+            marginLeft: '0px !important',
           }}
           open={open}
           getOptionLabel={option =>
@@ -134,15 +139,16 @@ export default function SearchConcept() {
           options={results}
           renderInput={params => (
             <TextField
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '0px 4px 4px 0px',
+                  height: '36px',
+                },
+              }}
               {...params}
               label="Search for a concept"
               variant="outlined"
-              sx={{
-                fieldset: {
-                  borderRadius: '0px 10px 10px 0px',
-                  //boxShadow: "rgba(0, 0, 0, 0.35) 0px 10px 10px"
-                },
-              }}
+              size="small"
             />
           )}
           renderOption={(props, option, { selected }) => (
