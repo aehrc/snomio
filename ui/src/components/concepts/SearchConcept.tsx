@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import { Autocomplete } from '@mui/lab';
-import { Grid, TextField } from '@mui/material';
+import { Autocomplete, ListItemText } from '@mui/material';
+import {
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  TextField,
+} from '@mui/material';
 import { Concept } from '../../types/concept.ts';
 import useDebounce from '../../hooks/useDebounce.tsx';
 import conceptService from '../../api/ConceptService.ts';
@@ -11,6 +17,8 @@ import MedicationIcon from '@mui/icons-material/Medication';
 import { Stack } from '@mui/system';
 import IconButton from '../@extended/IconButton.tsx';
 import { Link } from 'react-router-dom';
+import { isArtgId, isSctId } from '../../utils/helpers/conceptUtils.ts';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 export default function SearchConcept() {
   const localFsnToggle =
@@ -20,10 +28,16 @@ export default function SearchConcept() {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [fsnToggle, setFsnToggle] = useState(localFsnToggle);
+  const [searchFilter, setSearchFilter] = useState('Term');
+  const filterTypes = ['Term', 'Artg Id', 'Sct Id'];
 
-  const handleToggleChange = () => {
+  const handleTermDisplayToggleChange = () => {
     setFsnToggle(!fsnToggle);
   };
+  const handleSearchFilter = (event: SelectChangeEvent) => {
+    setSearchFilter(event.target.value);
+  };
+
   const checkItemAlreadyExists = (search: string): boolean => {
     const result = results.filter(
       concept =>
@@ -43,7 +57,14 @@ export default function SearchConcept() {
       setLoading(true);
       setResults([]);
       try {
-        const concepts = await conceptService.searchConcept(inputValue);
+        let concepts: Concept[] = [];
+        if (searchFilter === 'Term') {
+          concepts = await conceptService.searchConcept(inputValue);
+        } else if (searchFilter === 'Sct Id' && isSctId(inputValue)) {
+          concepts = await conceptService.searchConceptById(inputValue);
+        } else if (searchFilter === 'Artg Id' && isArtgId(inputValue)) {
+          concepts = await conceptService.searchConceptByArtgId(inputValue);
+        }
         setResults(concepts);
         setLoading(false);
       } catch (error) {
@@ -61,10 +82,39 @@ export default function SearchConcept() {
   }, [debouncedSearch, fsnToggle]);
   return (
     <Grid item xs={12} sm={12} md={12} lg={12}>
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2} alignItems="center" paddingLeft="1rem">
+        <FormControl>
+          <InputLabel id="demo-simple-select-label">Search Filter</InputLabel>
+          <Select
+            sx={{
+              width: '120px',
+              height: '36px',
+              borderRadius: '4px 0px 0px 4px',
+            }}
+            // size='small'
+            labelId="concept-search-filter-label"
+            value={searchFilter}
+            label="Filter"
+            onChange={handleSearchFilter}
+          >
+            {filterTypes.map(type => (
+              <MenuItem
+                key={type}
+                value={type}
+                onKeyDown={e => e.stopPropagation()}
+              >
+                {type}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <Autocomplete
           loading={loading}
-          sx={{ width: '400px' }}
+          sx={{
+            width: '400px',
+            borderRadius: '0px 4px 4px 0px',
+            marginLeft: '0px !important',
+          }}
           open={open}
           getOptionLabel={option =>
             getTermDisplay(option) + '[' + option.conceptId + ']' || ''
@@ -89,9 +139,16 @@ export default function SearchConcept() {
           options={results}
           renderInput={params => (
             <TextField
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '0px 4px 4px 0px',
+                  height: '36px',
+                },
+              }}
               {...params}
               label="Search for a concept"
               variant="outlined"
+              size="small"
             />
           )}
           renderOption={(props, option, { selected }) => (
@@ -136,14 +193,13 @@ export default function SearchConcept() {
             </li>
           )}
         />
-
         <IconButton
           variant={fsnToggle ? 'contained' : 'outlined'}
           color="primary"
           aria-label="toggle-task-menu"
-          onClick={handleToggleChange}
+          onClick={handleTermDisplayToggleChange}
         >
-          <span style={{ fontSize: 'small' }}>{fsnToggle ? 'FST' : 'PT'} </span>
+          <span style={{ fontSize: 'small' }}>{fsnToggle ? 'FSN' : 'PT'} </span>
         </IconButton>
       </Stack>
     </Grid>
