@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.csiro</groupId>
@@ -82,6 +82,11 @@
             <version>0.8.10</version>
         </dependency>
         <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+        <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <version>${rest-assured.version}</version>
@@ -142,12 +147,14 @@
                                 <requireProperty>
                                     <property>ims-username</property>
                                     <message>You must provide a valid username for the UAT Managed
-                                        Service using "-Dims-username=yourUsername".</message>
+                                        Service using "-Dims-username=yourUsername".
+                                    </message>
                                 </requireProperty>
                                 <requireProperty>
                                     <property>ims-password</property>
                                     <message>You must provide a valid password for the UAT Managed
-                                        Service using "-Dims-password=yourPassword".</message>
+                                        Service using "-Dims-password=yourPassword".
+                                    </message>
                                 </requireProperty>
                             </rules>
                         </configuration>
