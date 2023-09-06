@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Autocomplete } from '@mui/lab';
+import { Autocomplete } from '@mui/material';
 import {
   FormControl,
   Grid,
@@ -81,11 +81,16 @@ export default function SearchConcept() {
   }, [debouncedSearch, fsnToggle]);
   return (
     <Grid item xs={12} sm={12} md={12} lg={12}>
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2} alignItems="center" paddingLeft="1rem">
         <FormControl>
           <InputLabel id="demo-simple-select-label">Search Filter</InputLabel>
           <Select
-            sx={{ width: '120px' }}
+            sx={{
+              width: '120px',
+              height: '36px',
+              borderRadius: '4px 0px 0px 4px',
+            }}
+            // size='small'
             labelId="concept-search-filter-label"
             value={searchFilter}
             label="Filter"
@@ -97,7 +102,11 @@ export default function SearchConcept() {
         </FormControl>
         <Autocomplete
           loading={loading}
-          sx={{ width: '400px' }}
+          sx={{
+            width: '400px',
+            borderRadius: '0px 4px 4px 0px',
+            marginLeft: '0px !important',
+          }}
           open={open}
           getOptionLabel={option =>
             getTermDisplay(option) + '[' + option.conceptId + ']' || ''
@@ -122,9 +131,16 @@ export default function SearchConcept() {
           options={results}
           renderInput={params => (
             <TextField
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '0px 4px 4px 0px',
+                  height: '36px',
+                },
+              }}
               {...params}
               label="Search for a concept"
               variant="outlined"
+              size="small"
             />
           )}
           renderOption={(props, option, { selected }) => (
