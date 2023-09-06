@@ -1,31 +1,37 @@
-export function isNumeric(value: string) {
+import { Concept, ConceptSearchItem } from '../../types/concept.ts';
+
+function isNumeric(value: string) {
   return /^\d+$/.test(value);
 }
-export function isValidConceptId(value: string): boolean {
-  return isNumeric(value) && value.length > 3 && value.length < 11;
+
+export function mapToConcepts(searchItem: ConceptSearchItem[]): Concept[] {
+  const conceptList = searchItem.map(function (item) {
+    const referencedComponent = item.referencedComponent;
+    return referencedComponent;
+  });
+  return conceptList;
 }
 
-//Keep it for future
-// export function formSearchQueryParam(search:string):string{
-//     let queryParam = "";
-//     const temp = search.split(/[ ]+/);
-//     if(temp.length === 1){
-//         queryParam= !isNumeric(temp[0]) ? "term="+temp[0]: "ecl=^"+temp[0];
-//     }else{
-//         if(!isNumeric(temp[0]) && !isNumeric(temp[1])){
-//             return "term="+search;
-//         }
-//         if(isNumeric(temp[0])){
-//             queryParam="ecl=^"+temp[0];
-//         }else{
-//             queryParam="term="+temp[0];
-//         }
-//     if(isNumeric(temp[1])){
-//         queryParam="&ecl=^"+temp[1];
-//     }else{
-//         queryParam="&term="+temp[1];
-//         }
-//
-//     }
-//     return queryParam;
-// }
+export function isArtgId(id: string) {
+  if (id == null) {
+    return false;
+  }
+  id = '' + id;
+  return (
+    isNumeric(id) &&
+    Number(id) > 0 &&
+    id.length >= 4 &&
+    id.length <= 15 &&
+    id.match(/\./) == null
+  );
+}
+
+export function isSctId(id: string) {
+  if (id == null) {
+    return false;
+  }
+  id = '' + id;
+  return isNumeric(id) && Number(id) > 0 && id.length >= 6 && id.length <= 18;
+  // && Enums.Partition.fromCode(Common.getPartition(id)) != null //TODO need to expand this
+  // && Verhoeff.isValid(id);
+}
