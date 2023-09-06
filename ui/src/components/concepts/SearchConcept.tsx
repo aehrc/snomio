@@ -22,7 +22,7 @@ export default function SearchConcept() {
   const [loading, setLoading] = useState(false);
   const [fsnToggle, setFsnToggle] = useState(localFsnToggle);
   const [searchFilter, setSearchFilter] = useState('Term');
-  const filterTypes = ['Term', 'ArtgId', 'SctId'];
+  const filterTypes = ['Term', 'Artg Id', 'Sct Id'];
 
   const handleTermDisplayToggleChange = () => {
     setFsnToggle(!fsnToggle);
@@ -50,9 +50,9 @@ export default function SearchConcept() {
         let concepts: Concept[] = [];
         if (searchFilter === 'Term') {
           concepts = await conceptService.searchConcept(inputValue);
-        } else if (searchFilter === 'SctId' && isSctId(inputValue)) {
+        } else if (searchFilter === 'Sct Id' && isSctId(inputValue)) {
           concepts = await conceptService.searchConceptById(inputValue);
-        } else if (searchFilter === 'ArtgId' && isArtgId(inputValue)) {
+        } else if (searchFilter === 'Artg Id' && isArtgId(inputValue)) {
           concepts = await conceptService.searchConceptByArtgId(inputValue);
         }
         setResults(concepts);
