@@ -51,7 +51,7 @@ const ConceptService = {
     return mapToConcepts(conceptSearchResponse.items);
   },
   async getConcept(id: string): Promise<Concept> {
-    const response = await axios.get(`/snowstorm/MAIN/concepts/${id}`);
+    const response = await axios.get(`/api/MAIN/product-model/${id}`);
     if (response.status != 200) {
       this.handleErrors();
     }
