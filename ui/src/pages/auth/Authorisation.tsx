@@ -1,16 +1,16 @@
 import { useEffect } from 'react';
-import useUserStore from '../stores/UserStore';
-import useAuthStore from '../stores/AuthStore';
+import useUserStore from '../../stores/UserStore';
+import useAuthStore from '../../stores/AuthStore';
 import { useNavigate } from 'react-router-dom';
-import { UserState } from '../types/user';
-import Loading from '../components/Loading';
-import useApplicationConfigStore from '../stores/ApplicationConfigStore';
-import ApplicationConfig from '../types/applicationConfig';
-import Login from '../components/Login';
-import AuthWrapper from '../components/auth/AuthWrapper';
+import { UserState } from '../../types/user';
+import Loading from '../../components/Loading';
+import useApplicationConfigStore from '../../stores/ApplicationConfigStore';
+import ApplicationConfig from '../../types/applicationConfig';
+import Login from './Login';
+import AuthWrapper from './components/auth/AuthWrapper';
 import { Grid, Stack } from '@mui/material';
 
-function AuthorisationLayout() {
+function Authorisation() {
   const userStore = useUserStore();
   const authStore = useAuthStore();
   const applicationConfigStore = useApplicationConfigStore();
@@ -84,21 +84,9 @@ function AuthorisationLayout() {
             justifyContent="space-between"
             alignItems="baseline"
             sx={{ mb: { xs: -0.5, sm: 0.5 } }}
-          >
-            {/* <Typography variant="h3">Login</Typography> */}
-            {/* <Typography
-              component={Link}
-              to={authStore.authorised ? '/auth/register' : '/register'}
-              variant="body1"
-              sx={{ textDecoration: 'none' }}
-              color="primary"
-            >
-              Don&apos;t have an account?
-            </Typography> */}
-          </Stack>
+          ></Stack>
         </Grid>
         <Grid item xs={12}>
-          {/* <AuthLogin isDemo={isLoggedIn} /> */}
           {authStore.fetching ? <Loading /> : <Login />}
         </Grid>
       </Grid>
@@ -106,4 +94,4 @@ function AuthorisationLayout() {
   );
 }
 
-export default AuthorisationLayout;
+export default Authorisation;

@@ -5,12 +5,16 @@ import { Chip, MenuItem, Tooltip } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import { Stack } from '@mui/system';
-import StyledSelect from '../styled/StyledSelect.tsx';
-import { LabelBasic, LabelType, Ticket } from '../../types/tickets/ticket.ts';
-import useTicketStore from '../../stores/TicketStore.ts';
-import TicketsService from '../../api/TicketsService.ts';
-import { labelExistsOnTicket } from '../../utils/helpers/tickets/labelUtils.ts';
-import { ValidationColor } from '../../types/validationColor.ts';
+import StyledSelect from '../../../components/styled/StyledSelect.tsx';
+import {
+  LabelBasic,
+  LabelType,
+  Ticket,
+} from '../../../types/tickets/ticket.ts';
+import useTicketStore from '../../../stores/TicketStore.ts';
+import TicketsService from '../../../api/TicketsService.ts';
+import { labelExistsOnTicket } from '../../../utils/helpers/tickets/labelUtils.ts';
+import { ValidationColor } from '../../../types/validationColor.ts';
 
 interface CustomTicketLabelSelectionProps {
   id: string;

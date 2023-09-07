@@ -5,53 +5,59 @@ import Gravatar from 'react-gravatar';
 import {
   getEmail,
   mapUserToUserDetail,
-} from '../../utils/helpers/userUtils.ts';
+} from '../../../utils/helpers/userUtils.ts';
 import { ListItemText, MenuItem } from '@mui/material';
-import { JiraUser } from '../../types/JiraUserResponse.ts';
+import { Task } from '../../../types/task.ts';
+import { JiraUser } from '../../../types/JiraUserResponse.ts';
+import useTaskStore from '../../../stores/TaskStore.ts';
+import TasksServices from '../../../api/TasksService.ts';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Stack } from '@mui/system';
-import StyledSelect from '../styled/StyledSelect.tsx';
-import GravatarWithTooltip from '../GravatarWithTooltip.tsx';
-import useTicketStore from '../../stores/TicketStore.ts';
-import { Ticket } from '../../types/tickets/ticket.ts';
-import TicketsService from '../../api/TicketsService.ts';
+import { useSnackbar } from 'notistack';
+import StyledSelect from '../../../components/styled/StyledSelect.tsx';
+import GravatarWithTooltip from '../../../components/GravatarWithTooltip.tsx';
 
 interface CustomTaskAssigneeSelectionProps {
   id?: string;
   user?: string;
   userList: JiraUser[];
 }
-// const ITEM_HEIGHT = 100;
-// const ITEM_PADDING_TOP = 8;
-// const MenuProps = {
-//   PaperProps: {
-//     style: {
-//       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-//       width: 250,
-//     },
-//   },
-// };
+const ITEM_HEIGHT = 100;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
-export default function CustomTicketAssigneeSelection({
+export default function CustomTaskAssigneeSelection({
   id,
   user,
   userList,
 }: CustomTaskAssigneeSelectionProps) {
-  const { getTicketById, mergeTickets } = useTicketStore();
+  const taskStore = useTaskStore();
+  const { enqueueSnackbar } = useSnackbar();
   const [userName, setUserName] = useState<string>(user as string);
   const [disabled, setDisabled] = useState<boolean>(false);
+  const getTaskById = (taskId: string): Task => {
+    return taskStore.getTaskById(taskId) as Task;
+  };
 
-  const updateAssignee = async (owner: string, ticketId: string) => {
-    const ticket: Ticket | undefined = getTicketById(Number(ticketId));
-    if (ticket === undefined) return;
+  const updateOwner = async (owner: string, taskId: string) => {
+    const task: Task = getTaskById(taskId);
 
     const assignee = mapUserToUserDetail(owner, userList);
-    if (assignee?.username === undefined) return;
 
-    ticket.assignee = assignee?.username;
-    const returnedTask = await TicketsService.updateAssignee(ticket);
-    mergeTickets(returnedTask);
-    setDisabled(false);
+    const returnedTask = await TasksServices.updateTask(
+      task?.projectKey,
+      task?.key,
+      assignee,
+      [],
+    );
+    taskStore.mergeTasks(returnedTask);
   };
 
   const handleChange = (event: SelectChangeEvent<typeof userName>) => {
@@ -60,7 +66,23 @@ export default function CustomTicketAssigneeSelection({
       target: { value },
     } = event;
 
-    void updateAssignee(value, id as string);
+    void updateOwner(value, id as string)
+      .then(() => {
+        enqueueSnackbar(`Updated owner for task ${id}`, {
+          variant: 'success',
+          autoHideDuration: 5000,
+        });
+        setDisabled(false);
+      })
+      .catch(err => {
+        enqueueSnackbar(
+          `Update owner failed for task ${id} with error ${err}`,
+          {
+            variant: 'error',
+          },
+        );
+        setDisabled(false);
+      });
 
     setUserName(
       // On autofill we get a stringified value.
@@ -70,7 +92,7 @@ export default function CustomTicketAssigneeSelection({
 
   return (
     <Select
-      value={userName !== null ? userName : ''}
+      value={userName}
       onChange={handleChange}
       sx={{ width: '100%' }}
       input={<StyledSelect />}
@@ -78,7 +100,7 @@ export default function CustomTicketAssigneeSelection({
       renderValue={selected => (
         <GravatarWithTooltip username={selected} userList={userList} />
       )}
-      //   MenuProps={MenuProps}
+      MenuProps={MenuProps}
     >
       {userList.map(u => (
         <MenuItem

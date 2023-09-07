@@ -14,22 +14,22 @@ import {
   TaskStatus,
   UserDetails,
   ValidationStatus,
-} from '../types/task';
+} from '../../../types/task.ts';
 import { Card, Chip, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 import { ReactNode } from 'react';
-import statusToColor from '../utils/statusToColor';
-import { ValidationColor } from '../types/validationColor';
-import { JiraUser } from '../types/JiraUserResponse.ts';
+import statusToColor from '../../../utils/statusToColor.ts';
+import { ValidationColor } from '../../../types/validationColor.ts';
+import { JiraUser } from '../../../types/JiraUserResponse.ts';
 
 import {
   mapToUserNameArray,
   mapToUserOptions,
-} from '../utils/helpers/userUtils.ts';
-import CustomTaskAssigneeSelection from './tasks/CustomTaskAssigneeSelection.tsx';
-import CustomTaskReviewerSelection from './tasks/CustomTaskReviewerSelection.tsx';
-import { TableHeaders } from './TableHeaders.tsx';
+} from '../../../utils/helpers/userUtils.ts';
+import CustomTaskAssigneeSelection from './CustomTaskAssigneeSelection.tsx';
+import CustomTaskReviewerSelection from './CustomTaskReviewerSelection.tsx';
+import { TableHeaders } from '../../../components/TableHeaders.tsx';
 
 interface TaskListProps {
   tasks: Task[];

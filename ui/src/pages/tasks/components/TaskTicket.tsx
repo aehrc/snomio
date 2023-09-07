@@ -1,5 +1,5 @@
 import { Button, ButtonGroup, Card, Divider, Typography } from '@mui/material';
-import { Ticket } from '../../types/tickets/ticket';
+import { Ticket } from '../../../types/tickets/ticket';
 
 interface TaskTicketProps {
   ticket: Ticket;

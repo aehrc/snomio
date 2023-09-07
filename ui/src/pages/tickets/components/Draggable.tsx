@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { useDraggable } from '@dnd-kit/core';
-import MainCard from '../../components/MainCard';
+import MainCard from '../../../components/MainCard';
 import { CSSObject } from '@emotion/react';
 
 interface DraggableProps {

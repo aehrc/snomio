@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import useTaskById from "../hooks/useTaskById.tsx";
 import useConceptById from "../hooks/useConceptkById.tsx";
 
-function ConceptEditLayout() {
+function ConceptEdit() {
   const { id } = useParams();
   //const concept = useConceptById();
   return (
@@ -16,4 +16,4 @@ function ConceptEditLayout() {
   );
 }
 
-export default ConceptEditLayout;
+export default ConceptEdit;

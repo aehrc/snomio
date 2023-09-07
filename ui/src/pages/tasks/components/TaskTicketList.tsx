@@ -6,8 +6,8 @@ import {
   ListItemText,
 } from '@mui/material';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import useTicketStore from '../../stores/TicketStore';
-import { Ticket } from '../../types/tickets/ticket';
+import useTicketStore from '../../../stores/TicketStore';
+import { Ticket } from '../../../types/tickets/ticket';
 
 function TaskTicketList() {
   const { tickets, activeTicket, setActiveTicket } = useTicketStore();

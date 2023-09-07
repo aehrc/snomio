@@ -8,16 +8,16 @@ import {
   MenuItem,
   TextField,
 } from '@mui/material';
-import { Concept } from '../../types/concept.ts';
-import useDebounce from '../../hooks/useDebounce.tsx';
-import conceptService from '../../api/ConceptService.ts';
+import { Concept } from '../../../types/concept.ts';
+import useDebounce from '../../../hooks/useDebounce.tsx';
+import conceptService from '../../../api/ConceptService.ts';
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import MedicationIcon from '@mui/icons-material/Medication';
 import { Stack } from '@mui/system';
-import IconButton from '../@extended/IconButton.tsx';
+import IconButton from '../../../components/@extended/IconButton.tsx';
 import { Link } from 'react-router-dom';
-import { isArtgId, isSctId } from '../../utils/helpers/conceptUtils.ts';
+import { isArtgId, isSctId } from '../../../utils/helpers/conceptUtils.ts';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 export default function SearchConcept() {

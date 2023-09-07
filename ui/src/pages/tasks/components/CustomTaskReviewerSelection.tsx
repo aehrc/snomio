@@ -6,16 +6,16 @@ import {
   getDisplayName,
   getEmail,
   mapUserToUserDetail,
-} from '../../utils/helpers/userUtils.ts';
+} from '../../../utils/helpers/userUtils.ts';
 import { ListItemText, MenuItem, Tooltip } from '@mui/material';
-import { Task, UserDetails } from '../../types/task.ts';
-import { JiraUser } from '../../types/JiraUserResponse.ts';
-import useTaskStore from '../../stores/TaskStore.ts';
-import TasksServices from '../../api/TasksService.ts';
+import { Task, UserDetails } from '../../../types/task.ts';
+import { JiraUser } from '../../../types/JiraUserResponse.ts';
+import useTaskStore from '../../../stores/TaskStore.ts';
+import TasksServices from '../../../api/TasksService.ts';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import { Stack } from '@mui/system';
-import StyledSelect from '../styled/StyledSelect.tsx';
+import StyledSelect from '../../../components/styled/StyledSelect.tsx';
 import { useSnackbar } from 'notistack';
 
 interface CustomTaskReviewerSelectionProps {

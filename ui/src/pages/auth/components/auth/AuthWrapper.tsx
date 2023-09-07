@@ -5,12 +5,12 @@ import { Box, Grid } from '@mui/material';
 
 // project import
 // import AuthFooter from 'components/cards/AuthFooter';
-import Logo from '../logo';
+import Logo from '../../../../components/logo';
 import AuthCard from './AuthCard';
 
 // assets
 import AuthBackground from './AuthBackground';
-import LogoIcon from '../logo/LogoIcon';
+import LogoIcon from '../../../../components/logo/LogoIcon';
 import { Stack } from '@mui/system';
 
 interface Props {

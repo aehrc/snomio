@@ -1,14 +1,14 @@
 import { Grid } from '@mui/material';
 
-import useTaskById from '../hooks/useTaskById';
-import TaskEditCard from '../components/tasks/TaskEditCard';
-import TasksList from '../components/TasksList';
-import TaskTicket from '../components/tasks/TaskTicket';
+import useTaskById from '../../hooks/useTaskById.tsx';
+import TaskEditCard from './components/TaskEditCard.tsx';
+import TasksList from './components/TasksList.tsx';
+import TaskTicket from './components/TaskTicket.tsx';
 import { Stack } from '@mui/system';
-import useTicketStore from '../stores/TicketStore';
-import useJiraUserStore from '../stores/JiraUserStore.ts';
+import useTicketStore from '../../stores/TicketStore.ts';
+import useJiraUserStore from '../../stores/JiraUserStore.ts';
 import { CalendarOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import IconButton from '../components/@extended/IconButton.tsx';
+import IconButton from '../../components/@extended/IconButton.tsx';
 import { useEffect, useState } from 'react';
 
 function TaskEditLayout() {

@@ -8,7 +8,7 @@ import {
 import BadgeIcon from '@mui/icons-material/Badge';
 import TitleIcon from '@mui/icons-material/Title';
 import DescriptionIcon from '@mui/icons-material/Description';
-import useTaskById from '../../hooks/useTaskById';
+import useTaskById from '../../../hooks/useTaskById';
 import TaskDetailsActions from './TaskDetailsActions';
 import { useTheme } from '@mui/material/styles';
 import TaskTicketList from './TaskTicketList';

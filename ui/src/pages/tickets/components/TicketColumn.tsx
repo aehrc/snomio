@@ -1,6 +1,6 @@
 import { Stack } from '@mui/system';
-import useTicketByState from '../../hooks/useTicketByState';
-import { State } from '../../types/tickets/ticket';
+import useTicketByState from '../../../hooks/useTicketByState';
+import { State } from '../../../types/tickets/ticket';
 import Droppable from './Droppable';
 import { TicketCard } from './TicketCard';
 import { useTheme } from '@mui/material/styles';
