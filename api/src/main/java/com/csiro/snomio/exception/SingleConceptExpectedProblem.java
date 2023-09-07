@@ -10,11 +10,17 @@ public class SingleConceptExpectedProblem extends SnomioProblem {
 
   final transient Collection<ConceptSummary> concepts;
 
-  public SingleConceptExpectedProblem(String branch, String ecl,
-      Collection<ConceptSummary> concepts) {
-    super("single-concept-ecl", "Single concept expected from ECL",
+  public SingleConceptExpectedProblem(
+      String branch, String ecl, Collection<ConceptSummary> concepts) {
+    super(
+        "single-concept-ecl",
+        "Single concept expected from ECL",
         HttpStatus.INTERNAL_SERVER_ERROR,
-        "Expected a single concept ecl '" + ecl + "' on branch '" + branch + "' but found "
+        "Expected a single concept ecl '"
+            + ecl
+            + "' on branch '"
+            + branch
+            + "' but found "
             + concepts.size());
     this.concepts = concepts;
   }

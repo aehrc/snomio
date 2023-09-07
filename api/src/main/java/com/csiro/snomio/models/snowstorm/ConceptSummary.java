@@ -2,9 +2,7 @@ package com.csiro.snomio.models.snowstorm;
 
 import lombok.Data;
 
-/**
- * DTO for Snowstorm's API when it returns a "Concept mini" response - i.e. summary
- */
+/** DTO for Snowstorm's API when it returns a "Concept mini" response - i.e. summary */
 @Data
 public class ConceptSummary {
 
@@ -19,5 +17,4 @@ public class ConceptSummary {
   public void setId(long id) {
     this.conceptId = id;
   }
-
 }

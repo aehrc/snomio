@@ -23,8 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
     produces = {MediaType.APPLICATION_JSON_VALUE})
 public class ProductsController {
 
-  @Autowired
-  ProductService productService;
+  @Autowired ProductService productService;
 
   @GetMapping("/{branch}/product-model/{productId}")
   @ResponseBody
@@ -34,15 +33,16 @@ public class ProductsController {
 
   @GetMapping("/{branch}/product-model-graph/{productId}")
   @ResponseBody
-  public String getProductModelGraph(@PathVariable String branch,
-      @PathVariable Long productId) {
+  public String getProductModelGraph(@PathVariable String branch, @PathVariable Long productId) {
 
     ProductSummary summary = productService.getProductSummary(branch, productId);
 
     Map<String, Set<Node>> nodesByType = new HashMap<>();
 
-    summary.getNodes().forEach(
-        node -> nodesByType.computeIfAbsent(node.getLabel(), k -> new HashSet<>()).add(node));
+    summary
+        .getNodes()
+        .forEach(
+            node -> nodesByType.computeIfAbsent(node.getLabel(), k -> new HashSet<>()).add(node));
 
     StringBuilder graph = new StringBuilder();
     graph.append("digraph G {\n   rankdir=\"BT\"\n");
@@ -50,15 +50,28 @@ public class ProductsController {
       graph.append("  subgraph cluster_" + entry.getKey() + " {\n");
       graph.append("    label = \"" + entry.getKey() + "\";\n");
       for (Node node : entry.getValue()) {
-        graph.append("    " + node.getConcept().getConceptId() + " [label=\"" + node.getConcept()
-            .getPt().getTerm() + "\"];\n");
+        graph.append(
+            "    "
+                + node.getConcept().getConceptId()
+                + " [label=\""
+                + node.getConcept().getPt().getTerm()
+                + "\"];\n");
       }
       graph.append("  }\n");
     }
     for (Edge edge : summary.getEdges()) {
-      graph.append("  " + edge.getSource() + " -> " + edge.getTarget() + " [label=\"" + edge
-          .getLabel() + "\" " + (edge.getLabel().equals(ProductService.IS_A_LABEL)
-          ? "arrowhead=empty" : "style=dashed arrowhead=open") + "];\n");
+      graph.append(
+          "  "
+              + edge.getSource()
+              + " -> "
+              + edge.getTarget()
+              + " [label=\""
+              + edge.getLabel()
+              + "\" "
+              + (edge.getLabel().equals(ProductService.IS_A_LABEL)
+                  ? "arrowhead=empty"
+                  : "style=dashed arrowhead=open")
+              + "];\n");
     }
     return graph.append("}").toString();
   }

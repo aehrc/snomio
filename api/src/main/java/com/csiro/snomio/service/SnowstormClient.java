@@ -12,9 +12,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-/**
- * Client for Snowstorm's REST API
- */
+/** Client for Snowstorm's REST API */
 @Service
 @Log
 public class SnowstormClient {
@@ -34,8 +32,12 @@ public class SnowstormClient {
   }
 
   public ConceptSummary getConcept(String branch, Long id) {
-    return snowStormApiClient.get().uri("/" + branch + "/concepts/" + id)
-        .retrieve().bodyToMono(ConceptSummary.class).block();
+    return snowStormApiClient
+        .get()
+        .uri("/" + branch + "/concepts/" + id)
+        .retrieve()
+        .bodyToMono(ConceptSummary.class)
+        .block();
   }
 
   public ConceptSummary getConceptFromEcl(String branch, String ecl, Long id)
@@ -57,15 +59,23 @@ public class SnowstormClient {
     return getConceptsFromEcl(branch, ecl, Pair.of("<id>", id));
   }
 
-  public Collection<ConceptSummary> getConceptsFromEcl(String branch, String ecl,
-      Pair<String, Object>... params) {
+  public Collection<ConceptSummary> getConceptsFromEcl(
+      String branch, String ecl, Pair<String, Object>... params) {
     ecl = populateParameters(ecl, params);
-    ConceptList list = snowStormApiClient.get().uri("/" + branch + "/concepts?ecl=" + ecl)
-        .retrieve().bodyToMono(ConceptList.class).block();
+    ConceptList list =
+        snowStormApiClient
+            .get()
+            .uri("/" + branch + "/concepts?ecl=" + ecl)
+            .retrieve()
+            .bodyToMono(ConceptList.class)
+            .block();
 
     if (list == null) {
       throw new UnexpectedSnowstormResponseProblem(
-          "Expected a list of concepts from ECL '" + ecl + "' on branch '" + branch
+          "Expected a list of concepts from ECL '"
+              + ecl
+              + "' on branch '"
+              + branch
               + "' but the response was null");
     }
 
@@ -73,13 +83,20 @@ public class SnowstormClient {
   }
 
   public Collection<ConceptSummary> getDescendants(String branch, long conceptId) {
-    ConceptList list = snowStormApiClient.get()
-        .uri("/" + branch + "/concepts/" + conceptId + "/descendants")
-        .retrieve().bodyToMono(ConceptList.class).block();
+    ConceptList list =
+        snowStormApiClient
+            .get()
+            .uri("/" + branch + "/concepts/" + conceptId + "/descendants")
+            .retrieve()
+            .bodyToMono(ConceptList.class)
+            .block();
 
     if (list == null) {
       throw new UnexpectedSnowstormResponseProblem(
-          "Expected a list of descendants for '" + conceptId + "' on branch '" + branch
+          "Expected a list of descendants for '"
+              + conceptId
+              + "' on branch '"
+              + branch
               + "' but the response was null");
     }
 

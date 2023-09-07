@@ -3,9 +3,7 @@ package com.csiro.snomio.models.snowstorm;
 import java.util.Collection;
 import lombok.Data;
 
-/**
- * DTO for Snowstorm's API response when returning a list of concepts
- */
+/** DTO for Snowstorm's API response when returning a list of concepts */
 @Data
 public class ConceptList {
 
