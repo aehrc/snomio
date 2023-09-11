@@ -27,18 +27,26 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 @Component
 public class CookieAuthenticationFilter extends OncePerRequestFilter {
 
-  @Autowired
-  private LoginService loginService;
+  private final LoginService loginService;
+
+  private final AuthHelper authHelper;
+
+  private final HandlerExceptionResolver handlerExceptionResolver;
 
   @Autowired
-  private AuthHelper authHelper;
-
-  @Autowired
-  private HandlerExceptionResolver handlerExceptionResolver;
+  public CookieAuthenticationFilter(
+      LoginService loginService,
+      AuthHelper authHelper,
+      HandlerExceptionResolver handlerExceptionResolver) {
+    this.loginService = loginService;
+    this.authHelper = authHelper;
+    this.handlerExceptionResolver = handlerExceptionResolver;
+  }
 
   @Override
   protected void doFilterInternal(
-      @NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+      @NonNull HttpServletRequest request,
+      @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain)
       throws ServletException, IOException {
 

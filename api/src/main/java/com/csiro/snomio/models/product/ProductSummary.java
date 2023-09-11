@@ -12,6 +12,8 @@ import lombok.Data;
 @Data
 public class ProductSummary {
 
+  ConceptSummary subject;
+
   Set<Node> nodes = new HashSet<>();
   Set<Edge> edges = new HashSet<>();
 

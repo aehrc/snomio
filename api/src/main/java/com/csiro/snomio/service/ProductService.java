@@ -6,6 +6,7 @@ import com.csiro.snomio.models.product.Node;
 import com.csiro.snomio.models.product.ProductSummary;
 import com.csiro.snomio.models.snowstorm.ConceptSummary;
 import java.util.Collection;
+import lombok.extern.java.Log;
 import org.jgrapht.alg.TransitiveReduction;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedAcyclicGraph;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 /** Service for product-centric operations */
 @Service
+@Log
 public class ProductService {
 
   public static final String TPP_FOR_CTPP_ECL = ">> <id> and ^ 929360041000036105";
@@ -45,12 +47,14 @@ public class ProductService {
   }
 
   public ProductSummary getProductSummary(String branch, Long productId) {
+    log.info("Getting product model for " + productId + " on branch " + branch);
     // TODO validate productId is a CTPP
-    // TODO handle devices
     // TODO handle error responses from Snowstorm
 
     ProductSummary productSummary = new ProductSummary();
+    log.fine("Adding concepts and relationships for " + productId);
     addConceptsAndRelationshipsForProduct(branch, productId, productSummary);
+    log.fine("Adding subpacks for " + productId);
     snowStormApiClient
         .getConceptsFromEcl(branch, SUBPACK_FROM_PARENT_PACK_ECL, productId)
         .forEach(
@@ -59,6 +63,7 @@ public class ProductService {
               productSummary.addEdge(productId, subpack.getConceptId(), CONTAINS_LABEL);
             });
 
+    log.fine("Calculating transitive reduction for product model for " + productId);
     DirectedAcyclicGraph<Long, DefaultEdge> graph = new DirectedAcyclicGraph<>(DefaultEdge.class);
     productSummary.getNodes().forEach(node -> graph.addVertex(node.getConcept().getConceptId()));
     for (Node node : productSummary.getNodes()) {
@@ -76,13 +81,16 @@ public class ProductService {
                 productSummary.addEdge(
                     graph.getEdgeSource(edge), graph.getEdgeTarget(edge), "is a"));
 
+    log.info("Done product model for " + productId + " on branch " + branch);
     return productSummary;
   }
 
   private void addConceptsAndRelationshipsForProduct(
       String branch, Long productId, ProductSummary productSummary) {
     // add the product concept
-    productSummary.addNode(snowStormApiClient.getConcept(branch, productId), CTPP_LABEL);
+    ConceptSummary ctpp = snowStormApiClient.getConcept(branch, productId);
+    productSummary.setSubject(ctpp);
+    productSummary.addNode(ctpp, CTPP_LABEL);
     // add the TPP for the product
     ConceptSummary tpp =
         addSingleNode(branch, productSummary, productId, TPP_FOR_CTPP_ECL, TPP_LABEL);

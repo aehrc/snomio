@@ -23,17 +23,13 @@ import org.springframework.http.ProblemDetail;
 
 class TicketServiceTest extends TicketTestBase {
 
-  @Autowired
-  private LabelRepository labelRepository;
+  @Autowired private LabelRepository labelRepository;
 
-  @Autowired
-  private StateRepository stateRepository;
+  @Autowired private StateRepository stateRepository;
 
-  @Autowired
-  private PriorityBucketRepository priorityBucketRepository;
+  @Autowired private PriorityBucketRepository priorityBucketRepository;
 
-  @Autowired
-  private IterationRepository iterationRepository;
+  @Autowired private IterationRepository iterationRepository;
 
   @Test
   void testCreateTicket() {

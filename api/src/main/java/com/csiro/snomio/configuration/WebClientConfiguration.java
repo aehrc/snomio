@@ -13,7 +13,23 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class WebClientConfiguration {
-  @Autowired private AuthHelper authHelper;
+
+  private AuthHelper authHelper;
+
+  /** Adding a filter to inject the auth cookies. */
+  private final ExchangeFilterFunction addImsAuthCookie =
+      (clientRequest, nextFilter) -> {
+        ClientRequest filteredRequest =
+            ClientRequest.from(clientRequest)
+                .cookie(authHelper.getImsCookieName(), authHelper.getCookieValue())
+                .build();
+        return nextFilter.exchange(filteredRequest);
+      };
+
+  @Autowired
+  public WebClientConfiguration(AuthHelper authHelper) {
+    this.authHelper = authHelper;
+  }
 
   @Bean
   public WebClient imsApiClient(
@@ -28,7 +44,7 @@ public class WebClientConfiguration {
 
   @Bean
   public WebClient snowStormApiClient(
-      @Value("${ihtsdo.ap.api.url}") String authoringServiceUrl,
+      @Value("${ihtsdo.snowstorm.api.url}") String authoringServiceUrl,
       WebClient.Builder webClientBuilder) {
     return webClientBuilder
         .baseUrl(authoringServiceUrl)
@@ -37,13 +53,14 @@ public class WebClientConfiguration {
         .build();
   }
 
-  /** Adding a filter to inject the auth cookies. */
-  private final ExchangeFilterFunction addImsAuthCookie =
-      (clientRequest, nextFilter) -> {
-        ClientRequest filteredRequest =
-            ClientRequest.from(clientRequest)
-                .cookie(authHelper.getImsCookieName(), authHelper.getCookieValue())
-                .build();
-        return nextFilter.exchange(filteredRequest);
-      };
+  @Bean
+  public WebClient authoringPlatformApiClient(
+      @Value("${ihtsdo.ap.api.url}") String authoringServiceUrl,
+      WebClient.Builder webClientBuilder) {
+    return webClientBuilder
+        .baseUrl(authoringServiceUrl)
+        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .filter(addImsAuthCookie) // Cookies are injected through filter
+        .build();
+  }
 }
