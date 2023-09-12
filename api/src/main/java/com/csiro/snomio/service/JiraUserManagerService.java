@@ -17,7 +17,8 @@ public class JiraUserManagerService {
   private final WebClient snowStormApiClient;
 
   @Autowired
-  public JiraUserManagerService(@Qualifier("snowStormApiClient") WebClient snowStormApiClient) {
+  public JiraUserManagerService(
+      @Qualifier("managedServiceApiClient") WebClient snowStormApiClient) {
     this.snowStormApiClient = snowStormApiClient;
   }
 

@@ -28,6 +28,17 @@ public class WebClientConfiguration {
 
   @Bean
   public WebClient snowStormApiClient(
+      @Value("${ihtsdo.snowstorm.api.url}") String authoringServiceUrl,
+      WebClient.Builder webClientBuilder) {
+    return webClientBuilder
+        .baseUrl(authoringServiceUrl)
+        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .filter(addImsAuthCookie) // Cookies are injected through filter
+        .build();
+  }
+
+  @Bean
+  public WebClient managedServiceApiClient(
       @Value("${ihtsdo.ap.api.url}") String authoringServiceUrl,
       WebClient.Builder webClientBuilder) {
     return webClientBuilder
