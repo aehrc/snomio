@@ -9,7 +9,7 @@ import io.restassured.http.Cookie;
 import io.restassured.http.Cookies;
 import io.restassured.specification.RequestSpecification;
 import jakarta.annotation.PostConstruct;
-import lombok.Getter;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -19,27 +19,25 @@ import org.springframework.boot.test.web.server.LocalServerPort;
  For now there is some duplicated logic between here and SnomioTestBase. Some kind of attempt
  to make them independant of each other
 */
-@Getter
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Configuration.class)
 public class SnomioTestBase {
 
   @LocalServerPort int randomServerPort;
 
+  String snomioLocation;
+  Cookie imsCookie;
+
   @Value("${ihtsdo.ims.api.cookie.name}")
   String imsCookieName;
 
-  @Getter String snomioLocation;
-  @Getter Cookie imsCookie;
-
   @PostConstruct
-  private void setup() {
+  private void setupPort() throws IOException {
+    snomioLocation = "http://localhost:" + randomServerPort;
 
     snomioLocation = "http://localhost:" + randomServerPort;
     final JsonObject usernameAndPassword = new JsonObject();
     String username = System.getProperty("ims-username");
     String password = System.getProperty("ims-password");
-    System.out.println(username);
-    System.out.println(password);
 
     usernameAndPassword.addProperty("login", username);
     usernameAndPassword.addProperty("password", password);
@@ -55,10 +53,28 @@ public class SnomioTestBase {
             .response()
             .getDetailedCookies();
 
-    this.imsCookie = cookies.get(imsCookieName);
+    final Cookie imsCookie = cookies.get(imsCookieName);
+    this.imsCookie = imsCookie;
   }
+  ;
 
   public RequestSpecification withAuth() {
     return given().cookie(imsCookie);
+  }
+
+  public RequestSpecification withBadAuth() {
+    return given().cookie("foo");
+  }
+
+  public int getRandomServerPort() {
+    return randomServerPort;
+  }
+
+  public String getSnomioLocation() {
+    return snomioLocation;
+  }
+
+  public Cookie getImsCookie() {
+    return imsCookie;
   }
 }
