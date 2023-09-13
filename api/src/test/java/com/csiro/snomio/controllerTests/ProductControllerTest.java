@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class ProductControllerTest extends SnomioTestBase {
 
   @Test
-  @Disabled("Currently performance is to slow - to be corrected")
+  @Disabled("Currently performance is too slow - to be corrected")
   void getSimpleProductModel() {
     withAuth()
         .contentType(ContentType.JSON)
@@ -26,7 +26,7 @@ class ProductControllerTest extends SnomioTestBase {
   }
 
   @Test
-  @Disabled("Currently performance is to slow - to be corrected")
+  @Disabled("Currently performance is too slow - to be corrected")
   void getComplexProductModel() {
     withAuth()
         .contentType(ContentType.JSON)

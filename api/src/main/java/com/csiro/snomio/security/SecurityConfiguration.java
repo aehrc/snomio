@@ -43,6 +43,8 @@ public class SecurityConfiguration {
     // Encode branch paths in uri to allow request mapping to work
     return new FilterRegistrationBean<>(
         new BranchPathUriRewriteFilter(
-            "/api/(.*)/product-model/.*", "/api/(.*)/product-model-graph/.*"));
+            "/api/(.*)/products/.*",
+            "/api/(.*)/product-model/.*",
+            "/api/(.*)/product-model-graph/.*"));
   }
 }

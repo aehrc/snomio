@@ -1,6 +1,8 @@
 package com.csiro.snomio.models.product;
 
-import com.csiro.snomio.models.snowstorm.ConceptSummary;
+import au.csiro.snowstorm_client.model.SnowstormConceptMini;
+import au.csiro.snowstorm_client.model.SnowstormConceptMiniComponent;
+import com.csiro.snomio.util.SnowstormDtoUtil;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
@@ -12,16 +14,20 @@ import lombok.Data;
 @Data
 public class ProductSummary {
 
-  ConceptSummary subject;
+  SnowstormConceptMini subject;
 
   Set<Node> nodes = new HashSet<>();
   Set<Edge> edges = new HashSet<>();
 
-  public void addNode(ConceptSummary conceptSummary, String label) {
+  public void addNode(SnowstormConceptMiniComponent conceptSummary, String label) {
     nodes.add(new Node(conceptSummary, label));
   }
 
-  public void addEdge(long source, long target, String type) {
-    edges.add(new Edge(source, target, type));
+  public void addNode(SnowstormConceptMini mini, String label) {
+    addNode(SnowstormDtoUtil.fromMini(mini), label);
+  }
+
+  public void addEdge(String source, String target, String type) {
+    edges.add(new Edge(Long.parseLong(source), Long.parseLong(target), type));
   }
 }

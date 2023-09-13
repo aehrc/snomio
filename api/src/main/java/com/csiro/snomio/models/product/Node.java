@@ -1,6 +1,6 @@
 package com.csiro.snomio.models.product;
 
-import com.csiro.snomio.models.snowstorm.ConceptSummary;
+import au.csiro.snowstorm_client.model.SnowstormConceptMiniComponent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Node {
 
-  ConceptSummary concept;
+  SnowstormConceptMiniComponent concept;
   String label;
 }

@@ -1,6 +1,6 @@
 package com.csiro.snomio.exception;
 
-import com.csiro.snomio.models.snowstorm.ConceptSummary;
+import au.csiro.snowstorm_client.model.SnowstormConceptMiniComponent;
 import java.util.Collection;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class SingleConceptExpectedProblem extends SnomioProblem {
 
-  final transient Collection<ConceptSummary> concepts;
+  final transient Collection<SnowstormConceptMiniComponent> concepts;
 
   public SingleConceptExpectedProblem(
-      String branch, String ecl, Collection<ConceptSummary> concepts) {
+      String branch, String ecl, Collection<SnowstormConceptMiniComponent> concepts) {
     super(
         "single-concept-ecl",
         "Single concept expected from ECL",

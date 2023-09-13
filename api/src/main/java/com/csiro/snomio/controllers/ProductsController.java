@@ -23,19 +23,24 @@ import org.springframework.web.bind.annotation.RestController;
     produces = {MediaType.APPLICATION_JSON_VALUE})
 public class ProductsController {
 
-  @Autowired ProductService productService;
+  final ProductService productService;
+
+  @Autowired
+  public ProductsController(ProductService productService) {
+    this.productService = productService;
+  }
 
   @GetMapping("/{branch}/product-model/{productId}")
   @ResponseBody
   public ProductSummary getProductModel(@PathVariable String branch, @PathVariable Long productId) {
-    return productService.getProductSummary(branch, productId);
+    return productService.getProductSummary(branch, productId.toString());
   }
 
   @GetMapping("/{branch}/product-model-graph/{productId}")
   @ResponseBody
   public String getProductModelGraph(@PathVariable String branch, @PathVariable Long productId) {
 
-    ProductSummary summary = productService.getProductSummary(branch, productId);
+    ProductSummary summary = productService.getProductSummary(branch, productId.toString());
 
     Map<String, Set<Node>> nodesByType = new HashMap<>();
 
