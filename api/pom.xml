@@ -198,6 +198,11 @@
       <groupId>org.flywaydb</groupId>
       <version>${flyway-version}</version>
     </dependency>
+    <dependency>
+        <groupId>org.jgrapht</groupId>
+        <artifactId>jgrapht-core</artifactId>
+        <version>1.5.2</version>
+    </dependency>
   </dependencies>
   <description>Api for snomio</description>
   <modelVersion>4.0.0</modelVersion>
