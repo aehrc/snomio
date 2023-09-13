@@ -1,19 +1,14 @@
 import React, { useState, useCallback, Fragment, useRef } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import {ProductModel} from "../../../types/concept.ts";
-import * as Highcharts from "highcharts/highstock";
-import HighchartsReact from "highcharts-react-official";
-import HighchartsExporting from 'highcharts/modules/exporting'
-import networkgraph from "highcharts/modules/networkgraph";
+import {Product, ProductModel} from "../../../types/concept.ts";
+import ReactECharts from 'echarts-for-react';
 
-import {mapToNodes, mapToEdges} from "../../../utils/helpers/conceptUtils.ts";
+
+
 import {Box} from "@mui/system";
+import {EChartsOption} from "echarts-for-react/src/types.ts";
 
 
-if (typeof Highcharts === "object") {
-  networkgraph(Highcharts);
-  HighchartsExporting(Highcharts)
-}
 
 interface ProductModelGraphProps {
   productModel: ProductModel;
@@ -22,102 +17,157 @@ interface ProductModelGraphProps {
 function ProductModelGraph({
                              productModel
 }: ProductModelGraphProps) {
-  const ProductModelNetworkGraph = (props: HighchartsReact.Props) => {
+  const ProductModelNetworkGraph = () => {
     const [chart, setChart] = useState(null);
 
     const chartRef = useRef(null);
+    let nodesArray: string[] = [];
 
-    // const callback = useCallback(
-    //     (HighchartsChart: React.SetStateAction<null>) => {
-    //       setChart(HighchartsChart);
-    //     },
-    //     []
-    // );
+    function mapToLinks(productModel:ProductModel): any[] {
+      const edgeArray = productModel.edges.map(function (edge) {
+        const value = {
+          source: nodesArray.indexOf(edge.source),
+          target: nodesArray.indexOf(edge.target),
+          label: {
+            show: true,
+            opacity: 1,
+            formatter: function() {
+              return edge.label;
+            }
 
-    if(!productModel){
-      return (<Fragment></Fragment>);
+          }
+
+        }
+        return value;
+      });
+      return edgeArray;
+    }
+    function mapToNodes(nodes:Product[]): any[] {
+      nodesArray = [];
+      const nodeArray = nodes.map(function (item, index) {
+        const value = {name: item.concept.fsn.term,
+          value:index,category:item.label, conceptId:item.concept.conceptId};
+        nodesArray.push(item.concept.conceptId);
+        return value;
+      });
+      return nodeArray;
     }
 
-    const seriesOptions: 	any ={
-      showInLegend: true,
-      accessibility: {
-        enabled: false
-      },
-
-
-      dataLabels: {
-        enabled: true,
-        linkFormat: '{point.relation}',
-        nodeFormat: '{point.id} <br> {point.key}',
-        //align:'right',
-        overflow:"false",
-
-        allowOverlap: false,
-        style: {
-          textOutline: false,
-          fontSize: '0.8em',
-          fontWeight: 'normal',
-          textOverflow: 'ellipsis'
+    const webkitDep = {
+      "type": "force",
+      "categories": [
+        {
+          "name": "CTPP",
+          "keyword": {},
+          "base": "kjh"
+        },
+        {
+          "name": "TP",
+          "keyword": {},
+          "base": "kjh"
+        },
+        {
+          "name": "TPP",
+          "keyword": {},
+          "base": "kjh"
+        },
+        {
+          "name": "TPUU",
+          "keyword": {},
+          "base": "kjh"
+        },
+        {
+          "name": "MPP",
+          "keyword": {},
+          "base": "kjh"
+        },
+        {
+          "name": "MPUU",
+          "keyword": {},
+          "base": "kjh"
+        },
+        {
+          "name": "MP",
+          "keyword": {},
+          "base": "kjh"
         }
-      },
+      ],
 
-      data:productModel ? mapToEdges(productModel.edges) : [],
-     nodes:productModel ? mapToNodes(productModel.nodes) : []
+
+      "nodes": productModel ? mapToNodes(productModel.nodes): [],
+
+      "links": productModel ? mapToLinks(productModel) : []
     };
 
-    const options: Highcharts.Options = {
-      chart: {
-        type: 'networkgraph',
-        marginTop: 80,
-        height:1000
-      },
-      title: {
-        text: `Product Model Graph for ${productModel.subject.fsn.term}[ ${productModel.subject.conceptId}]`
+    const options: EChartsOption = {
+      legend: {
+        data: ['MP','MPP','MPUU','TP','TPUU','TPP', 'CTPP']
       },
       tooltip: {
-        formatter: function () {
-          return 'Name: <b>' + this.point.name + '</b><br>Concept ID: ' + '<b>'+this.point.id+'</b> <br>'+ 'Model: <b>' + this.point.key + '</b>'
+        formatter: function (params) {
+
+          return `Concept ID: <b>${params.data.conceptId} </b><br />
+              FSN:<b> ${params.name}</b><br />`;
         }
       },
-      legend: {
-        enabled: true
-      },
-
-      plotOptions: {
-        networkgraph: {
-          keys: ['from', 'to','relation'],
-          layoutAlgorithm: {
-            enableSimulation: true,
-            integration: 'verlet',
-            linkLength: 250
+      series: [
+        {
+          type: 'graph',
+          layout: 'force',
+          animation: false,
+          //categories: graph.categories,
+          label: {
+            formatter: '{b}',
+            show: true,
+            //overflow: 'break',
+            position: 'insideTopLeft',
+            width: 350,
+            ellipsis: '...',
+            overflow: 'truncate'
+          },
+          itemStyle: {
+            opacity: 1
+          },
+          draggable: true,
+          zoom: 8,
+          symbolSize: [100, 10],
+          data: webkitDep.nodes.map(function (node, idx) {
+            node.id = idx;
+            return node;
+          }),
+          categories: webkitDep.categories,
+          force: {
+            //edgeLength: 5,
+             repulsion: 100,
+            //gravity: 0.2
+          },
+          scaleLimit: {
+            min: 0.4,
+            max: 5
           },
 
+          //roam: true,
+          edges: webkitDep.links,
+          symbol: 'rectangle'
         }
-      },
-
-
-      series: [seriesOptions],
+      ]
     };
 
     return (
-        <Fragment>
+        <div className={"widgetContainer"} style={{padding: '9px',flexFlow: "1", display: "flex", alignItems: "center", height: "100%"}}>
           {options && (
               <>
-                <HighchartsReact
-                    highcharts={Highcharts}
-                    options={options}
-                    //callback={callback}
-                    ref={chartRef}
-                    allowChartUpdate={true}
-                    immutable={true}
-                    {...props}
+                <ReactECharts
+                    option={options}
+                    style={{ height: '100%', width: '90%' }}
+                    //onEvents={onEvents}
                 />
               </>
           )}
-        </Fragment>
+        </div>
     );
   };
-  return  (<Box ><ProductModelNetworkGraph /> </Box>);
+  return  (<Box style={{height:"1100px"}}><ProductModelNetworkGraph /> </Box>);
 }
 
 

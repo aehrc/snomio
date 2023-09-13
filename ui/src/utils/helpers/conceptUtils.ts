@@ -1,4 +1,4 @@
-import {Concept, ConceptSearchItem, Edge, Product} from '../../types/concept.ts';
+import {Concept, ConceptSearchItem, Edge, Product, ProductModel} from '../../types/concept.ts';
 
 function isNumeric(value: string) {
   return /^\d+$/.test(value);
@@ -70,16 +70,47 @@ export function getColorForModel(model:string):string{
   }
   return "#FFFFFF";
 }
-export function mapToNodes(nodes:Product[]): any[] {
+export function mapToNodesHigh(nodes:Product[]): any[] {
   const nodeArray = nodes.map(function (item) {
     const value = {id: item.concept.conceptId,
-      marker: {
-        //radius: 60
-        symbol:'square',
-        radius: 80
-      },
-      color: getColorForModel(item.label),name:item.concept.fsn.term,key:item.label}
+      // marker: {
+      //   //radius: 60
+      //  // symbol:'square',
+      //  color: getColorForModel(item.label)
+      //
+      // },
+      name:item.concept.fsn.term,key:item.label, color: getColorForModel(item.label)}
     return value;
   });
   return nodeArray;
 }
+// export function mapToNodes(nodes:Product[]): any[] {
+//   const nodeArray = nodes.map(function (item, index) {
+//     const value = {name: item.concept.fsn.term,
+//       value:index,category:item.label}
+//     return value;
+//   });
+//   return nodeArray;
+// }
+// export function mapToLinks(productModel:ProductModel): any[] {
+//   const edgeArray = productModel.edges.map(function (edge) {
+//     const value = {
+//       source: edge.source,
+//       target: edge.target,
+//       // label: {
+//       //   show: true,
+//       //   formatter: function() {
+//       //     return edge.label;
+//       //   }
+//       //
+//       // }
+//
+//     }
+//     return value;
+//   });
+//   return edgeArray;
+// }
+// function getNodeIndexById(conceptId:string, productModel:ProductModel):number{
+//
+//
+// }
