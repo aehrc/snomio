@@ -9,14 +9,15 @@ import conceptService from '../../api/ConceptService.ts';
 import { Box } from '@mui/material';
 import ProductLabelGroup from './components/ProductLabelGroup.tsx';
 import { filterByLabel } from '../../utils/helpers/conceptUtils.ts';
+import ProductModelGraph from "./components/ProductModelGraph.tsx";
+
+
 
 function ProductModelLayout() {
   const [productModel, setProductModel] = useState<ProductModel>();
   const conceptStore = useConceptStore();
   const { id } = useParams();
-  const lableTypesRight = ['TP', 'TPUU', 'TPP'];
-  const lableTypesLeft = ['MP', 'MPUU', 'MPP'];
-  const lableTypesCentre = ['CTPP'];
+
 
   useEffect(() => {
     conceptService
@@ -27,41 +28,7 @@ function ProductModelLayout() {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-        <Grid xs={6} key={'left'}>
-          {lableTypesLeft.map(label => (
-            <ProductLabelGroup
-              label={label}
-              productLabelItems={filterByLabel(
-                productModel?.nodes as Product[],
-                label,
-              )}
-            />
-          ))}
-        </Grid>
-        <Grid xs={6} key={'right'}>
-          {lableTypesRight.map(label => (
-            <ProductLabelGroup
-              label={label}
-              productLabelItems={filterByLabel(
-                productModel?.nodes as Product[],
-                label,
-              )}
-            />
-          ))}
-        </Grid>
-        <Grid xs={12} key={'bottom'}>
-          {lableTypesCentre.map(label => (
-            <ProductLabelGroup
-              label={label}
-              productLabelItems={filterByLabel(
-                productModel?.nodes as Product[],
-                label,
-              )}
-            />
-          ))}
-        </Grid>
-      </Grid>
+      <ProductModelGraph productModel={productModel as ProductModel}/>
     </Box>
   );
 }
