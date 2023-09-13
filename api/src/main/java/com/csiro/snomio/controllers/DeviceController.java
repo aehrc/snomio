@@ -1,7 +1,7 @@
 package com.csiro.snomio.controllers;
 
 import com.csiro.snomio.models.product.PackageDetails;
-import com.csiro.snomio.service.MedicationService;
+import com.csiro.snomio.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,19 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(
     value = "/api",
     produces = {MediaType.APPLICATION_JSON_VALUE})
-public class MedicationController {
+public class DeviceController {
 
-  final MedicationService medicationService;
+  final DeviceService deviceService;
 
   @Autowired
-  MedicationController(MedicationService medicationService) {
-    this.medicationService = medicationService;
+  DeviceController(DeviceService deviceService) {
+    this.deviceService = deviceService;
   }
 
-  @GetMapping("/{branch}/medications/{productId}")
+  @GetMapping("/{branch}/devices/{productId}")
   @ResponseBody
-  public PackageDetails getMedicationAtomioData(
+  public PackageDetails getDeviceAtomioData(
       @PathVariable String branch, @PathVariable Long productId) {
-    return medicationService.getAtomicData(branch, productId.toString());
+    return deviceService.getAtomicData(branch, productId.toString());
   }
 }

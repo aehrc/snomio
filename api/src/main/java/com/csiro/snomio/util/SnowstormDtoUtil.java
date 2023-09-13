@@ -1,11 +1,19 @@
 package com.csiro.snomio.util;
 
+import au.csiro.snowstorm_client.model.SnowstormConceptComponent;
 import au.csiro.snowstorm_client.model.SnowstormConceptMini;
 import au.csiro.snowstorm_client.model.SnowstormConceptMiniComponent;
+import au.csiro.snowstorm_client.model.SnowstormRelationshipComponent;
 import au.csiro.snowstorm_client.model.SnowstormTermLangPojoComponent;
+import com.csiro.snomio.exception.AtomicDataExtractionProblem;
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SnowstormDtoUtil {
+
+  private SnowstormDtoUtil() {}
 
   /**
    * Convert a {@link SnowstormConceptMini} to a {@link SnowstormConceptMiniComponent}. Annoying
@@ -66,5 +74,96 @@ public class SnowstormDtoUtil {
     component.id((String) map.get("id"));
     component.idAndFsnTerm((String) map.get("idAndFsnTerm"));
     return component;
+  }
+
+  public static Set<SnowstormRelationshipComponent> filterActiveStatedRelationshipByType(
+      Set<SnowstormRelationshipComponent> relationships, String type) {
+    return relationships.stream()
+        .filter(r -> r.getType().getConceptId().equals(type))
+        .filter(SnowstormRelationshipComponent::getActive)
+        .filter(r -> r.getCharacteristicType().equals("STATED_RELATIONSHIP"))
+        .collect(Collectors.toSet());
+  }
+
+  public static Set<SnowstormRelationshipComponent> getRelationshipsFromAxioms(
+      SnowstormConceptComponent concept) {
+    if (concept.getClassAxioms().size() != 1) {
+      throw new AtomicDataExtractionProblem(
+          "Expected 1 class axiom but found " + concept.getClassAxioms().size(),
+          concept.getConceptId());
+    }
+    return concept.getClassAxioms().iterator().next().getRelationships();
+  }
+
+  public static boolean relationshipOfTypeExists(
+      Set<SnowstormRelationshipComponent> subRoleGroup, String type) {
+    return !filterActiveStatedRelationshipByType(subRoleGroup, type).isEmpty();
+  }
+
+  public static String getSingleActiveConcreteValue(
+      Set<SnowstormRelationshipComponent> relationships, String type) {
+    return findSingleRelationshipsForActiveInferredByType(relationships, type)
+        .iterator()
+        .next()
+        .getConcreteValue()
+        .getValue();
+  }
+
+  public static BigDecimal getSingleActiveBigDecimal(
+      Set<SnowstormRelationshipComponent> relationships, String type) {
+    return new BigDecimal(getSingleActiveConcreteValue(relationships, type));
+  }
+
+  public static BigDecimal getSingleOptionalActiveBigDecimal(
+      Set<SnowstormRelationshipComponent> relationships, String type) {
+    if (relationshipOfTypeExists(relationships, type)) {
+      return getSingleActiveBigDecimal(relationships, type);
+    }
+    return null;
+  }
+
+  public static Set<SnowstormRelationshipComponent> findSingleRelationshipsForActiveInferredByType(
+      Set<SnowstormRelationshipComponent> relationships, String type) {
+    Set<SnowstormRelationshipComponent> filteredRelationships =
+        filterActiveStatedRelationshipByType(relationships, type);
+
+    if (filteredRelationships.size() != 1) {
+      throw new AtomicDataExtractionProblem(
+          "Expected 1 " + type + " relationship but found " + filteredRelationships.size(),
+          relationships.iterator().next().getSourceId());
+    }
+
+    return filteredRelationships;
+  }
+
+  public static Set<SnowstormRelationshipComponent> getActiveRelationshipsInRoleGroup(
+      SnowstormRelationshipComponent subpacksRelationship,
+      Set<SnowstormRelationshipComponent> relationships) {
+    return relationships.stream()
+        .filter(r -> r.getGroupId().equals(subpacksRelationship.getGroupId()))
+        .filter(SnowstormRelationshipComponent::getActive)
+        .filter(r -> r.getCharacteristicType().equals("STATED_RELATIONSHIP"))
+        .collect(Collectors.toSet());
+  }
+
+  public static Set<SnowstormRelationshipComponent> getActiveRelationshipsOfType(
+      Set<SnowstormRelationshipComponent> relationships, String type) {
+    return filterActiveStatedRelationshipByType(relationships, type);
+  }
+
+  public static SnowstormConceptMiniComponent getSingleOptionalActiveTarget(
+      Set<SnowstormRelationshipComponent> relationships, String type) {
+    if (relationshipOfTypeExists(relationships, type)) {
+      return getSingleActiveTarget(relationships, type);
+    }
+    return null;
+  }
+
+  public static SnowstormConceptMiniComponent getSingleActiveTarget(
+      Set<SnowstormRelationshipComponent> relationships, String type) {
+    return findSingleRelationshipsForActiveInferredByType(relationships, type)
+        .iterator()
+        .next()
+        .getTarget();
   }
 }
