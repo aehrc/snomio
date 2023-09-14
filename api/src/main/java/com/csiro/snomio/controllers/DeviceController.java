@@ -1,5 +1,6 @@
 package com.csiro.snomio.controllers;
 
+import com.csiro.snomio.models.product.DeviceProductDetails;
 import com.csiro.snomio.models.product.PackageDetails;
 import com.csiro.snomio.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class DeviceController {
 
   @GetMapping("/{branch}/devices/{productId}")
   @ResponseBody
-  public PackageDetails getDeviceAtomioData(
+  public PackageDetails<DeviceProductDetails> getDeviceAtomioData(
       @PathVariable String branch, @PathVariable Long productId) {
     return deviceService.getAtomicData(branch, productId.toString());
   }

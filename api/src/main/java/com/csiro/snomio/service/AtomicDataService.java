@@ -41,13 +41,13 @@ import lombok.extern.java.Log;
 import reactor.core.publisher.Mono;
 
 @Log
-public abstract class AtomicDataService {
+public abstract class AtomicDataService<T extends ProductDetails> {
 
   protected abstract SnowstormClient getSnowStormApiClient();
 
   protected abstract String getProductAtomicDataEcl();
 
-  protected abstract ProductDetails populateSpecificProductDetails(
+  protected abstract T populateSpecificProductDetails(
       SnowstormConceptComponent product,
       String productId,
       Map<String, SnowstormConceptComponent> browserMap,
@@ -60,7 +60,7 @@ public abstract class AtomicDataService {
 
   protected abstract String getSubpackRelationshipType();
 
-  public PackageDetails getAtomicData(String branch, String productId) {
+  public PackageDetails<T> getAtomicData(String branch, String productId) {
     Collection<SnowstormConceptMiniComponent> concepts =
         getSnowStormApiClient()
             .getConceptsFromEcl(branch, getProductAtomicDataEcl(), productId, 0, 100);
@@ -123,13 +123,13 @@ public abstract class AtomicDataService {
     return populatePackageDetails(productId, browserMap, typeMap, artgMap);
   }
 
-  private PackageDetails populatePackageDetails(
+  private PackageDetails<T> populatePackageDetails(
       String productId,
       Map<String, SnowstormConceptComponent> browserMap,
       Map<String, String> typeMap,
       Map<String, Set<String>> artgMap) {
 
-    PackageDetails details = new PackageDetails();
+    PackageDetails<T> details = new PackageDetails<>();
 
     SnowstormConceptComponent basePackage = browserMap.get(productId);
     Set<SnowstormRelationshipComponent> basePackageRelationships =
@@ -162,7 +162,7 @@ public abstract class AtomicDataService {
       for (SnowstormRelationshipComponent subpacksRelationship : subpacksRelationships) {
         Set<SnowstormRelationshipComponent> roleGroup =
             getActiveRelationshipsInRoleGroup(subpacksRelationship, basePackageRelationships);
-        PackageQuantity packageQuantity = new PackageQuantity();
+        PackageQuantity<T> packageQuantity = new PackageQuantity<>();
         details.getContainedPackages().add(packageQuantity);
         // sub pack quantity unit
         packageQuantity.setUnit(getSingleActiveTarget(roleGroup, HAS_PACK_SIZE_UNIT));
@@ -184,7 +184,7 @@ public abstract class AtomicDataService {
       for (SnowstormRelationshipComponent subProductRelationship : productRelationships) {
         Set<SnowstormRelationshipComponent> subRoleGroup =
             getActiveRelationshipsInRoleGroup(subProductRelationship, basePackageRelationships);
-        ProductQuantity productQuantity = new ProductQuantity();
+        ProductQuantity<T> productQuantity = new ProductQuantity<>();
         details.getContainedProducts().add(productQuantity);
         // contained product quantity value
         productQuantity.setValue(getSingleActiveBigDecimal(subRoleGroup, HAS_PACK_SIZE_VALUE));
@@ -198,7 +198,7 @@ public abstract class AtomicDataService {
     return details;
   }
 
-  private ProductDetails populateProductDetails(
+  private T populateProductDetails(
       String productId,
       Map<String, SnowstormConceptComponent> browserMap,
       Map<String, String> typeMap,
@@ -215,7 +215,7 @@ public abstract class AtomicDataService {
           productId);
     }
 
-    ProductDetails productDetails =
+    T productDetails =
         populateSpecificProductDetails(
             product, productId, browserMap, typeMap, subProductRelationship);
 

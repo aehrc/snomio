@@ -13,7 +13,6 @@ import au.csiro.snowstorm_client.model.SnowstormConceptMiniComponent;
 import au.csiro.snowstorm_client.model.SnowstormRelationshipComponent;
 import com.csiro.snomio.exception.AtomicDataExtractionProblem;
 import com.csiro.snomio.models.product.DeviceProductDetails;
-import com.csiro.snomio.models.product.ProductDetails;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Service;
 /** Service for product-centric operations */
 @Service
 @Log
-public class DeviceService extends AtomicDataService {
+public class DeviceService extends AtomicDataService<DeviceProductDetails> {
   private static final String PRODUCT_CONCEPTS_FOR_ATOMIC_EXTRACTION_ECL =
       "(<id> or (<id>.999000111000168106) "
           + "or (<id>.999000081000168101) "
@@ -49,7 +48,7 @@ public class DeviceService extends AtomicDataService {
   }
 
   @Override
-  protected ProductDetails populateSpecificProductDetails(
+  protected DeviceProductDetails populateSpecificProductDetails(
       SnowstormConceptComponent product,
       String productId,
       Map<String, SnowstormConceptComponent> browserMap,
