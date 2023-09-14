@@ -87,7 +87,7 @@ public abstract class AtomicDataService {
             .collect(Collectors.toMap(SnowstormConceptComponent::getConceptId, c -> c));
 
     SnowstormItemsPageReferenceSetMemberComponent refsetMembersList = refsetMembers.block();
-    if (refsetMembersList == null) {
+    if (refsetMembersList == null || refsetMembersList.getItems() == null) {
       throw new AtomicDataExtractionProblem("No browser concepts found", productId);
     }
     Map<String, String> typeMap =
@@ -110,7 +110,10 @@ public abstract class AtomicDataService {
             m ->
                 artgMap
                     .computeIfAbsent(m.getReferencedComponentId(), k -> new HashSet<>())
-                    .add(m.getAdditionalFields().getOrDefault("schemeValue", null)));
+                    .add(
+                        m.getAdditionalFields() != null
+                            ? m.getAdditionalFields().getOrDefault("schemeValue", null)
+                            : null));
 
     if (!typeMap.keySet().equals(browserMap.keySet())) {
       throw new AtomicDataExtractionProblem(
@@ -167,6 +170,7 @@ public abstract class AtomicDataService {
         packageQuantity.setValue(
             new BigDecimal(getSingleActiveConcreteValue(roleGroup, HAS_PACK_SIZE_VALUE)));
         // sub pack product details
+        assert subpacksRelationship.getTarget() != null;
         packageQuantity.setPackageDetails(
             populatePackageDetails(
                 subpacksRelationship.getTarget().getConceptId(), browserMap, typeMap, artgMap));
@@ -200,6 +204,7 @@ public abstract class AtomicDataService {
       Map<String, String> typeMap,
       SnowstormRelationshipComponent subProductRelationship) {
 
+    assert subProductRelationship.getTarget() != null;
     SnowstormConceptComponent product =
         browserMap.get(subProductRelationship.getTarget().getConceptId());
 

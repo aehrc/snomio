@@ -16,5 +16,6 @@ public final class AmtConstants {
   public static final String ARTGID_REFSET = "11000168105";
   public static final String CONTAINS_DEVICE = "999000081000168101";
   public static final String CONTAINS_PACKAGED_DEVICE = "999000111000168106";
+
   private AmtConstants() {}
 }

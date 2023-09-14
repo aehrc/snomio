@@ -90,7 +90,11 @@ public class MedicationService extends AtomicDataService {
       MedicationProductDetails productDetails) {
     Set<SnowstormConceptComponent> mpuu =
         filterActiveStatedRelationshipByType(productRelationships, IS_A).stream()
-            .filter(r -> typeMap.get(r.getTarget().getConceptId()).equals(MPUU_REFSET_ID))
+            .filter(
+                r ->
+                    r.getTarget() != null
+                        && typeMap.get(r.getTarget().getConceptId()) != null
+                        && typeMap.get(r.getTarget().getConceptId()).equals(MPUU_REFSET_ID))
             .map(r -> browserMap.get(r.getTarget().getConceptId()))
             .collect(Collectors.toSet());
 
@@ -106,7 +110,8 @@ public class MedicationService extends AtomicDataService {
     productDetails.setGenericForm(genericDoseForm);
     SnowstormConceptMiniComponent specificDoseForm =
         getSingleActiveTarget(productRelationships, HAS_MANUFACTURED_DOSE_FORM);
-    if (!specificDoseForm.getConceptId().equals(genericDoseForm.getConceptId())) {
+    if (specificDoseForm.getConceptId() != null
+        && !specificDoseForm.getConceptId().equals(genericDoseForm.getConceptId())) {
       productDetails.setSpecificForm(specificDoseForm);
     }
     if (relationshipOfTypeExists(productRelationships, HAS_DEVICE_TYPE)) {
