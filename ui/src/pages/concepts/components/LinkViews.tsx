@@ -19,8 +19,7 @@ export default function LinkViews(props: LinkViewsProps) {
             <Grid key={index}>
               <Stack direction="row" spacing={3}>
                 <span>{e.label}</span>
-                {Number(e.source) ===
-                Number(currentConcept.concept.conceptId) ? (
+                {e.source === currentConcept.concept.conceptId ? (
                   <ArrowForward />
                 ) : (
                   <ArrowBack />
