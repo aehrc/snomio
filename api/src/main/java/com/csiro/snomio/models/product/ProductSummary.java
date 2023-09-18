@@ -28,6 +28,6 @@ public class ProductSummary {
   }
 
   public void addEdge(String source, String target, String type) {
-    edges.add(new Edge(Long.parseLong(source), Long.parseLong(target), type));
+    edges.add(new Edge(source, target, type));
   }
 }

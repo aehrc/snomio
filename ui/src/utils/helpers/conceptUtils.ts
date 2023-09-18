@@ -1,5 +1,9 @@
-import {Concept, ConceptSearchItem, Edge, Product} from '../../types/concept.ts';
-import {JiraUser} from "../../types/JiraUserResponse.ts";
+import {
+  Concept,
+  ConceptSearchItem,
+  Edge,
+  Product,
+} from '../../types/concept.ts';
 
 function isNumeric(value: string) {
   return /^\d+$/.test(value);
@@ -46,20 +50,22 @@ export function isFsnToggleOn(): boolean {
   return localStorage.getItem('fsn_toggle') === 'true' ? true : false;
 }
 
-export function findRelations(edges:Edge[], nodeA:string, nodeB:string): Edge[] {
-  const related= edges.filter(e => (Number(e.source) === Number(nodeA) && Number(e.target) === Number(nodeB)) || (Number(e.source) === Number(nodeB) && Number(e.target) === Number(nodeA)));
-  // console.log(nodeA +","+nodeB);
-  // console.log(related);
-  if(related.length >1){
-    console.log(related);
-  }
+export function findRelations(
+  edges: Edge[],
+  nodeA: string,
+  nodeB: string,
+): Edge[] {
+  const related = edges.filter(function (el) {
+    return (
+      (el.source === nodeA && el.target === nodeB) ||
+      (el.source === nodeB && el.target === nodeA)
+    );
+  });
   return related;
 }
-export function findProductUsingId(conceptId:string, nodes:Product[]) {
+export function findProductUsingId(conceptId: string, nodes: Product[]) {
   const product = nodes.find(function (p) {
-    return Number(p.concept.conceptId) === Number(conceptId);
+    return p.concept.conceptId === conceptId;
   });
   return product;
 }
-
-

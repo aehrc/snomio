@@ -27,7 +27,7 @@ export interface ConceptSearchItem {
   referencedComponent: Concept;
 }
 export interface ProductModel {
-  subject:Concept;
+  subject: Concept;
   nodes: Product[];
   edges: Edge[];
 }
@@ -38,5 +38,5 @@ export interface Product {
 export interface Edge {
   source: string;
   target: string;
-  label:string
+  label: string;
 }

@@ -1,13 +1,15 @@
 import {
   AccordionDetails,
-  AccordionSummary, DialogTitle,
+  AccordionSummary,
   Grid,
-  Link, Popover, Switch, Tooltip,
-  Typography, withStyles,
+  Link,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import {
-  DefinitionStatus, Edge,
+  DefinitionStatus,
+  Edge,
   Product,
   ProductModel,
 } from '../../types/concept.ts';
@@ -17,33 +19,46 @@ import { Simulate } from 'react-dom/test-utils';
 import error = Simulate.error;
 import conceptService from '../../api/ConceptService.ts';
 import { Box } from '@mui/material';
-import ProductTypeGroup from './components/ProductTypeGroup.tsx';
-import {filterByLabel, findProductUsingId, findRelations} from '../../utils/helpers/conceptUtils.ts';
-import { experimentalStyled as styled } from '@mui/material/styles';
+import {
+  filterByLabel,
+  findProductUsingId,
+  findRelations,
+  isFsnToggleOn,
+} from '../../utils/helpers/conceptUtils.ts';
+import { experimentalStyled as styled, useTheme } from '@mui/material/styles';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Stack } from '@mui/system';
-import LinkViews from "./components/LinkViews.tsx";
-import {Button} from "@mantine/core";
+import LinkViews from './components/LinkViews.tsx';
 
 function ProductModelLayout() {
   const [productModel, setProductModel] = useState<ProductModel>();
-  const conceptStore = useConceptStore();
   const { id } = useParams();
   const lableTypesRight = ['TP', 'TPUU', 'TPP'];
   const lableTypesLeft = ['MP', 'MPUU', 'MPP'];
   const lableTypesCentre = ['CTPP'];
   const [activeConcept, setActiveConcept] = useState<string>();
+  const [expandedConcepts, setExpandedConcepts] = useState<string[]>([]);
+  const [fsnToggle, setFsnToggle] = useState<boolean>(isFsnToggleOn);
+  const theme = useTheme();
 
   useEffect(() => {
     conceptService
       .getConceptModel(id as string)
-      .then(e => setProductModel(e))
+      .then(e => {
+        reloadStateElements();
+        setProductModel(e);
+      })
       .catch(error);
-  }, [id, conceptStore]);
+  }, [id, fsnToggle]);
   interface ProductTypeGroupProps {
     productLabelItems: Product[];
     label: string;
+  }
+  function reloadStateElements() {
+    setActiveConcept(undefined);
+    setExpandedConcepts([]);
+    setFsnToggle(isFsnToggleOn);
   }
 
   function ProductTypeGroup({
@@ -64,19 +79,24 @@ function ProductModelLayout() {
     }));
 
     const ProductPanel = (product: Product, fsnToggle: boolean) => {
-      const Accordion = styled((props: AccordionProps) => (
-        <MuiAccordion disableGutters elevation={0} square {...props} />
-      ))(({ theme }) => ({
-        //backgroundColor:"white",
-        border: `3px solid ${theme.palette.divider}`,
-        '&:not(:last-child)': {
-          borderBottom: 0,
-        },
-        '&:before': {
-          display: 'none',
-        },
-      }));
-       const links = activeConcept ? findRelations(productModel?.edges as Edge[], activeConcept, product.concept.conceptId) : [];
+      const links = activeConcept
+        ? findRelations(
+            productModel?.edges as Edge[],
+            activeConcept,
+            product.concept.conceptId,
+          )
+        : [];
+      const accordionClicked = (conceptId: string) => {
+        if (expandedConcepts.includes(conceptId)) {
+          setExpandedConcepts(
+            expandedConcepts.filter((value: string) => value !== conceptId),
+          );
+          setActiveConcept(undefined);
+        } else {
+          setExpandedConcepts([...expandedConcepts, conceptId]);
+          setActiveConcept(conceptId);
+        }
+      };
 
       const getColorByDefinitionStatus = (): string => {
         return product.concept.definitionStatus === DefinitionStatus.Primitive
@@ -86,28 +106,20 @@ function ProductModelLayout() {
 
       return (
         <Grid>
-
           <Accordion
-            //defaultExpanded={true}
-            //renderActiveOnly={false}
-            // onChange={(e, expanded) => {
-            //   if (expanded) {
-            //
-            //
-            //   } else {
-            //     setActiveConcept(undefined);
-            //   }
-            // }}
-            onClick={(e) => {
-              e.stopPropagation();
-             setActiveConcept(product.concept.conceptId);
-
-              //if(e.target.)
+            key={product.concept.conceptId}
+            sx={{
+              backgroundColor:
+                activeConcept === product.concept.conceptId
+                  ? theme.palette.warning.light
+                  : 'white',
             }}
+            onChange={() => accordionClicked(product.concept.conceptId)}
+            expanded={expandedConcepts.includes(product.concept.conceptId)}
           >
             <AccordionSummary
               sx={{
-                backgroundColor:  getColorByDefinitionStatus,
+                backgroundColor: getColorByDefinitionStatus,
               }}
               expandIcon={<ExpandMoreIcon />}
               //aria-expanded={true}
@@ -115,29 +127,52 @@ function ProductModelLayout() {
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-
-              {links.length > 0 ? (<Grid xs={40} item={true} style={{backgroundColor:"yellow"}}>
-                <Tooltip title={<LinkViews links={links} linkedConcept={findProductUsingId(activeConcept as string, productModel?.nodes as Product[]) as Product} currentConcept={product} key={product.concept.conceptId}/>}
-                         componentsProps={{
-                           tooltip: {
-                             sx: {
-                               bgcolor: "#9bddff",
-                               color: "#262626",
-                               border: "1px solid #888888",
-                               borderRadius:"15px"
-                             }
-                           }
-                         }}>
+              {links.length > 0 ? (
+                <Grid xs={40} item={true}>
+                  <Tooltip
+                    title={
+                      <LinkViews
+                        links={links}
+                        linkedConcept={
+                          findProductUsingId(
+                            activeConcept as string,
+                            productModel?.nodes as Product[],
+                          ) as Product
+                        }
+                        currentConcept={product}
+                        key={product.concept.conceptId}
+                      />
+                    }
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          bgcolor: '#9bddff',
+                          color: '#262626',
+                          border: '1px solid #888888',
+                          borderRadius: '15px',
+                        },
+                      },
+                    }}
+                  >
+                    <Typography>
+                      {/*<span style={{backgroundColor:theme.palette.warning.light}}>{fsnToggle ? product.concept.fsn.term : product.concept.pt.term} </span>*/}
+                      <span
+                        style={{ backgroundColor: theme.palette.warning.light }}
+                      >
+                        {product.concept.conceptId}{' '}
+                      </span>
+                    </Typography>
+                  </Tooltip>
+                </Grid>
+              ) : (
+                <Grid xs={40} item={true}>
                   <Typography>
-                    {fsnToggle ? product.concept.fsn.term : product.concept.pt.term}
+                    {fsnToggle
+                      ? product.concept.fsn.term
+                      : product.concept.pt.term}
                   </Typography>
-                </Tooltip>
-
-
-              </Grid>) :(<Grid xs={40} item={true}><Typography>
-                {fsnToggle ? product.concept.fsn.term : product.concept.pt.term}
-              </Typography></Grid>)}
-
+                </Grid>
+              )}
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
@@ -154,24 +189,7 @@ function ProductModelLayout() {
                       ? product.concept.pt.term
                       : product.concept.fsn.term}
                   </Typography>
-
                 </Stack>
-                {/*<Switch*/}
-                {/*    checked={checked}*/}
-                {/*    onChange={(event) => {*/}
-                {/*      //if(event.i)*/}
-                {/*      event.stopPropagation();*/}
-                {/*      if (event.currentTarget.checked) {*/}
-                {/*        //setActiveConcept(product.concept.conceptId);*/}
-                {/*        setChecked(true);*/}
-                {/*      }else {*/}
-                {/*        setChecked(false);*/}
-                {/*      }*/}
-                {/*    }*/}
-
-                {/*    }*/}
-                {/*    inputProps={{ 'aria-label': 'controlled' }}*/}
-                {/*/>*/}
               </Typography>
             </AccordionDetails>
           </Accordion>
@@ -183,17 +201,21 @@ function ProductModelLayout() {
         <Accordion defaultExpanded={true}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
-            //aria-expanded={true}
-
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
             <Typography>{label}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography key={label+"-lists"}>
+            <Typography key={label + '-lists'}>
               {productLabelItems?.map(p => {
-                return <ProductPanel label={p.label} concept={p.concept}  key={p.concept.conceptId}/>;
+                return (
+                  <ProductPanel
+                    label={p.label}
+                    concept={p.concept}
+                    key={p.concept.conceptId}
+                  />
+                );
               })}
             </Typography>
           </AccordionDetails>
@@ -208,7 +230,7 @@ function ProductModelLayout() {
         <Grid xs={6} key={'left'} item={true}>
           {lableTypesLeft.map(label => (
             <ProductTypeGroup
-                key={label}
+              key={label}
               label={label}
               productLabelItems={filterByLabel(
                 productModel?.nodes as Product[],
