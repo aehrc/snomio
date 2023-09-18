@@ -1,7 +1,5 @@
 package com.csiro.snomio.controllerTests;
 
-import static org.junit.Assert.assertEquals;
-
 import com.csiro.snomio.SnomioTestBase;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Assertions;

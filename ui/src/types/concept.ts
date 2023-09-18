@@ -27,9 +27,16 @@ export interface ConceptSearchItem {
   referencedComponent: Concept;
 }
 export interface ProductModel {
+  subject:Concept;
   nodes: Product[];
+  edges: Edge[];
 }
 export interface Product {
   concept: Concept;
   label: string;
+}
+export interface Edge {
+  source: string;
+  target: string;
+  label:string
 }

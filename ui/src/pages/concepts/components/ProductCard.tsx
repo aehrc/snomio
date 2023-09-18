@@ -18,8 +18,9 @@ import { Stack } from '@mui/system';
 interface ProductCardProps {
   product: Product;
 }
-function ProductLabelGroup({ product }: ProductCardProps) {
+function ProductPanel({ product }: ProductCardProps) {
   const [fsnToggle, setFsnToggle] = useState(isFsnToggleOn());
+  const [highlite, setHighlite] = useState(false);
 
   const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -39,15 +40,24 @@ function ProductLabelGroup({ product }: ProductCardProps) {
   }, [fsnToggle]);
   const getColorByDefinitionStatus = (): string => {
     return product.concept.definitionStatus === DefinitionStatus.Primitive
-      ? '#4A80A3 '
-      : ' #aed0ea';
+      ? '#99CCFF'
+      : '#CCCCFF';
   };
+  const calledFunction = () => setHighlite(!highlite);
   return (
     <Grid>
-      <Accordion defaultExpanded={false}>
+      <Accordion
+        defaultExpanded={false}
+        onChange={(e, expanded) => {
+          if (expanded) {
+            calledFunction();
+            return;
+          }
+        }}
+      >
         <AccordionSummary
           sx={{
-            backgroundColor: getColorByDefinitionStatus,
+            backgroundColor: highlite ? 'red' : getColorByDefinitionStatus,
           }}
           expandIcon={<ExpandMoreIcon />}
           //aria-expanded={true}
@@ -65,6 +75,14 @@ function ProductLabelGroup({ product }: ProductCardProps) {
               <span style={{ color: '#184E6B' }}>Concept Id:</span>
               <Link>{product.concept.conceptId}</Link>
             </Stack>
+            <Stack direction="row" spacing={2}>
+              <Typography style={{ color: '#184E6B' }}>
+                {fsnToggle ? 'PT' : 'FSN'}:
+              </Typography>
+              <Typography>
+                {fsnToggle ? product.concept.pt.term : product.concept.fsn.term}
+              </Typography>
+            </Stack>
           </Typography>
         </AccordionDetails>
       </Accordion>
@@ -72,4 +90,4 @@ function ProductLabelGroup({ product }: ProductCardProps) {
   );
 }
 
-export default ProductLabelGroup;
+export default ProductPanel;
