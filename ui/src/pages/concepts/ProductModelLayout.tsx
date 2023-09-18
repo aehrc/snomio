@@ -155,11 +155,12 @@ function ProductModelLayout() {
                     }}
                   >
                     <Typography>
-                      {/*<span style={{backgroundColor:theme.palette.warning.light}}>{fsnToggle ? product.concept.fsn.term : product.concept.pt.term} </span>*/}
                       <span
                         style={{ backgroundColor: theme.palette.warning.light }}
                       >
-                        {product.concept.conceptId}{' '}
+                        {fsnToggle
+                          ? product.concept.fsn.term
+                          : product.concept.pt.term}{' '}
                       </span>
                     </Typography>
                   </Tooltip>
