@@ -5,6 +5,6 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class PackageQuantity extends Quantity {
-  PackageDetails packageDetails;
+public class PackageQuantity<T extends ProductDetails> extends Quantity {
+  PackageDetails<T> packageDetails;
 }

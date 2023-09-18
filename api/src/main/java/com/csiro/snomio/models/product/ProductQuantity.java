@@ -1,8 +1,10 @@
 package com.csiro.snomio.models.product;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class ProductQuantity extends Quantity {
-  ProductDetails productDetails;
+@EqualsAndHashCode(callSuper = true)
+public class ProductQuantity<T extends ProductDetails> extends Quantity {
+  T productDetails;
 }

@@ -1,5 +1,6 @@
 package com.csiro.snomio.controllers;
 
+import com.csiro.snomio.models.product.MedicationProductDetails;
 import com.csiro.snomio.models.product.PackageDetails;
 import com.csiro.snomio.service.MedicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class MedicationController {
 
   @GetMapping("/{branch}/medications/{productId}")
   @ResponseBody
-  public PackageDetails getMedicationAtomioData(
+  public PackageDetails<MedicationProductDetails> getMedicationAtomioData(
       @PathVariable String branch, @PathVariable Long productId) {
     return medicationService.getAtomicData(branch, productId.toString());
   }

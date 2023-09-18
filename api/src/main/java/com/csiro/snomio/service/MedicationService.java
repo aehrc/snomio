@@ -30,7 +30,6 @@ import au.csiro.snowstorm_client.model.SnowstormRelationshipComponent;
 import com.csiro.snomio.exception.AtomicDataExtractionProblem;
 import com.csiro.snomio.models.product.Ingredient;
 import com.csiro.snomio.models.product.MedicationProductDetails;
-import com.csiro.snomio.models.product.ProductDetails;
 import com.csiro.snomio.models.product.Quantity;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +41,7 @@ import org.springframework.stereotype.Service;
 /** Service for product-centric operations */
 @Service
 @Log
-public class MedicationService extends AtomicDataService {
+public class MedicationService extends AtomicDataService<MedicationProductDetails> {
   private static final String PRODUCT_CONCEPTS_FOR_ATOMIC_EXTRACTION_ECL =
       "(<id> or (<id>.999000011000168107) "
           + "or (<id>.774160008) "
@@ -90,7 +89,11 @@ public class MedicationService extends AtomicDataService {
       MedicationProductDetails productDetails) {
     Set<SnowstormConceptComponent> mpuu =
         filterActiveStatedRelationshipByType(productRelationships, IS_A).stream()
-            .filter(r -> typeMap.get(r.getTarget().getConceptId()).equals(MPUU_REFSET_ID))
+            .filter(
+                r ->
+                    r.getTarget() != null
+                        && typeMap.get(r.getTarget().getConceptId()) != null
+                        && typeMap.get(r.getTarget().getConceptId()).equals(MPUU_REFSET_ID))
             .map(r -> browserMap.get(r.getTarget().getConceptId()))
             .collect(Collectors.toSet());
 
@@ -106,7 +109,8 @@ public class MedicationService extends AtomicDataService {
     productDetails.setGenericForm(genericDoseForm);
     SnowstormConceptMiniComponent specificDoseForm =
         getSingleActiveTarget(productRelationships, HAS_MANUFACTURED_DOSE_FORM);
-    if (!specificDoseForm.getConceptId().equals(genericDoseForm.getConceptId())) {
+    if (specificDoseForm.getConceptId() != null
+        && !specificDoseForm.getConceptId().equals(genericDoseForm.getConceptId())) {
       productDetails.setSpecificForm(specificDoseForm);
     }
     if (relationshipOfTypeExists(productRelationships, HAS_DEVICE_TYPE)) {
@@ -147,7 +151,7 @@ public class MedicationService extends AtomicDataService {
   }
 
   @Override
-  protected ProductDetails populateSpecificProductDetails(
+  protected MedicationProductDetails populateSpecificProductDetails(
       SnowstormConceptComponent product,
       String productId,
       Map<String, SnowstormConceptComponent> browserMap,
