@@ -1,5 +1,5 @@
 import { Edge, Product } from '../../../types/concept.ts';
-import { Box, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 
