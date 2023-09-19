@@ -33,7 +33,8 @@ export default ({ mode }) => {
           target: snomioBaseUrl,
           changeOrigin: false,
           secure: false,
-          rewrite: path => path.replace(/^\/api\/branch/, '/api/'+defaultBranch),
+          rewrite: path =>
+            path.replace(/^\/api\/branch/, '/api/' + defaultBranch),
         },
         '/authoring-services': {
           target: apUrl,
