@@ -11,7 +11,7 @@ import {
   DefinitionStatus,
   Edge,
   Product,
-  ProductModel,
+  ProductModelSummary,
 } from '../../types/concept.ts';
 import { useParams } from 'react-router-dom';
 import { Simulate } from 'react-dom/test-utils';
@@ -29,9 +29,11 @@ import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Stack } from '@mui/system';
 import LinkViews from './components/LinkViews.tsx';
+import useConceptStore from '../../stores/ConceptStore.ts';
 
 function ProductModelView() {
-  const [productModel, setProductModel] = useState<ProductModel>();
+  const { activeProduct } = useConceptStore();
+  const [productModel, setProductModel] = useState<ProductModelSummary>();
   const { id } = useParams();
   const lableTypesRight = ['TP', 'TPUU', 'TPP'];
   const lableTypesLeft = ['MP', 'MPUU', 'MPP'];
@@ -43,13 +45,13 @@ function ProductModelView() {
 
   useEffect(() => {
     conceptService
-      .getConceptModel(id as string)
+      .getConceptModel(activeProduct ? activeProduct.conceptId : (id as string))
       .then(e => {
         reloadStateElements();
         setProductModel(e);
       })
       .catch(error);
-  }, [id, fsnToggle]);
+  }, [id, fsnToggle, activeProduct]);
   interface ProductTypeGroupProps {
     productLabelItems: Product[];
     label: string;
@@ -85,7 +87,7 @@ function ProductModelView() {
             product.concept.conceptId,
           )
         : [];
-      function showwHighlite() {
+      function showHighlite() {
         return links.length > 0;
       }
       const accordionClicked = (conceptId: string) => {
@@ -126,7 +128,7 @@ function ProductModelView() {
                 border: '3px solid',
               }}
               style={{
-                borderColor: showwHighlite()
+                borderColor: showHighlite()
                   ? theme.palette.warning.light
                   : 'transparent',
               }}
@@ -136,7 +138,7 @@ function ProductModelView() {
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              {showwHighlite() ? (
+              {showHighlite() ? (
                 <Grid xs={40} item={true}>
                   <Tooltip
                     title={

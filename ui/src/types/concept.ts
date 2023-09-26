@@ -26,7 +26,7 @@ export interface ConceptSearchResponse {
 export interface ConceptSearchItem {
   referencedComponent: Concept;
 }
-export interface ProductModel {
+export interface ProductModelSummary {
   subject: Concept;
   nodes: Product[];
   edges: Edge[];

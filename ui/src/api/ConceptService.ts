@@ -3,9 +3,10 @@ import {
   Concept,
   ConceptResponse,
   ConceptSearchResponse,
-  ProductModel,
+  ProductModelSummary,
 } from '../types/concept.ts';
 import { mapToConcepts } from '../utils/helpers/conceptUtils.ts';
+import { MedicationPackageDetails } from '../types/authoring.ts';
 
 const ConceptService = {
   // TODO more useful way to handle errors? retry? something about tasks service being down etc.
@@ -51,12 +52,28 @@ const ConceptService = {
     const conceptSearchResponse = response.data as ConceptSearchResponse;
     return mapToConcepts(conceptSearchResponse.items);
   },
-  async getConceptModel(id: string): Promise<ProductModel> {
+  async getConceptModel(id: string): Promise<ProductModelSummary> {
     const response = await axios.get(`/api/branch/product-model/${id}`);
     if (response.status != 200) {
       this.handleErrors();
     }
-    const productModel = response.data as ProductModel;
+    const productModel = response.data as ProductModelSummary;
+    return productModel;
+  },
+  async fetchMedication(id: string): Promise<MedicationPackageDetails> {
+    const response = await axios.get(`/api/branch/medications/${id}`);
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+    const medicationPackageDetails = response.data as MedicationPackageDetails;
+    return medicationPackageDetails;
+  },
+  async fetchDevice(id: string): Promise<ProductModelSummary> {
+    const response = await axios.get(`/api/branch/devices/${id}`);
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+    const productModel = response.data as ProductModelSummary;
     return productModel;
   },
 };
