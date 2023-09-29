@@ -28,6 +28,19 @@ const ConceptService = {
     concepts = conceptResponse.items;
     return concepts;
   },
+  async searchConceptByEcl(ecl: string): Promise<Concept[]> {
+    let concepts: Concept[] = [];
+    const response = await axios.get(
+      // `/snowstorm/MAIN/concepts?term=${str}`,
+      `/snowstorm/MAIN/concepts?ecl=${ecl}`,
+    );
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+    const conceptResponse = response.data as ConceptResponse;
+    concepts = conceptResponse.items;
+    return concepts;
+  },
   async searchConceptById(id: string): Promise<Concept> {
     const response = await axios.get(`/snowstorm/MAIN/concepts/${id}`);
     if (response.status != 200) {
