@@ -571,13 +571,28 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                         <Grid item xs={3}>
                           <InnerBox component="fieldset">
                             <legend>ARTG ID</legend>
+                            {/*<Field*/}
+                            {/*  as={TextField}*/}
+                            {/*  name={'externalIdentifiers[0].identifierValue'}*/}
+                            {/*  fullWidth*/}
+                            {/*  variant="outlined"*/}
+                            {/*  margin="dense"*/}
+                            {/*  InputLabelProps={{ shrink: true }}*/}
+                            {/*/>*/}
+
+
                             <Field
-                              as={TextField}
-                              name={'externalIdentifiers[0].identifierValue'}
-                              fullWidth
-                              variant="outlined"
-                              margin="dense"
-                              InputLabelProps={{ shrink: true }}
+                                name={'externalIdentifiers'}
+                                id={'externalIdentifiers'}
+
+                                options={[]}
+                                getOptionLabel={option => option.identifierValue}
+                                multiple
+                                freeSolo
+                                component={FormikAutocomplete}
+                                fullWidth
+                                variant="outlined"
+                                margin="dense"
                             />
                           </InnerBox>
                         </Grid>
