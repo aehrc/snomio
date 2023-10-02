@@ -8,7 +8,7 @@ import {
   MenuItem,
   TextField,
 } from '@mui/material';
-import { Concept, Edge, Product } from '../../../types/concept.ts';
+import { Concept } from '../../../types/concept.ts';
 import useDebounce from '../../../hooks/useDebounce.tsx';
 import conceptService from '../../../api/ConceptService.ts';
 import Box from '@mui/material/Box';

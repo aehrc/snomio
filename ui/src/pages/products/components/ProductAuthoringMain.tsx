@@ -35,7 +35,6 @@ export interface ProductAuthoringMainProps {
 function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   const {
     packageDetails,
-    show,
     units,
     containerTypes,
     ingredients,
@@ -48,11 +47,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     console.log(values);
   };
 
-  const MainBox = styled(Box)({
-    border: `2px solid ${theme.palette.divider}`,
-    color: 'red',
-    fontWeight: 'bold',
-  });
   const TPBox = styled(Box)({
     border: `1px solid ${theme.palette.divider}`,
     color: 'red',
@@ -89,8 +83,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   });
 
   const ContainedPackages = () => {
-    //const [name, setName] = React.useState("");
-    const { values, setFieldValue } = useFormikContext();
+    const { values } = useFormikContext();
 
     const [value, setValue] = React.useState(0);
 
@@ -179,11 +172,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
       </>
     );
   };
-  const ContainedProducts = ({
-                               packageIndex,
-    partOfPackage,
-    showTPU,
-  }) => {
+  const ContainedProducts = ({ packageIndex, partOfPackage, showTPU }) => {
     //const [name, setName] = React.useState("");
     const { values, setFieldValues } = useFormikContext();
 
