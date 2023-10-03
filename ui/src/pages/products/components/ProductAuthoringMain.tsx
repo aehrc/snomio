@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Field, FieldArray, Form, Formik, useFormikContext } from 'formik';
-import { MedicationPackageDetails } from '../../../types/authoring.ts';
+import {
+  Field,
+  FieldArray,
+  FieldArrayRenderProps,
+  Form,
+  Formik,
+  useFormikContext,
+} from 'formik';
+import {
+  ExternalIdentifier,
+  MedicationPackageDetails,
+  SnowstormConceptMiniComponent,
+} from '../../../types/authoring.ts';
 import {
   Accordion,
   AccordionDetails,
@@ -83,7 +94,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   });
 
   const ContainedPackages = () => {
-    const { values } = useFormikContext();
+    const { values } = useFormikContext<MedicationPackageDetails>();
 
     const [value, setValue] = React.useState(0);
 
@@ -148,9 +159,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
             <CustomTabPanel
               value={value}
               index={index}
-              key={
-                containedPackage.packageDetails.productName.conceptId + index
-              }
+              key={containedPackage.packageDetails.productName.conceptId}
             >
               <FieldArray
                 name={'containedPackages[${index}].containedProducts'}
@@ -172,12 +181,19 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
       </>
     );
   };
-  const ContainedProducts = ({ packageIndex, partOfPackage, showTPU }) => {
+  const ContainedProducts = ({
+    packageIndex,
+    partOfPackage,
+    showTPU,
+    containerProductsArrayHelpers,
+  }) => {
     //const [name, setName] = React.useState("");
-    const { values, setFieldValues } = useFormikContext();
+    const { values, setFieldValues } =
+      useFormikContext<MedicationPackageDetails>();
 
     const containedProducts = partOfPackage
-      ? values.containedPackages[packageIndex].packageDetails.containedProducts
+      ? values.containedPackages[packageIndex as number].packageDetails
+          .containedProducts
       : values.containedProducts;
     const productsArray = partOfPackage
       ? `containedPackages[${packageIndex}].packageDetails.containedProducts`
@@ -185,6 +201,20 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
 
     const [specialFormDoses, setSpecialFormDoses] = useState<Concept[]>([]);
     const [selectedDoseForm, setSelectedDoseForm] = useState<Concept>();
+    const [expandedProducts, setExpandedProducts] = useState<string[]>([]);
+
+    const productAccordionClicked = (key: string) => {
+      if (expandedProducts.includes(key)) {
+        setExpandedProducts(
+          expandedProducts.filter((value: string) => value !== key),
+        );
+      } else {
+        setExpandedProducts([...expandedProducts, key]);
+      }
+    };
+    const productKey = (index: number) => {
+      return `product-key-${index}`;
+    };
     useEffect(() => {
       async function fetchSpecialFormDoses() {
         setSpecialFormDoses([]);
@@ -211,13 +241,14 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
         <ProductBox component="fieldset">
           <legend>Contained Products</legend>
           {containedProducts.map((containedProduct, index) => (
-            <div
-              key={
-                containedProduct.productDetails.productName.conceptId + index
-              }
-            >
+            <div key={containedProduct.productDetails.productName.conceptId}>
               <br />
-              <Accordion key={index} style={{ border: 'none' }}>
+              <Accordion
+                key={productKey(index)}
+                style={{ border: 'none' }}
+                onChange={() => productAccordionClicked(productKey(index))}
+                expanded={expandedProducts.includes(productKey(index))}
+              >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   //aria-expanded={true}
@@ -247,7 +278,9 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               name={`${productsArray}[${index}].productDetails.productName`}
                               id={`${productsArray}[${index}].productDetails.productName`}
                               options={brandProducts}
-                              getOptionLabel={option => option.pt.term}
+                              getOptionLabel={(option: Concept) =>
+                                option.pt.term
+                              }
                               component={FormikAutocomplete}
                               fullWidth
                               variant="outlined"
@@ -270,8 +303,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               <ActiveIngredients
                                 containedProductIndex={index}
                                 activeIngredientsArrayHelpers={arrayHelpers}
-                                packageIndex={packageIndex}
-                                partOfPackage={partOfPackage}
+                                packageIndex={packageIndex }
+                                partOfPackage={partOfPackage as boolean }
                               />
                             </>
                           )}
@@ -292,7 +325,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             name={`${productsArray}[${index}].productDetails.genericForm`}
                             id={`${productsArray}[${index}].productDetails.genericForm`}
                             options={doseForms}
-                            getOptionLabel={option => option.pt.term}
+                            getOptionLabel={(option: Concept) => option.pt.term}
                             callback={setSelectedDoseForm}
                             component={FormikAutocomplete}
                             fullWidth
@@ -307,7 +340,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             name={`${productsArray}[${index}].productDetails.specificForm`}
                             id={`${productsArray}[${index}].productDetails.specificForm`}
                             options={specialFormDoses}
-                            getOptionLabel={option => option.pt.term}
+                            getOptionLabel={(option: Concept) => option.pt.term}
                             component={FormikAutocomplete}
                             fullWidth
                             variant="outlined"
@@ -338,7 +371,9 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                 name={`${productsArray}[${index}].productDetails.quantity.unit`}
                                 id={`${productsArray}[${index}].productDetails.quantity.unit`}
                                 options={units}
-                                getOptionLabel={option => option.pt.term}
+                                getOptionLabel={(option: Concept) =>
+                                  option.pt.term
+                                }
                                 component={FormikAutocomplete}
                               />
                             </Grid>
@@ -367,7 +402,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                 name={`${productsArray}[${index}].unit`}
                                 id={`${productsArray}[${index}].unit`}
                                 options={units}
-                                getOptionLabel={option => option.pt.term}
+                                getOptionLabel={(option:Concept) => option.pt.term}
                                 component={FormikAutocomplete}
                               />
                             </Grid>
@@ -392,15 +427,10 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     partOfPackage,
   }) => {
     //const [number, setNumber] = React.useState("");
-    const { values } = useFormikContext();
-    const [unitSelection, setUnitSelection] = useState<string>('existing');
-
-    const handleUnitToggleChange = (
-      event: React.MouseEvent<HTMLElement>,
-      newUnitSelection: string,
-    ) => {
-      setUnitSelection(newUnitSelection);
-    };
+    const { values } = useFormikContext<MedicationPackageDetails>();
+    const [expandedIngredients, setExpandedIngredients] = useState<string[]>(
+      [],
+    );
 
     // const handleAddContactNumber = () => {
     //   const contact = {};
@@ -415,22 +445,40 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     // };
 
     const activeIngredients = partOfPackage
-      ? values.containedPackages[packageIndex].packageDetails.containedProducts[
-          containedProductIndex
-        ].productDetails.activeIngredients
+      ? values.containedPackages[packageIndex].packageDetails
+          .containedProducts[containedProductIndex as number].productDetails
+          .activeIngredients
       : values.containedProducts[containedProductIndex].productDetails
           .activeIngredients;
 
     const activeIngredientsArray = partOfPackage
       ? `containedPackages[${packageIndex}].packageDetails.containedProducts[${containedProductIndex}].productDetails.activeIngredients`
       : `containedProducts[${containedProductIndex}].productDetails.activeIngredients`;
+    const getKey = (index: number) => {
+      return `ingredient-key-${index}`;
+    };
+
+    const ingredientsAccordionClicked = (key: string) => {
+      if (expandedIngredients.includes(key)) {
+        setExpandedIngredients(
+          expandedIngredients.filter((value: string) => value !== key),
+        );
+      } else {
+        setExpandedIngredients([...expandedIngredients, key]);
+      }
+    };
 
     return (
       <>
         {activeIngredients.map((activeIngredient, index) => (
-          <div key={activeIngredient.activeIngredient.conceptId + index}>
+          <div key={activeIngredient.activeIngredient.conceptId}>
             <br />
-            <Accordion key={index} style={{ border: 'none' }}>
+            <Accordion
+              style={{ border: 'none' }}
+              key={getKey(index)}
+              onChange={() => ingredientsAccordionClicked(getKey(index))}
+              expanded={expandedIngredients.includes(getKey(index))}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 //aria-expanded={true}
@@ -452,7 +500,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                     name={`${activeIngredientsArray}[${index}].activeIngredient`}
                     id={`${activeIngredientsArray}[${index}].activeIngredient`}
                     options={ingredients}
-                    getOptionLabel={option => option.pt.term}
+                    getOptionLabel={(option: Concept) => option.pt.term}
                     component={FormikAutocomplete}
                     fullWidth
                     variant="outlined"
@@ -466,7 +514,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                     name={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
                     id={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
                     options={ingredients}
-                    getOptionLabel={option => option.pt.term}
+                    getOptionLabel={(option: Concept) => option.pt.term}
                     component={FormikAutocomplete}
                     fullWidth
                     variant="outlined"
@@ -493,7 +541,34 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                         id={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
                         name={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
                         options={units}
-                        getOptionLabel={option => option.pt.term}
+                        getOptionLabel={(option: Concept) => option.pt.term}
+                        component={FormikAutocomplete}
+                      />
+                    </Grid>
+                  </Stack>
+                </InnerBox>
+
+                <InnerBox component="fieldset">
+                  <legend>Concentration Strength</legend>
+
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Grid item xs={4}>
+                      <Field
+                        as={TextField}
+                        //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
+                        name={`${activeIngredientsArray}[${index}].concentrationStrength.value`}
+                        fullWidth
+                        variant="outlined"
+                        margin="dense"
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Field
+                        id={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
+                        name={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
+                        options={units}
+                        getOptionLabel={(option: Concept) => option.pt.term}
                         component={FormikAutocomplete}
                       />
                     </Grid>
@@ -526,7 +601,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                 {({ values }) => (
                   <Form
                     onChange={event => {
-                      console.log('hello');
+                      console.log('hello' + event.currentTarget);
                     }}
                   >
                     {/*<MainBox component="fieldset">*/}
@@ -560,7 +635,9 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               name={'containerType'}
                               id={'containerType'}
                               options={containerTypes}
-                              getOptionLabel={option => option.pt.term}
+                              getOptionLabel={(option: Concept) =>
+                                option.pt.term
+                              }
                               component={FormikAutocomplete}
                               fullWidth
                               variant="outlined"
@@ -580,19 +657,19 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             {/*  InputLabelProps={{ shrink: true }}*/}
                             {/*/>*/}
 
-
                             <Field
-                                name={'externalIdentifiers'}
-                                id={'externalIdentifiers'}
-
-                                options={[]}
-                                getOptionLabel={option => option.identifierValue}
-                                multiple
-                                freeSolo
-                                component={FormikAutocomplete}
-                                fullWidth
-                                variant="outlined"
-                                margin="dense"
+                              name={'externalIdentifiers'}
+                              id={'externalIdentifiers'}
+                              options={[]}
+                              getOptionLabel={(option: ExternalIdentifier) =>
+                                option.identifierValue
+                              }
+                              multiple
+                              freeSolo
+                              component={FormikAutocomplete}
+                              fullWidth
+                              variant="outlined"
+                              margin="dense"
                             />
                           </InnerBox>
                         </Grid>
@@ -609,6 +686,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                 <ContainedProducts
                                   containerProductsArrayHelpers={arrayHelpers}
                                   showTPU={true}
+                                  partOfPackage={false}
                                 />
                               </>
                             );

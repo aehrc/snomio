@@ -8,13 +8,13 @@ const FormikAutocomplete = ({ textFieldProps, ...props }) => {
   } = props;
 
   const { error, helperText, ...field } = fieldToTextField(props);
-  const { name } = field;
+  const { name: string } = field;
 
   return (
     <Autocomplete
       {...props}
       {...field}
-      onChange={(_, value) => {
+      onChange={(_, value: any) => {
         setFieldValue(name, value);
         if (callback) {
           callback(value);
