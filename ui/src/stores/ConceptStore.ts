@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Concept, Product, ProductModelSummary } from '../types/concept.ts';
+import { Concept, ProductModelSummary } from '../types/concept.ts';
 import conceptService from '../api/ConceptService.ts';
 import { filterByActiveConcepts } from '../utils/helpers/conceptUtils.ts';
 
