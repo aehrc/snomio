@@ -2,12 +2,15 @@ import { create } from 'zustand';
 import { Task, TaskStatus } from '../types/task';
 import TasksServices from '../api/TasksService';
 import useUserStore from './UserStore.ts';
+import useApplicationConfigStore from './ApplicationConfigStore.ts';
 import { userExistsInList } from '../utils/helpers/userUtils.ts';
 
 interface TaskStoreConfig {
   fetching: boolean;
   myTasks: Task[];
   allTasks: Task[];
+  setTasks: (tasks: Task[]) => void;
+  setAllTasks: (tasks: Task[]) => void;
   fetchTasks: () => Promise<void>;
   fetchAllTasks: () => Promise<void>;
   getTaskById: (taskId: string | undefined) => Task | null;
@@ -40,12 +43,20 @@ const useTaskStore = create<TaskStoreConfig>()((set, get) => ({
     }));
 
     try {
-      const allTasks = await TasksServices.getAllTasks();
+      const projectKey =
+        useApplicationConfigStore.getState().applicationConfig?.apProjectKey;
+      const allTasks = await TasksServices.getAllTasks(projectKey);
       set({ allTasks: [...allTasks] });
       set({ fetching: false });
     } catch (error) {
       console.log(error);
     }
+  },
+  setTasks: (tasks: Task[]) => {
+    set({ myTasks: [...tasks] });
+  },
+  setAllTasks: (allTasks: Task[]) => {
+    set({ allTasks: [...allTasks] });
   },
   getTaskById: (taskId: string | undefined) => {
     if (taskId === undefined) return null;

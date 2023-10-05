@@ -1,11 +1,16 @@
 import axios from 'axios';
 import {
   AdditionalFieldType,
+  AdditionalFieldTypeOfListType,
+  Comment,
   Iteration,
   LabelType,
+  PagedTicket,
   PriorityBucket,
   State,
+  TaskAssocation,
   Ticket,
+  TicketDto,
 } from '../types/tickets/ticket';
 
 const TicketsService = {
@@ -14,14 +19,70 @@ const TicketsService = {
   handleErrors: () => {
     throw new Error('invalid ticket response');
   },
-
-  async getAllTickets(): Promise<Ticket[]> {
-    const response = await axios.get('/api/tickets');
+  async getIndividualTicket(id: number): Promise<TicketDto> {
+    const response = await axios.get(`/api/tickets/${id}`);
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+    return response.data as TicketDto;
+  },
+  async getPaginatedTickets(page: number, size: number): Promise<PagedTicket> {
+    const pageAndSize = `page=${page}&size=${size}`;
+    const response = await axios.get('/api/tickets?' + pageAndSize);
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+    const pagedResponse = response.data as PagedTicket;
+    return pagedResponse;
+  },
+  async getTaskAssociations(): Promise<TaskAssocation[]> {
+    const response = await axios.get('/api/tickets/taskAssociations');
     if (response.status != 200) {
       this.handleErrors();
     }
 
-    return response.data as Ticket[];
+    return response.data as TaskAssocation[];
+  },
+  async createTaskAssociation(
+    ticketId: number,
+    taskId: string,
+  ): Promise<TaskAssocation> {
+    const response = await axios.post(
+      `/api/tickets/${ticketId}/taskAssociations/${taskId}`,
+    );
+
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+
+    return response.data as TaskAssocation;
+  },
+  async deleteTaskAssociation(
+    ticketId: number,
+    taskAssociationId: number,
+  ): Promise<number> {
+    const response = await axios.delete(
+      `/api/tickets/${ticketId}/taskAssociations/${taskAssociationId}`,
+    );
+
+    if (response.status != 204) {
+      this.handleErrors();
+    }
+
+    return response.status;
+  },
+  async searchPaginatedTickets(
+    queryParams: string,
+    page: number,
+    size: number,
+  ): Promise<PagedTicket> {
+    const queryPageAndSize = `${queryParams}&page=${page}&size=${size}`;
+    const response = await axios.get('/api/tickets/search' + queryPageAndSize);
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+    const pagedResponse = response.data as PagedTicket;
+    return pagedResponse;
   },
   async updateTicketState(ticket: Ticket): Promise<Ticket> {
     const response = await axios.put(
@@ -64,6 +125,25 @@ const TicketsService = {
 
     return response.data as Ticket;
   },
+  async addTicketComment(ticketId: number, content: string): Promise<Comment> {
+    const response = await axios.post(`/api/tickets/${ticketId}/comments`, {
+      text: content,
+    });
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+
+    return response.data as Comment;
+  },
+  async deleteTicketComment(commentId: number, ticketId: number) {
+    const response = await axios.delete(
+      `/api/tickets/${ticketId}/comments/${commentId}`,
+    );
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+    return response;
+  },
   async deleteTicketLabel(id: string, labelId: number) {
     const response = await axios.delete(`/api/tickets/${id}/labels/${labelId}`);
     if (response.status != 200) {
@@ -83,12 +163,12 @@ const TicketsService = {
 
     return response.data as Ticket;
   },
-  async updateAdditionalFieldTypeValue(
+  async updateAdditionalFieldValue(
     ticketId: number,
-    additionalFieldId: number,
+    additionalFieldValue: string,
   ): Promise<Ticket> {
     const response = await axios.post(
-      `/api/tickets/${ticketId}/additionalField/${additionalFieldId}`,
+      `/api/tickets/${ticketId}/additionalFieldValue/${additionalFieldValue}`,
     );
     if (response.status != 200) {
       this.handleErrors();
@@ -128,13 +208,23 @@ const TicketsService = {
 
     return response.data as Iteration[];
   },
-  async getAllAdditionalFields(): Promise<AdditionalFieldType[]> {
-    const response = await axios.get('/api/tickets/additionalFieldTypes');
+  async getAllAdditionalFieldTypes(): Promise<AdditionalFieldType[]> {
+    const response = await axios.get('/api/additionalFieldTypes');
     if (response.status != 200) {
       this.handleErrors();
     }
 
     return response.data as AdditionalFieldType[];
+  },
+  async getAllAdditionalFieldTypessWithValues(): Promise<
+    AdditionalFieldTypeOfListType[]
+  > {
+    const response = await axios.get('/api/additionalFieldValuesForListType');
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+
+    return response.data as AdditionalFieldTypeOfListType[];
   },
 };
 

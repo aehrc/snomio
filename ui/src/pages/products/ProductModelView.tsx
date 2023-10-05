@@ -30,7 +30,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Stack } from '@mui/system';
 import LinkViews from './components/LinkViews.tsx';
 import useConceptStore from '../../stores/ConceptStore.ts';
-
+import Loading from '../../components/Loading.tsx';
 function ProductModelView() {
   const { activeProduct } = useConceptStore();
   const [productModel, setProductModel] = useState<ProductModelSummary>();
@@ -42,6 +42,11 @@ function ProductModelView() {
   const [expandedConcepts, setExpandedConcepts] = useState<string[]>([]);
   const [fsnToggle, setFsnToggle] = useState<boolean>(isFsnToggleOn);
   const theme = useTheme();
+  const { isLoading, data } = useConceptModel(
+    id,
+    reloadStateElements,
+    setProductModel,
+  );
 
   useEffect(() => {
     conceptService
@@ -233,49 +238,52 @@ function ProductModelView() {
       </Grid>
     );
   }
-
-  return (
-    <Box sx={{ width: '100%' }}>
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-        <Grid xs={6} key={'left'} item={true}>
-          {lableTypesLeft.map(label => (
-            <ProductTypeGroup
-              key={label}
-              label={label}
-              productLabelItems={filterByLabel(
-                productModel?.nodes as Product[],
-                label,
-              )}
-            />
-          ))}
+  if (isLoading) {
+    return <Loading message={`Loading 7 Box model for ${id}`} />;
+  } else {
+    return (
+      <Box sx={{ width: '100%' }}>
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          <Grid xs={6} key={'left'} item={true}>
+            {lableTypesLeft.map(label => (
+              <ProductTypeGroup
+                key={label}
+                label={label}
+                productLabelItems={filterByLabel(
+                  productModel?.nodes as Product[],
+                  label,
+                )}
+              />
+            ))}
+          </Grid>
+          <Grid xs={6} key={'right'} item={true}>
+            {lableTypesRight.map(label => (
+              <ProductTypeGroup
+                label={label}
+                key={label}
+                productLabelItems={filterByLabel(
+                  productModel?.nodes as Product[],
+                  label,
+                )}
+              />
+            ))}
+          </Grid>
+          <Grid xs={12} key={'bottom'} item={true}>
+            {lableTypesCentre.map(label => (
+              <ProductTypeGroup
+                label={label}
+                key={label}
+                productLabelItems={filterByLabel(
+                  productModel?.nodes as Product[],
+                  label,
+                )}
+              />
+            ))}
+          </Grid>
         </Grid>
-        <Grid xs={6} key={'right'} item={true}>
-          {lableTypesRight.map(label => (
-            <ProductTypeGroup
-              label={label}
-              key={label}
-              productLabelItems={filterByLabel(
-                productModel?.nodes as Product[],
-                label,
-              )}
-            />
-          ))}
-        </Grid>
-        <Grid xs={12} key={'bottom'} item={true}>
-          {lableTypesCentre.map(label => (
-            <ProductTypeGroup
-              label={label}
-              key={label}
-              productLabelItems={filterByLabel(
-                productModel?.nodes as Product[],
-                label,
-              )}
-            />
-          ))}
-        </Grid>
-      </Grid>
-    </Box>
-  );
+      </Box>
+    );
+  }
 }
 
 export default ProductModelView;

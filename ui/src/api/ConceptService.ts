@@ -19,7 +19,7 @@ const ConceptService = {
     let concepts: Concept[] = [];
     const response = await axios.get(
       // `/snowstorm/MAIN/concepts?term=${str}`,
-      `/snowstorm/MAIN/concepts?term=${str}&ecl=%5E%20929360051000036108`,
+      `/snowstorm/branch/concepts?term=${str}&ecl=%5E%20929360051000036108`,
     );
     if (response.status != 200) {
       this.handleErrors();

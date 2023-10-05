@@ -1,18 +1,32 @@
 import { useEffect, useState } from 'react';
 
 import useTicketStore from '../stores/TicketStore';
-import { Ticket } from '../types/tickets/ticket';
+import { Comment, Ticket, TicketDto } from '../types/tickets/ticket';
+import TicketsService from '../api/TicketsService';
 
 function useTicketById(id: string | undefined) {
-  const [ticket, setTicket] = useState<Ticket | undefined>();
+  const [ticket, setTicket] = useState<TicketDto | undefined>();
   const { getTicketById, tickets } = useTicketStore();
 
   useEffect(() => {
-    const tempTicket: Ticket | undefined = getTicketById(Number(id));
+    const tempTicket: TicketDto | undefined = getTicketById(Number(id));
+    sortComments(tempTicket?.comments);
     setTicket(tempTicket);
-  }, [id, tickets]);
+    void (async () => {
+      const fullTicket = await TicketsService.getIndividualTicket(Number(id));
+      sortComments(fullTicket?.comments);
+      setTicket(fullTicket);
+    })();
+  }, [id, tickets, getTicketById]);
 
   return ticket;
+}
+
+function sortComments(comments: Comment[] | undefined) {
+  if (comments === undefined) return;
+  comments.sort((a: Comment, b: Comment) => {
+    return new Date(a.created).getTime() - new Date(b.created).getTime();
+  });
 }
 
 export default useTicketById;
