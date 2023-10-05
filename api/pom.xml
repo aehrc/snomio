@@ -109,6 +109,7 @@
               <option>DEFINITIONS_FOR_ALL_OBJECTS</option>
 <!--              <option>FORBIDDEN_ADDITIONAL_PROPERTIES_BY_DEFAULT</option>-->
             </enabled>
+            <disabled>SCHEMA_VERSION_INDICATOR</disabled>
           </options>
         </configuration>
       </plugin>
