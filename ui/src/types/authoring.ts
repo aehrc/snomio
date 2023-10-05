@@ -1,34 +1,34 @@
-import { DefinitionStatus, Term } from './concept.ts';
+import { Concept } from './concept.ts';
 
-export interface SnowstormConceptMiniComponent {
-  conceptId: string;
-  active: boolean;
-  definitionStatus: DefinitionStatus;
-  moduleId: string;
-  effectiveTime: string | null;
-  fsn: Term;
-  pt: Term;
-  descendantCount: string | null;
-  isLeafInferred: boolean | null;
-  isLeafStated: any;
-  id: string;
-  definitionStatusId: any;
-  leafInferred: any;
-  leafStated: any;
-  extraFields: any;
-  idAndFsnTerm: string | null;
-}
+// export interface SnowstormConceptMiniComponent {
+//   conceptId: string;
+//   active: boolean;
+//   definitionStatus: DefinitionStatus;
+//   moduleId: string;
+//   effectiveTime: string | null;
+//   fsn: Term;
+//   pt: Term;
+//   descendantCount: string | null;
+//   isLeafInferred: boolean | null;
+//   isLeafStated: any;
+//   id: string;
+//   definitionStatusId: any;
+//   leafInferred: any;
+//   leafStated: any;
+//   extraFields: any;
+//   idAndFsnTerm: string | null;
+// }
 export interface ExternalIdentifier {
   identifierScheme: string;
   identifierValue: string;
 }
 export interface Quantity {
   value: number;
-  unit: SnowstormConceptMiniComponent;
+  unit: Concept;
 }
 export interface MedicationProductQuantity {
   value: number;
-  unit: SnowstormConceptMiniComponent;
+  unit: Concept;
   productDetails: MedicationProductDetails;
 }
 export interface MedicationPackageQuantity {
@@ -37,29 +37,29 @@ export interface MedicationPackageQuantity {
   packageDetails: MedicationPackageDetails;
 }
 export interface ProductDetails {
-  productName: SnowstormConceptMiniComponent;
-  deviceType: SnowstormConceptMiniComponent;
+  productName: Concept;
+  deviceType: Concept;
   otherIdentifyingInformation: string;
 }
 export interface Ingredient {
-  activeIngredient: SnowstormConceptMiniComponent;
-  preciseIngredient: SnowstormConceptMiniComponent;
-  basisOfStrengthSubstance: SnowstormConceptMiniComponent;
+  activeIngredient: Concept;
+  preciseIngredient: Concept;
+  basisOfStrengthSubstance: Concept;
   totalQuantity: Quantity;
   concentrationStrength: Quantity;
 }
 export interface MedicationProductDetails {
-  productName: SnowstormConceptMiniComponent;
-  genericForm: SnowstormConceptMiniComponent;
-  specificForm: SnowstormConceptMiniComponent;
+  productName: Concept;
+  genericForm: Concept;
+  specificForm: Concept;
   quantity: Quantity;
-  containerType: SnowstormConceptMiniComponent;
+  containerType: Concept;
   activeIngredients: Ingredient[];
 }
 
 export interface MedicationPackageDetails {
-  productName: SnowstormConceptMiniComponent;
-  containerType: SnowstormConceptMiniComponent;
+  productName: Concept;
+  containerType: Concept;
   externalIdentifiers: ExternalIdentifier[];
   containedProducts: MedicationProductQuantity[];
   containedPackages: MedicationPackageQuantity[];
