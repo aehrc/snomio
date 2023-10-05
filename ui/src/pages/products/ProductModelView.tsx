@@ -31,6 +31,7 @@ import { Stack } from '@mui/system';
 import LinkViews from './components/LinkViews.tsx';
 import useConceptStore from '../../stores/ConceptStore.ts';
 import Loading from '../../components/Loading.tsx';
+import { useConceptModel } from '../../hooks/api/products/useConceptModel.tsx';
 function ProductModelView() {
   const { activeProduct } = useConceptStore();
   const [productModel, setProductModel] = useState<ProductModelSummary>();
@@ -42,7 +43,7 @@ function ProductModelView() {
   const [expandedConcepts, setExpandedConcepts] = useState<string[]>([]);
   const [fsnToggle, setFsnToggle] = useState<boolean>(isFsnToggleOn);
   const theme = useTheme();
-  const { isLoading, data } = useConceptModel(
+  const { isLoading } = useConceptModel(
     id,
     reloadStateElements,
     setProductModel,
