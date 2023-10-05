@@ -22,7 +22,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Stack } from '@mui/system';
 import { experimentalStyled as styled, useTheme } from '@mui/material/styles';
 import { Concept } from '../../../types/concept.ts';
-import FormikAutocomplete from './FormikAutocomplete.tsx';
+import ProductAutocomplete from './ProductAutocomplete.tsx';
 import conceptService from '../../../api/ConceptService.ts';
 
 export interface ProductAuthoringMainProps {
@@ -274,7 +274,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
                               }
-                              component={FormikAutocomplete}
+                              component={ProductAutocomplete}
                               fullWidth
                               variant="outlined"
                               margin="dense"
@@ -324,7 +324,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             options={doseForms}
                             getOptionLabel={(option: Concept) => option.pt.term}
                             callback={setSelectedDoseForm}
-                            component={FormikAutocomplete}
+                            component={ProductAutocomplete}
                             fullWidth
                             variant="outlined"
                             margin="dense"
@@ -338,7 +338,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             id={`${productsArray}[${index}].productDetails.specificForm`}
                             options={specialFormDoses}
                             getOptionLabel={(option: Concept) => option.pt.term}
-                            component={FormikAutocomplete}
+                            component={ProductAutocomplete}
                             fullWidth
                             variant="outlined"
                             margin="dense"
@@ -371,7 +371,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                 getOptionLabel={(option: Concept) =>
                                   option.pt.term
                                 }
-                                component={FormikAutocomplete}
+                                component={ProductAutocomplete}
                               />
                             </Grid>
                           </Stack>
@@ -402,7 +402,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                 getOptionLabel={(option: Concept) =>
                                   option.pt.term
                                 }
-                                component={FormikAutocomplete}
+                                component={ProductAutocomplete}
                               />
                             </Grid>
                           </Stack>
@@ -499,7 +499,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                     id={`${activeIngredientsArray}[${index}].activeIngredient`}
                     options={ingredients}
                     getOptionLabel={(option: Concept) => option.pt.term}
-                    component={FormikAutocomplete}
+                    component={ProductAutocomplete}
                     fullWidth
                     variant="outlined"
                     margin="dense"
@@ -513,7 +513,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                     id={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
                     options={ingredients}
                     getOptionLabel={(option: Concept) => option.pt.term}
-                    component={FormikAutocomplete}
+                    component={ProductAutocomplete}
                     fullWidth
                     variant="outlined"
                     margin="dense"
@@ -540,7 +540,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                         name={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
                         options={units}
                         getOptionLabel={(option: Concept) => option.pt.term}
-                        component={FormikAutocomplete}
+                        component={ProductAutocomplete}
                       />
                     </Grid>
                   </Stack>
@@ -567,7 +567,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                         name={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
                         options={units}
                         getOptionLabel={(option: Concept) => option.pt.term}
-                        component={FormikAutocomplete}
+                        component={ProductAutocomplete}
                       />
                     </Grid>
                   </Stack>
@@ -636,7 +636,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
                               }
-                              component={FormikAutocomplete}
+                              component={ProductAutocomplete}
                               fullWidth
                               variant="outlined"
                               margin="dense"
@@ -655,7 +655,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               }
                               multiple
                               freeSolo
-                              component={FormikAutocomplete}
+                              component={ProductAutocomplete}
                               fullWidth
                               variant="outlined"
                               margin="dense"

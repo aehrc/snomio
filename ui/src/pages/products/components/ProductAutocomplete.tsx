@@ -1,8 +1,9 @@
 import { Autocomplete, TextField } from '@mui/material';
 import React from 'react';
 import { fieldToTextField, TextFieldProps } from 'formik-mui';
+import { Concept } from '../../../types/concept.ts';
 
-class FormikAutocomplete extends React.Component<{
+class ProductAutocomplete extends React.Component<{
   textFieldProps: TextFieldProps;
 }> {
   render() {
@@ -48,4 +49,4 @@ class FormikAutocomplete extends React.Component<{
   }
 }
 
-export default FormikAutocomplete;
+export default ProductAutocomplete;
