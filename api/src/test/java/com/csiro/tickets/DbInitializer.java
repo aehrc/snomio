@@ -8,6 +8,9 @@ import com.csiro.tickets.models.State;
 import com.csiro.tickets.models.Ticket;
 import com.csiro.tickets.models.TicketType;
 import com.csiro.tickets.repository.AdditionalFieldTypeRepository;
+import com.csiro.tickets.repository.AttachmentRepository;
+import com.csiro.tickets.repository.AttachmentTypeRepository;
+import com.csiro.tickets.repository.CommentRepository;
 import com.csiro.tickets.repository.IterationRepository;
 import com.csiro.tickets.repository.LabelRepository;
 import com.csiro.tickets.repository.PriorityBucketRepository;
@@ -28,7 +31,7 @@ public class DbInitializer {
 
   @Autowired private StateRepository stateRepository;
 
-  @Autowired private AdditionalFieldTypeRepository additionalFieldRepository;
+  @Autowired private AdditionalFieldTypeRepository additionalFieldTypeRepository;
 
   @Autowired private LabelRepository labelRepository;
 
@@ -38,20 +41,44 @@ public class DbInitializer {
 
   @Autowired private TicketRepository ticketRepository;
 
+  @Autowired private AttachmentRepository attachmentRepository;
+
+  @Autowired private AttachmentTypeRepository attachmentTypeRepository;
+
+  @Autowired private CommentRepository commentRepository;
+
   public void init() {
+
+    clearDb();
+    initState();
+    initAdditionalFieldType();
+    initLabel();
+    initIteration();
+    initPriorityBucket();
+    initTicketType();
+    initTickets();
+  }
+
+  private void clearDb() {
+    ticketRepository.deleteAll();
+    additionalFieldTypeRepository.deleteAll();
+    stateRepository.deleteAll();
+    attachmentTypeRepository.deleteAll();
+    attachmentRepository.deleteAll();
+    ticketTypeRepository.deleteAll();
+    commentRepository.deleteAll();
+    labelRepository.deleteAll();
+    iterationRepository.deleteAll();
+    priorityBucketRepository.deleteAll();
+  }
+
+  public void initTicketType() {
     TicketType ticketType =
         TicketType.builder()
             .name("Test Ticket Type")
             .description("A ticketType Description")
             .build();
     ticketTypeRepository.save(ticketType);
-
-    initState();
-    initAdditionalFieldType();
-    initLabel();
-    initIteration();
-    initPriorityBucket();
-    initTickets();
   }
 
   public void initState() {
@@ -87,7 +114,7 @@ public class DbInitializer {
             .name("task_data")
             .description("An additional field that holds the task data")
             .build();
-    additionalFieldRepository.save(additionalFieldType);
+    additionalFieldTypeRepository.save(additionalFieldType);
   }
 
   public void initLabel() {

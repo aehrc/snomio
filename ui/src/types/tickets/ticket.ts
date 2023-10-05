@@ -1,3 +1,4 @@
+import { Embedded, PagedItem } from '../pagesResponse';
 import { ValidationColor } from '../validationColor';
 
 export interface Ticket extends VersionedEntity {
@@ -5,11 +6,25 @@ export interface Ticket extends VersionedEntity {
   description: string;
   ticketType?: TicketType;
   state: State;
-  labels: Label[];
+  labels: LabelType[];
   assignee: string;
   iteration: Iteration;
   priorityBucket?: PriorityBucket;
-  additionalFieldTypeValues?: AdditionalFieldTypeValue[];
+  comments?: Comment[];
+  attachments?: Attachment[];
+  'ticket-additional-fields': AdditionalFieldValue[];
+}
+
+export interface PagedTicket extends PagedItem {
+  _embedded: EmbeddedTicketDto;
+}
+
+interface EmbeddedTicketDto extends Embedded {
+  ticketDtoList?: Ticket[];
+}
+
+export interface PagedTicket extends PagedItem {
+  _embedded: EmbeddedTicketDto;
 }
 
 interface BaseEntity {
@@ -61,13 +76,51 @@ export interface Iteration extends VersionedEntity {
   active: boolean;
   completed: boolean;
 }
-export interface AdditionalFieldTypeValue extends VersionedEntity {
+export interface AdditionalFieldValue extends VersionedEntity {
+  additionalFieldType: AdditionalFieldType;
   valueOf: string;
-  grouping: number;
+}
+
+export interface AdditionalFieldTypeOfListType {
+  typeId: number;
+  typeName: string;
+  values: TypeValue[];
 }
 
 export interface AdditionalFieldType extends VersionedEntity {
   name: string;
   description: string;
-  additionalFieldTypeValues: AdditionalFieldTypeValue[];
+  listType: boolean;
+}
+
+export interface TypeValue {
+  ids: string;
+  value: string;
+}
+
+export interface Comment extends VersionedEntity {
+  text: string;
+}
+
+export interface Attachment extends VersionedEntity {
+  description: string;
+  data: string;
+  length: number;
+  sha256: string;
+}
+
+export interface Comment extends VersionedEntity {
+  text: string;
+}
+
+export interface Attachment extends VersionedEntity {
+  description: string;
+  data: string;
+  length: number;
+  sha256: string;
+}
+
+export interface TaskAssocation extends VersionedEntity {
+  ticketId: number;
+  taskId: string;
 }

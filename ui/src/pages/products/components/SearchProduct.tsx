@@ -131,6 +131,7 @@ export default function SearchProduct(props: SearchProductProps) {
     ) {
       void fetchData().then(r => r);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, fsnToggle]);
   return (
     <Grid item xs={12} sm={12} md={12} lg={12}>
