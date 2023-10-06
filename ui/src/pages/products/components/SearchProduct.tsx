@@ -10,20 +10,16 @@ import {
 } from '@mui/material';
 import { Concept } from '../../../types/concept.ts';
 import useDebounce from '../../../hooks/useDebounce.tsx';
-import conceptService from '../../../api/ConceptService.ts';
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
 import MedicationIcon from '@mui/icons-material/Medication';
 import { Stack } from '@mui/system';
 import IconButton from '../../../components/@extended/IconButton.tsx';
 import { Link } from 'react-router-dom';
-import {
-  isArtgId,
-  isFsnToggleOn,
-  isSctId,
-} from '../../../utils/helpers/conceptUtils.ts';
+import { isFsnToggleOn } from '../../../utils/helpers/conceptUtils.ts';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import useConceptStore from '../../../stores/ConceptStore.ts';
+import { useSearchConcept } from '../../../hooks/api/products/useSearchConcept.tsx';
 
 export interface SearchProductProps {
   authoring: boolean;
@@ -35,7 +31,6 @@ export default function SearchProduct(props: SearchProductProps) {
   const [results, setResults] = useState<Concept[]>([]);
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [loading, setLoading] = useState(false);
   const [fsnToggle, setFsnToggle] = useState(localFsnToggle);
   const [searchFilter, setSearchFilter] = useState('Term');
   const filterTypes = ['Term', 'Artg Id', 'Sct Id'];
@@ -103,35 +98,19 @@ export default function SearchProduct(props: SearchProductProps) {
     );
   };
   const debouncedSearch = useDebounce(inputValue, 400);
-  useEffect(() => {
-    localStorage.setItem('fsn_toggle', fsnToggle.toString());
-    async function fetchData() {
-      setLoading(true);
-      setResults([]);
-      try {
-        let concepts: Concept[] = [];
-        if (searchFilter === 'Term') {
-          concepts = await conceptService.searchConcept(inputValue);
-        } else if (searchFilter === 'Sct Id' && isSctId(inputValue)) {
-          concepts = [await conceptService.searchConceptById(inputValue)];
-        } else if (searchFilter === 'Artg Id' && isArtgId(inputValue)) {
-          concepts = await conceptService.searchConceptByArtgId(inputValue);
-        }
-        setResults(concepts);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
-    }
+  const { isLoading, data, error } = useSearchConcept(
+    searchFilter,
+    debouncedSearch,
+    checkItemAlreadyExists,
+  );
 
-    if (
-      debouncedSearch &&
-      debouncedSearch.length > 2 &&
-      !checkItemAlreadyExists(debouncedSearch)
-    ) {
-      void fetchData().then(r => r);
+  useEffect(() => {
+    if (data !== undefined) {
+      localStorage.setItem('fsn_toggle', fsnToggle.toString());
+      setResults(data);
     }
-  }, [debouncedSearch, fsnToggle]);
+  }, [data]);
+
   return (
     <Grid item xs={12} sm={12} md={12} lg={12}>
       <Stack direction="row" spacing={2} alignItems="center" paddingLeft="1rem">
@@ -161,7 +140,7 @@ export default function SearchProduct(props: SearchProductProps) {
           </Select>
         </FormControl>
         <Autocomplete
-          loading={loading}
+          loading={isLoading}
           sx={{
             width: '400px',
             borderRadius: '0px 4px 4px 0px',

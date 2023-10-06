@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ConceptService from '../../../api/ConceptService';
-import { ProductModelSummary } from '../../../types/concept';
+import { ProductModel } from '../../../types/concept';
 
 export function useConceptModel(
   id: string | undefined,
   reloadStateElements: () => void,
-  setProductModel: (data: ProductModelSummary) => void,
+  setProductModel: (data: ProductModel) => void,
 ) {
   const { isLoading, data } = useQuery(
     [`concept-${id}`],

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Field, FieldArray, Form, Formik, useFormikContext } from 'formik';
 import {
   ExternalIdentifier,
+  Ingredient,
   MedicationPackageDetails,
 } from '../../../types/authoring.ts';
 import {
@@ -46,9 +47,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   } = productprops;
   const theme = useTheme();
 
-  const handleSubmit = (values, props) => {
+  const handleSubmit = (values: MedicationPackageDetails) => {
     console.log(values);
-    console.log(props);
   };
 
   const TPBox = styled(Box)({
@@ -160,7 +160,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                 {arrayHelpers => (
                   <>
                     <ContainedProducts
-                      containerProductsArrayHelpers={arrayHelpers}
                       packageIndex={index}
                       partOfPackage={true}
                       showTPU={true}
@@ -174,15 +173,18 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
       </>
     );
   };
-  const ContainedProducts = ({
+  interface ContainedProductsProps {
+    packageIndex?: number;
+    partOfPackage: boolean;
+    showTPU: boolean;
+  }
+  const ContainedProducts: FC<ContainedProductsProps> = ({
     packageIndex,
     partOfPackage,
     showTPU,
-    containerProductsArrayHelpers,
   }) => {
     //const [name, setName] = React.useState("");
-    const { values, setFieldValues } =
-      useFormikContext<MedicationPackageDetails>();
+    const { values } = useFormikContext<MedicationPackageDetails>();
 
     const containedProducts = partOfPackage
       ? values.containedPackages[packageIndex as number].packageDetails
@@ -213,11 +215,13 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
         setSpecialFormDoses([]);
         try {
           let concepts: Concept[] = [];
-          const conceptId = selectedDoseForm.conceptId.trim();
-          const ecl = '<' + conceptId;
+          if (selectedDoseForm) {
+            const conceptId = selectedDoseForm.conceptId.trim();
+            const ecl = '<' + conceptId;
 
-          concepts = await conceptService.searchConceptByEcl(ecl);
-          setSpecialFormDoses(concepts);
+            concepts = await conceptService.searchConceptByEcl(ecl);
+            setSpecialFormDoses(concepts);
+          }
         } catch (error) {
           console.log(error);
         }
@@ -270,7 +274,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             <Field
                               name={`${productsArray}[${index}].productDetails.productName`}
                               id={`${productsArray}[${index}].productDetails.productName`}
-                              options={brandProducts}
+                              optionValues={brandProducts}
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
                               }
@@ -295,13 +299,12 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             <>
                               <ActiveIngredients
                                 containedProductIndex={index}
-                                activeIngredientsArrayHelpers={arrayHelpers}
                                 packageIndex={
                                   partOfPackage
                                     ? (packageIndex as number)
                                     : undefined
                                 }
-                                partOfPackage={partOfPackage as boolean}
+                                partOfPackage={partOfPackage}
                               />
                             </>
                           )}
@@ -321,7 +324,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                           <Field
                             name={`${productsArray}[${index}].productDetails.genericForm`}
                             id={`${productsArray}[${index}].productDetails.genericForm`}
-                            options={doseForms}
+                            optionValues={doseForms}
                             getOptionLabel={(option: Concept) => option.pt.term}
                             setval={setSelectedDoseForm}
                             component={ProductAutocomplete}
@@ -336,7 +339,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                           <Field
                             name={`${productsArray}[${index}].productDetails.specificForm`}
                             id={`${productsArray}[${index}].productDetails.specificForm`}
-                            options={specialFormDoses}
+                            optionValues={specialFormDoses}
                             getOptionLabel={(option: Concept) => option.pt.term}
                             component={ProductAutocomplete}
                             fullWidth
@@ -367,7 +370,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               <Field
                                 name={`${productsArray}[${index}].productDetails.quantity.unit`}
                                 id={`${productsArray}[${index}].productDetails.quantity.unit`}
-                                options={units}
+                                optionValues={units}
                                 getOptionLabel={(option: Concept) =>
                                   option.pt.term
                                 }
@@ -398,7 +401,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               <Field
                                 name={`${productsArray}[${index}].unit`}
                                 id={`${productsArray}[${index}].unit`}
-                                options={units}
+                                optionValues={units}
                                 getOptionLabel={(option: Concept) =>
                                   option.pt.term
                                 }
@@ -419,7 +422,12 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     );
   };
 
-  const ActiveIngredients = ({
+  interface ActiveIngredientsProps {
+    packageIndex?: number;
+    containedProductIndex: number;
+    partOfPackage: boolean;
+  }
+  const ActiveIngredients: FC<ActiveIngredientsProps> = ({
     containedProductIndex,
     packageIndex,
     partOfPackage,
@@ -444,9 +452,9 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
 
     const activeIngredients = partOfPackage
       ? values.containedPackages[packageIndex as number].packageDetails
-          .containedProducts[containedProductIndex as number].productDetails
+          .containedProducts[containedProductIndex].productDetails
           .activeIngredients
-      : values.containedProducts[containedProductIndex as number].productDetails
+      : values.containedProducts[containedProductIndex].productDetails
           .activeIngredients;
 
     const activeIngredientsArray = partOfPackage
@@ -468,114 +476,116 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
 
     return (
       <>
-        {activeIngredients.map((activeIngredient, index) => (
-          <div key={activeIngredient.activeIngredient.conceptId}>
-            <br />
-            <Accordion
-              style={{ border: 'none' }}
-              key={getKey(index)}
-              onChange={() => ingredientsAccordionClicked(getKey(index))}
-              expanded={expandedIngredients.includes(getKey(index))}
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                //aria-expanded={true}
-
-                aria-controls="panel2a-content"
-                id="panel2a-header"
+        {activeIngredients.map(
+          (activeIngredient: Ingredient, index: number) => (
+            <div key={activeIngredient.activeIngredient.conceptId}>
+              <br />
+              <Accordion
+                style={{ border: 'none' }}
+                key={getKey(index)}
+                onChange={() => ingredientsAccordionClicked(getKey(index))}
+                expanded={expandedIngredients.includes(getKey(index))}
               >
-                <Grid xs={40} item={true}>
-                  <Typography>
-                    {activeIngredient.activeIngredient.pt.term}
-                  </Typography>
-                </Grid>
-              </AccordionSummary>
-              <AccordionDetails>
-                <InnerBox component="fieldset">
-                  <legend>Intended Active Ingredient</legend>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  //aria-expanded={true}
 
-                  <Field
-                    name={`${activeIngredientsArray}[${index}].activeIngredient`}
-                    id={`${activeIngredientsArray}[${index}].activeIngredient`}
-                    options={ingredients}
-                    getOptionLabel={(option: Concept) => option.pt.term}
-                    component={ProductAutocomplete}
-                    fullWidth
-                    variant="outlined"
-                    margin="dense"
-                    disableClearable={true}
-                  />
-                </InnerBox>
-                <InnerBox component="fieldset">
-                  <legend>BoSS</legend>
-                  <Field
-                    name={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
-                    id={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
-                    options={ingredients}
-                    getOptionLabel={(option: Concept) => option.pt.term}
-                    component={ProductAutocomplete}
-                    fullWidth
-                    variant="outlined"
-                    margin="dense"
-                  />
-                </InnerBox>
-                <InnerBox component="fieldset">
-                  <legend>Strength</legend>
+                  aria-controls="panel2a-content"
+                  id="panel2a-header"
+                >
+                  <Grid xs={40} item={true}>
+                    <Typography>
+                      {activeIngredient.activeIngredient.pt.term}
+                    </Typography>
+                  </Grid>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <InnerBox component="fieldset">
+                    <legend>Intended Active Ingredient</legend>
 
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Grid item xs={4}>
-                      <Field
-                        as={TextField}
-                        //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
-                        name={`${activeIngredientsArray}[${index}].totalQuantity.value`}
-                        fullWidth
-                        variant="outlined"
-                        margin="dense"
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Field
-                        id={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
-                        name={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
-                        options={units}
-                        getOptionLabel={(option: Concept) => option.pt.term}
-                        component={ProductAutocomplete}
-                      />
-                    </Grid>
-                  </Stack>
-                </InnerBox>
+                    <Field
+                      name={`${activeIngredientsArray}[${index}].activeIngredient`}
+                      id={`${activeIngredientsArray}[${index}].activeIngredient`}
+                      optionValues={ingredients}
+                      getOptionLabel={(option: Concept) => option.pt.term}
+                      component={ProductAutocomplete}
+                      fullWidth
+                      variant="outlined"
+                      margin="dense"
+                      disableClearable={true}
+                    />
+                  </InnerBox>
+                  <InnerBox component="fieldset">
+                    <legend>BoSS</legend>
+                    <Field
+                      name={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
+                      id={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
+                      optionValues={ingredients}
+                      getOptionLabel={(option: Concept) => option.pt.term}
+                      component={ProductAutocomplete}
+                      fullWidth
+                      variant="outlined"
+                      margin="dense"
+                    />
+                  </InnerBox>
+                  <InnerBox component="fieldset">
+                    <legend>Strength</legend>
 
-                <InnerBox component="fieldset">
-                  <legend>Concentration Strength</legend>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Grid item xs={4}>
+                        <Field
+                          as={TextField}
+                          //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
+                          name={`${activeIngredientsArray}[${index}].totalQuantity.value`}
+                          fullWidth
+                          variant="outlined"
+                          margin="dense"
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Field
+                          id={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
+                          name={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
+                          optionValues={units}
+                          getOptionLabel={(option: Concept) => option.pt.term}
+                          component={ProductAutocomplete}
+                        />
+                      </Grid>
+                    </Stack>
+                  </InnerBox>
 
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Grid item xs={4}>
-                      <Field
-                        as={TextField}
-                        //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
-                        name={`${activeIngredientsArray}[${index}].concentrationStrength.value`}
-                        fullWidth
-                        variant="outlined"
-                        margin="dense"
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Field
-                        id={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
-                        name={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
-                        options={units}
-                        getOptionLabel={(option: Concept) => option.pt.term}
-                        component={ProductAutocomplete}
-                      />
-                    </Grid>
-                  </Stack>
-                </InnerBox>
-              </AccordionDetails>
-            </Accordion>
-          </div>
-        ))}
+                  <InnerBox component="fieldset">
+                    <legend>Concentration Strength</legend>
+
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Grid item xs={4}>
+                        <Field
+                          as={TextField}
+                          //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
+                          name={`${activeIngredientsArray}[${index}].concentrationStrength.value`}
+                          fullWidth
+                          variant="outlined"
+                          margin="dense"
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Field
+                          id={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
+                          name={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
+                          optionValues={units}
+                          getOptionLabel={(option: Concept) => option.pt.term}
+                          component={ProductAutocomplete}
+                        />
+                      </Grid>
+                    </Stack>
+                  </InnerBox>
+                </AccordionDetails>
+              </Accordion>
+            </div>
+          ),
+        )}
         {/*<input type="text" value={number} onChange={handleChange} />*/}
 
         {/*<button type="button" onClick={handleAddContactNumber}>*/}
@@ -632,7 +642,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             <Field
                               name={'containerType'}
                               id={'containerType'}
-                              options={containerTypes}
+                              optionValues={containerTypes}
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
                               }
@@ -649,7 +659,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             <Field
                               name={'externalIdentifiers'}
                               id={'externalIdentifiers'}
-                              options={[]}
+                              optionValues={[]}
                               getOptionLabel={(option: ExternalIdentifier) =>
                                 option.identifierValue
                               }
@@ -673,7 +683,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               <>
                                 <br />
                                 <ContainedProducts
-                                  containerProductsArrayHelpers={arrayHelpers}
                                   showTPU={true}
                                   partOfPackage={false}
                                 />
@@ -692,9 +701,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             return (
                               <>
                                 <br />
-                                <ContainedPackages
-                                  containerPackagesArrayHelpers={arrayHelpers}
-                                />
+                                <ContainedPackages />
                               </>
                             );
                           }}

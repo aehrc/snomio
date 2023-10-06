@@ -35,7 +35,7 @@ export interface ConceptSearchResponse {
 export interface ConceptSearchItem {
   referencedComponent: Concept;
 }
-export interface ProductModelSummary {
+export interface ProductModel {
   subject: Concept;
   nodes: Product[];
   edges: Edge[];

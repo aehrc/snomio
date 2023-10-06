@@ -3,7 +3,7 @@ import {
   Concept,
   ConceptResponse,
   ConceptSearchResponse,
-  ProductModelSummary,
+  ProductModel,
 } from '../types/concept.ts';
 import { mapToConcepts } from '../utils/helpers/conceptUtils.ts';
 import { MedicationPackageDetails } from '../types/authoring.ts';
@@ -41,12 +41,13 @@ const ConceptService = {
     concepts = conceptResponse.items;
     return concepts;
   },
-  async searchConceptById(id: string): Promise<Concept> {
+
+  async searchConceptById(id: string): Promise<Concept[]> {
     const response = await axios.get(`/snowstorm/branch/concepts/${id}`);
     if (response.status != 200) {
       this.handleErrors();
     }
-    const concept = response.data as Concept;
+    const concept = [response.data as Concept];
     return concept;
   },
   async searchConceptByArtgId(id: string): Promise<Concept[]> {
@@ -65,12 +66,12 @@ const ConceptService = {
     const conceptSearchResponse = response.data as ConceptSearchResponse;
     return mapToConcepts(conceptSearchResponse.items);
   },
-  async getConceptModel(id: string): Promise<ProductModelSummary> {
+  async getConceptModel(id: string): Promise<ProductModel> {
     const response = await axios.get(`/api/branch/product-model/${id}`);
     if (response.status != 200) {
       this.handleErrors();
     }
-    const productModel = response.data as ProductModelSummary;
+    const productModel = response.data as ProductModel;
     return productModel;
   },
   async fetchMedication(id: string): Promise<MedicationPackageDetails> {
@@ -81,12 +82,12 @@ const ConceptService = {
     const medicationPackageDetails = response.data as MedicationPackageDetails;
     return medicationPackageDetails;
   },
-  async fetchDevice(id: string): Promise<ProductModelSummary> {
+  async fetchDevice(id: string): Promise<ProductModel> {
     const response = await axios.get(`/api/branch/devices/${id}`);
     if (response.status != 200) {
       this.handleErrors();
     }
-    const productModel = response.data as ProductModelSummary;
+    const productModel = response.data as ProductModel;
     return productModel;
   },
 };

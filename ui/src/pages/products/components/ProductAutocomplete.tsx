@@ -1,18 +1,20 @@
 import { Autocomplete, TextField } from '@mui/material';
 import React, { FC } from 'react';
 import { Concept } from '../../../types/concept.ts';
-import { FieldProps, Form } from 'formik';
+import { FieldProps } from 'formik';
 interface ProductAutocompleteProps {
-  setval: (val: Concept) => void;
+  setval: (val: any) => void;
+  optionValues: any[];
 }
 const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
   field,
-  form: { touched, errors, setTouched, setFieldValue },
+  form: { touched, setTouched, setFieldValue },
   // textFieldProps,
   setval,
+  optionValues,
+
   ...props
 }) => {
-  console.log('cgottem');
   // const {error, helperText, ...field} = fieldToTextField(props);
   // const { error, helperText, ...field } = fieldToTextField(form);
   const { name } = field;
@@ -26,8 +28,8 @@ const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
           setval(value as Concept);
         }
       }}
+      options={optionValues}
       onBlur={() => void setTouched({ [name]: true })}
-      // options={[]}
       // getOptionSelected={(item, current) => item.value === current.value}
       renderInput={props => (
         // <div {...props}></div>

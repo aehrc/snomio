@@ -11,7 +11,7 @@ import {
   DefinitionStatus,
   Edge,
   Product,
-  ProductModelSummary,
+  ProductModel,
 } from '../../types/concept.ts';
 import { useParams } from 'react-router-dom';
 import { Simulate } from 'react-dom/test-utils';
@@ -34,7 +34,7 @@ import Loading from '../../components/Loading.tsx';
 import { useConceptModel } from '../../hooks/api/products/useConceptModel.tsx';
 function ProductModelView() {
   const { activeProduct } = useConceptStore();
-  const [productModel, setProductModel] = useState<ProductModelSummary>();
+  const [productModel, setProductModel] = useState<ProductModel>();
   const { id } = useParams();
   const lableTypesRight = ['TP', 'TPUU', 'TPP'];
   const lableTypesLeft = ['MP', 'MPUU', 'MPP'];

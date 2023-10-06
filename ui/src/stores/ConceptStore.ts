@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Concept, ProductModelSummary } from '../types/concept.ts';
+import { Concept, ProductModel } from '../types/concept.ts';
 import conceptService from '../api/ConceptService.ts';
 import { filterByActiveConcepts } from '../utils/helpers/conceptUtils.ts';
 
@@ -7,7 +7,7 @@ interface ConceptStoreConfig {
   fetching: boolean;
   fetchProductModel: (
     conceptId: string | undefined,
-  ) => Promise<ProductModelSummary | undefined | null>;
+  ) => Promise<ProductModel | undefined | null>;
   activeProduct: Concept | null;
   setActiveProduct: (product: Concept | null) => void;
   units: Concept[];
