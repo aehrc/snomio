@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { Concept, ProductModel } from '../types/concept.ts';
 import conceptService from '../api/ConceptService.ts';
-import { filterByActiveConcepts } from '../utils/helpers/conceptUtils.ts';
 
 interface ConceptStoreConfig {
   fetching: boolean;
@@ -11,10 +10,15 @@ interface ConceptStoreConfig {
   activeProduct: Concept | null;
   setActiveProduct: (product: Concept | null) => void;
   units: Concept[];
+  setUnits: (units: Concept[]) => void;
   containerTypes: Concept[];
+  setContainerTypes: (containerTypes: Concept[]) => void;
   ingredients: Concept[];
+  setIngredients: (ingredients: Concept[]) => void;
   doseForms: Concept[];
+  setDoseForms: (doseForms: Concept[]) => void;
   brandProducts: Concept[];
+  setBrandProducts: (brandProducts: Concept[]) => void;
   fetchUnits: () => Promise<void>;
   fetchContainerTypes: () => Promise<void>;
   fetchIngredients: () => Promise<void>;
@@ -32,6 +36,21 @@ const useConceptStore = create<ConceptStoreConfig>()(set => ({
   brandProducts: [],
   setActiveProduct: product => {
     set({ activeProduct: product });
+  },
+  setUnits: (units: Concept[]) => {
+    set({ units: [...units] });
+  },
+  setContainerTypes: (concepts: Concept[]) => {
+    set({ containerTypes: [...concepts] });
+  },
+  setBrandProducts: (concepts: Concept[]) => {
+    set({ brandProducts: [...concepts] });
+  },
+  setIngredients: (concepts: Concept[]) => {
+    set({ ingredients: [...concepts] });
+  },
+  setDoseForms: (concepts: Concept[]) => {
+    set({ doseForms: [...concepts] });
   },
   fetchProductModel: async (conceptId: string | undefined) => {
     if (conceptId === undefined) {
@@ -55,9 +74,8 @@ const useConceptStore = create<ConceptStoreConfig>()(set => ({
     }));
 
     try {
-      const tempUnits = await conceptService.searchConceptByEcl('%3C767524001');
-      const uniqueConcepts = filterByActiveConcepts(tempUnits);
-      set({ units: [...uniqueConcepts] });
+      const tempUnits = await conceptService.getAllUnits();
+      set({ units: [...tempUnits] });
       set({ fetching: false });
     } catch (error) {
       console.log(error);
@@ -69,11 +87,8 @@ const useConceptStore = create<ConceptStoreConfig>()(set => ({
     }));
 
     try {
-      const tempConcepts = await conceptService.searchConceptByEcl(
-        '%3C706437002',
-      );
-      const uniqueConcepts = filterByActiveConcepts(tempConcepts);
-      set({ containerTypes: [...uniqueConcepts] });
+      const tempConcepts = await conceptService.getAllContainerTypes();
+      set({ containerTypes: [...tempConcepts] });
       set({ fetching: false });
     } catch (error) {
       console.log(error);
@@ -85,11 +100,8 @@ const useConceptStore = create<ConceptStoreConfig>()(set => ({
     }));
 
     try {
-      const tempConcepts = await conceptService.searchConceptByEcl(
-        '%3C105590001',
-      );
-      const uniqueConcepts = filterByActiveConcepts(tempConcepts);
-      set({ ingredients: [...uniqueConcepts] });
+      const tempConcepts = await conceptService.getAllIngredients();
+      set({ ingredients: [...tempConcepts] });
       set({ fetching: false });
     } catch (error) {
       console.log(error);
@@ -101,11 +113,8 @@ const useConceptStore = create<ConceptStoreConfig>()(set => ({
     }));
 
     try {
-      const tempConcepts = await conceptService.searchConceptByEcl(
-        '%3C736542009',
-      );
-      const uniqueConcepts = filterByActiveConcepts(tempConcepts);
-      set({ doseForms: [...uniqueConcepts] });
+      const tempConcepts = await conceptService.getAllDoseForms();
+      set({ doseForms: [...tempConcepts] });
       set({ fetching: false });
     } catch (error) {
       console.log(error);
@@ -117,11 +126,8 @@ const useConceptStore = create<ConceptStoreConfig>()(set => ({
     }));
 
     try {
-      const tempConcepts = await conceptService.searchConceptByEcl(
-        '%3C774167006',
-      );
-      const uniqueConcepts = filterByActiveConcepts(tempConcepts);
-      set({ brandProducts: [...uniqueConcepts] });
+      const tempConcepts = await conceptService.getAllBrandProducts();
+      set({ brandProducts: [...tempConcepts] });
       set({ fetching: false });
     } catch (error) {
       console.log(error);

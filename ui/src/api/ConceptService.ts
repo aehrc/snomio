@@ -5,7 +5,10 @@ import {
   ConceptSearchResponse,
   ProductModel,
 } from '../types/concept.ts';
-import { mapToConcepts } from '../utils/helpers/conceptUtils.ts';
+import {
+  filterByActiveConcepts,
+  mapToConcepts,
+} from '../utils/helpers/conceptUtils.ts';
 import { MedicationPackageDetails } from '../types/authoring.ts';
 
 const ConceptService = {
@@ -39,7 +42,8 @@ const ConceptService = {
     }
     const conceptResponse = response.data as ConceptResponse;
     concepts = conceptResponse.items;
-    return concepts;
+    const uniqueConcepts = filterByActiveConcepts(concepts);
+    return uniqueConcepts;
   },
 
   async searchConceptById(id: string): Promise<Concept[]> {
@@ -65,6 +69,21 @@ const ConceptService = {
     }
     const conceptSearchResponse = response.data as ConceptSearchResponse;
     return mapToConcepts(conceptSearchResponse.items);
+  },
+  async getAllUnits(): Promise<Concept[]> {
+    return this.searchConceptByEcl('<767524001');
+  },
+  async getAllContainerTypes(): Promise<Concept[]> {
+    return this.searchConceptByEcl('<706437002');
+  },
+  async getAllIngredients(): Promise<Concept[]> {
+    return this.searchConceptByEcl('<105590001');
+  },
+  async getAllDoseForms(): Promise<Concept[]> {
+    return this.searchConceptByEcl('<736542009');
+  },
+  async getAllBrandProducts(): Promise<Concept[]> {
+    return this.searchConceptByEcl('<774167006');
   },
   async getConceptModel(id: string): Promise<ProductModel> {
     const response = await axios.get(`/api/branch/product-model/${id}`);
