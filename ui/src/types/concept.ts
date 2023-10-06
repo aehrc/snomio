@@ -16,12 +16,12 @@ export interface Concept {
   pt: Term;
   descendantCount: string | null;
   isLeafInferred: boolean | null;
-  isLeafStated: any;
+  //isLeafStated: any;
   id: string;
-  definitionStatusId: any;
-  leafInferred: any;
-  leafStated: any;
-  extraFields: any;
+  // definitionStatusId: any;
+  // leafInferred: any;
+  // leafStated: any;
+  // extraFields: any;
   idAndFsnTerm: string | null;
 }
 export interface Term {

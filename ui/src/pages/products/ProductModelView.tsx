@@ -6,7 +6,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   DefinitionStatus,
   Edge,
@@ -14,9 +14,6 @@ import {
   ProductModel,
 } from '../../types/concept.ts';
 import { useParams } from 'react-router-dom';
-import { Simulate } from 'react-dom/test-utils';
-import error = Simulate.error;
-import conceptService from '../../api/ConceptService.ts';
 import { Box } from '@mui/material';
 import {
   filterByLabel,
@@ -29,11 +26,10 @@ import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Stack } from '@mui/system';
 import LinkViews from './components/LinkViews.tsx';
-import useConceptStore from '../../stores/ConceptStore.ts';
-import Loading from '../../components/Loading.tsx';
 import { useConceptModel } from '../../hooks/api/products/useConceptModel.tsx';
+import Loading from '../../components/Loading.tsx';
+
 function ProductModelView() {
-  const { activeProduct } = useConceptStore();
   const [productModel, setProductModel] = useState<ProductModel>();
   const { id } = useParams();
   const lableTypesRight = ['TP', 'TPUU', 'TPP'];
@@ -43,21 +39,12 @@ function ProductModelView() {
   const [expandedConcepts, setExpandedConcepts] = useState<string[]>([]);
   const [fsnToggle, setFsnToggle] = useState<boolean>(isFsnToggleOn);
   const theme = useTheme();
-  const { isLoading } = useConceptModel(
+  const { isLoading, data } = useConceptModel(
     id,
     reloadStateElements,
     setProductModel,
   );
 
-  useEffect(() => {
-    conceptService
-      .getConceptModel(activeProduct ? activeProduct.conceptId : (id as string))
-      .then(e => {
-        reloadStateElements();
-        setProductModel(e);
-      })
-      .catch(error);
-  }, [id, fsnToggle, activeProduct]);
   interface ProductTypeGroupProps {
     productLabelItems: Product[];
     label: string;
