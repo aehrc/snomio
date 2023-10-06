@@ -1,17 +1,17 @@
 import { Autocomplete, TextField } from '@mui/material';
 import React from 'react';
-import { fieldToTextField, TextFieldProps } from 'formik-mui';
-import { Concept } from '../../../types/concept.ts';
+import {fieldToTextField, TextFieldProps} from 'formik-mui';
+import {Concept} from "../../../types/concept.ts";
+import {Form} from 'formik';
+interface ProductAutocompleteProps {
+    textFieldsProps: TextFieldProps;
+    callback: (val:Concept) => void;
+    form: Form;
 
-class ProductAutocomplete extends React.Component<{
-  textFieldProps: TextFieldProps;
-}> {
-  render() {
-    const { textFieldProps, ...props } = this.props;
-    const {
-      form: { setTouched, setFieldValue },
-      callback,
-    } = props;
+
+}
+const ProductAutocomplete = ({textFieldsProps, form, callback }):ProductAutocompleteProps => {
+     const { setTouched, setFieldValue } = form;
 
     const { error, helperText, ...field } = fieldToTextField(props);
     const { name } = field;
@@ -21,21 +21,15 @@ class ProductAutocomplete extends React.Component<{
         {...props}
         {...field}
         onChange={(_, value) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
           setFieldValue(name, value);
-          if (callback) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            callback(value);
-          }
+                if(callback){
+                    callback(value);
+                }
+
         }}
-        onBlur={() => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          setTouched({ [name]: true });
-        }}
+            onBlur={() => setTouched({ [name]: true })}
         // getOptionSelected={(item, current) => item.value === current.value}
-        // isOptionEqualToValue={(option, value) =>
-        //     option.conceptId === value.conceptId
-        // }
         renderInput={props => (
           <TextField
             {...props}
@@ -46,7 +40,5 @@ class ProductAutocomplete extends React.Component<{
         )}
       />
     );
-  }
-}
-
+};
 export default ProductAutocomplete;

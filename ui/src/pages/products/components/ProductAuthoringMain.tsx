@@ -323,7 +323,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             id={`${productsArray}[${index}].productDetails.genericForm`}
                             options={doseForms}
                             getOptionLabel={(option: Concept) => option.pt.term}
-                            callback={setSelectedDoseForm}
+                            setval={setSelectedDoseForm}
                             component={ProductAutocomplete}
                             fullWidth
                             variant="outlined"
