@@ -9,14 +9,11 @@ interface ProductAutocompleteProps {
 const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
   field,
   form: { touched, setTouched, setFieldValue },
-  // textFieldProps,
   setval,
   optionValues,
 
   ...props
 }) => {
-  // const {error, helperText, ...field} = fieldToTextField(props);
-  // const { error, helperText, ...field } = fieldToTextField(form);
   const { name } = field;
   return (
     <Autocomplete
@@ -30,15 +27,9 @@ const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
       }}
       options={optionValues}
       onBlur={() => void setTouched({ [name]: true })}
-      // getOptionSelected={(item, current) => item.value === current.value}
       renderInput={props => (
         // <div {...props}></div>
-        <TextField
-          {...props}
-          // {...textFieldProps}
-          // helperText={}
-          // error={errors[field.name]}
-        />
+        <TextField {...props} />
       )}
     />
   );
