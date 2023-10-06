@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ConceptService from '../../../api/ConceptService';
-import { Concept, ProductModel } from '../../../types/concept';
+import { Concept } from '../../../types/concept';
 import { isArtgId, isSctId } from '../../../utils/helpers/conceptUtils';
 
 export function useSearchConcept(
