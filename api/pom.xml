@@ -101,8 +101,8 @@
           <classpath>WITH_ALL_DEPENDENCIES</classpath>
           <classNames>com/csiro/**/models/**/*,au/csiro/**/model/*</classNames>
           <schemaVersion>DRAFT_2020_12</schemaVersion>
-          <schemaFileName>{0}.json</schemaFileName>
-          <schemaFilePath>${project.build.outputDirectory}/static/schemas</schemaFilePath>
+          <schemaFileName>{0}</schemaFileName>
+          <schemaFilePath>${project.build.outputDirectory}/static/$defs</schemaFilePath>
           <failIfNoClassesMatch>false</failIfNoClassesMatch>
           <options>
             <enabled>

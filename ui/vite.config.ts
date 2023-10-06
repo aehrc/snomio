@@ -51,7 +51,7 @@ export default ({ mode }) => {
           rewrite: path => path.replace(/^\/snowstorm\/branch/, defaultBranch),
           //ws: true,
         },
-        '/schemas': {
+        '/$defs': {
           target: snomioBaseUrl,
           changeOrigin: false,
           secure: false,
