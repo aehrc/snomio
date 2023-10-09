@@ -182,6 +182,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                               partOfPackage={partOfPackage}
                               units={units}
                               ingredients={ingredients}
+                              arrayHelpers={arrayHelpers}
                             />
                           </>
                         )}

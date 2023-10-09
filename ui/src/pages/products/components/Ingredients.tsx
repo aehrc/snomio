@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { Field, useFormikContext } from 'formik';
+import {Field, FieldArrayRenderProps, useFormikContext} from 'formik';
 import {
   Ingredient,
   MedicationPackageDetails,
@@ -8,7 +8,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Box,
+  Box, Button,
   Grid,
   TextField,
   Typography,
@@ -23,6 +23,7 @@ interface IngredientsProps {
   packageIndex?: number;
   containedProductIndex: number;
   partOfPackage: boolean;
+  arrayHelpers:FieldArrayRenderProps;
   ingredients: Concept[];
   units: Concept[];
 }
@@ -30,6 +31,7 @@ const Ingredients: FC<IngredientsProps> = ({
   containedProductIndex,
   packageIndex,
   partOfPackage,
+    arrayHelpers,
   ingredients,
   units,
 }) => {
@@ -44,17 +46,12 @@ const Ingredients: FC<IngredientsProps> = ({
     fontSize: 'small',
   });
 
-  // const handleAddContactNumber = () => {
-  //   const contact = {};
-  //   contact.number = number;
-  //
-  //   contactsArrayHelpers.push(contact);
-  //   setNumber("");
-  // };
+  const handleAddIngredient = () => {
+    const ingredient = {};
+    arrayHelpers.push(ingredient);
 
-  // const handleChange = event => {
-  //   setNumber(event.currentTarget.value);
-  // };
+  };
+
 
   const activeIngredients = partOfPackage
     ? values.containedPackages[packageIndex as number].packageDetails
@@ -99,9 +96,35 @@ const Ingredients: FC<IngredientsProps> = ({
               id="panel2a-header"
             >
               <Grid xs={40} item={true}>
-                <Typography>
-                  {activeIngredient.activeIngredient.pt.term}
-                </Typography>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Grid item xs={4}>
+                  <Typography>
+                    {activeIngredient.activeIngredient.pt.term}
+                  </Typography>
+                  </Grid>
+                  <Grid container justifyContent="flex-end">
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Grid item xs={3}>
+                        <button
+                            type="button"
+                            onClick={() => arrayHelpers.remove(index)}
+                        >
+                          +
+                        </button>
+                      </Grid>
+                      <Grid item xs={3}>
+                        <button
+                            type="button"
+                            onClick={handleAddIngredient}
+                        >
+                          -
+                        </button>
+                      </Grid>
+                    </Stack>
+                  </Grid>
+
+                </Stack>
+
               </Grid>
             </AccordionSummary>
             <AccordionDetails>
@@ -190,11 +213,6 @@ const Ingredients: FC<IngredientsProps> = ({
           </Accordion>
         </div>
       ))}
-      {/*<input type="text" value={number} onChange={handleChange} />*/}
-
-      {/*<button type="button" onClick={handleAddContactNumber}>*/}
-      {/*  add contact to {values.people[personIndex].name}*/}
-      {/*</button>*/}
     </>
   );
 };
