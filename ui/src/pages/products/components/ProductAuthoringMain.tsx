@@ -3,7 +3,7 @@ import {Field, FieldArray, FieldArrayRenderProps, Form, Formik, useFormikContext
 import {
   ExternalIdentifier,
   Ingredient,
-  MedicationPackageDetails, MedicationProductQuantity,
+  MedicationPackageDetails, MedicationPackageQuantity, MedicationProductQuantity,
 } from '../../../types/authoring.ts';
 import {
   Accordion,
@@ -28,8 +28,12 @@ import conceptService from '../../../api/ConceptService.ts';
 import {
   addOrRemoveFromArray,
 } from "../../../utils/helpers/conceptUtils.ts";
-;
+
 import {AddCircle, RemoveCircle} from "@mui/icons-material";
+import CustomTabPanel, {a11yProps} from "./CustomTabPanel.tsx";
+
+
+
 
 export interface ProductAuthoringMainProps {
   packageDetails: MedicationPackageDetails;
@@ -91,7 +95,12 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     fontSize: 'larger',
   });
 
-  const ContainedPackages = () => {
+  interface ContainedPackagesProps{
+    arrayHelpers:FieldArrayRenderProps;
+  }
+
+  function ContainedPackages(props:ContainedPackagesProps) {
+    const { arrayHelpers } = props;
     const { values } = useFormikContext<MedicationPackageDetails>();
 
     const [value, setValue] = React.useState(0);
@@ -99,39 +108,17 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
       setValue(newValue);
     };
-    interface TabPanelProps {
-      children?: React.ReactNode;
-      index: number;
-      value: number;
-    }
-    function CustomTabPanel(props: TabPanelProps) {
-      const { children, value, index, ...other } = props;
+    const handlePackageCreation = (newValue: number) => {
+      setValue(newValue);
+      // const medicationPackageQty:MedicationPackageQuantity = {packageDetails:{containedPackages:[], containedProducts:[]}}
+      // //const productQuantity:MedicationProductQuantity ={productDetails:{activeIngredients:[{}]}};
+      // arrayHelpers.push(medicationPackageQty);
+    };
 
-      return (
-        <div
-          role="tabpanel"
-          hidden={value !== index}
-          id={`simple-tabpanel-${index}`}
-          aria-labelledby={`simple-tab-${index}`}
-          {...other}
-        >
-          {value === index && (
-            <Box sx={{ p: 3 }}>
-              <div>{children}</div>
-            </Box>
-          )}
-        </div>
-      );
-    }
-    function a11yProps(index: number) {
-      return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-      };
-    }
+
     return (
       <>
-        <PackageBox component="fieldset">
+        <PackageBox component="fieldset" >
           <legend>Contained Packages</legend>
 
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -140,23 +127,33 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
               onChange={handleChange}
               aria-label="package tab"
             >
-              {values.containedPackages.map((containedPackage, index) => (
-                <Tab
-                  label={containedPackage.packageDetails.productName.pt.term}
-                  {...a11yProps(index)}
-                  key={index}
-                />
-              ))}
+              {values.containedPackages?.map((containedPackage, index) =>
+
+                     (
+                        <Tab
+                            label={containedPackage?.packageDetails?.productName?.pt.term}
+                            {...a11yProps(index)}
+                            key={index}
+                        />
+                    )
+
+              )}
+              <Tab
+                  icon={<AddCircle />}
+                  onClick={ ()=>handlePackageCreation(values.containedPackages?.length ? values.containedPackages?.length+1 :0 ) }
+                  {...a11yProps(values.containedPackages?.length ? values.containedPackages?.length+1 :0)}
+                  key={values.containedPackages?.length ? values.containedPackages?.length+1 :0}
+              />
             </Tabs>
           </Box>
-          {values.containedPackages.map((containedPackage, index) => (
+          {values.containedPackages?.map((containedPackage, index) => (
             <CustomTabPanel
               value={value}
               index={index}
-              key={containedPackage.packageDetails.productName.conceptId}
+              key={index}
             >
               <FieldArray
-                name={'containedPackages[${index}].containedProducts'}
+                name={`containedPackages[${index}].packageDetails.containedProducts`}
               >
                 {arrayHelpers => (
                   <>
@@ -174,7 +171,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
         </PackageBox>
       </>
     );
-  };
+  }
 
   interface ContainedProductsProps {
     packageIndex?: number;
@@ -194,7 +191,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
 
     const containedProducts = partOfPackage
         ? values.containedPackages[packageIndex as number].packageDetails
-            .containedProducts
+            ?.containedProducts
         : values.containedProducts;
     const productsArray = partOfPackage
         ? `containedPackages[${packageIndex}].packageDetails.containedProducts`
@@ -243,7 +240,11 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
           <ProductBox component="fieldset">
             <legend>Contained Products</legend>
 
-            {containedProducts.map((containedProduct, index) => (
+            {containedProducts.map((containedProduct, index) => {
+                  const activeIngredientsArray = partOfPackage
+                      ? `containedPackages[${packageIndex}].packageDetails.containedProducts[${index}].productDetails.activeIngredients`
+                      : `containedProducts[${index}].productDetails.activeIngredients`;
+              return (
                 <div key={productKey(index)}>
                   <br />
                   <Accordion
@@ -318,7 +319,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                           <OuterBox component="fieldset">
                             <legend>Active Ingredients</legend>
                             <FieldArray
-                                name={`containedProducts[${index}].productDetails.activeIngredients`}
+                                name={activeIngredientsArray}
                             >
                               {arrayHelpers => (
                                   <>
@@ -445,7 +446,9 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                     </AccordionDetails>
                   </Accordion>
                 </div>
-            ))}
+            )
+            }
+            )}
           </ProductBox>
         </>
     );
@@ -519,7 +522,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                         expandIcon={<ExpandMoreIcon />}
                         onClick={(event) => {
                           ingredientsAccordionClicked(getKey(index))
-                          event.stopPropagation();
+                          // event.stopPropagation();
                         }}
 
                         aria-controls="panel2a-content"
@@ -758,7 +761,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             return (
                               <>
                                 <br />
-                                <ContainedPackages />
+                                <ContainedPackages arrayHelpers={arrayHelpers} />
                               </>
                             );
                           }}
