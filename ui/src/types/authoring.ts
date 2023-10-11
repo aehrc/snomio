@@ -24,12 +24,12 @@ export interface ExternalIdentifier {
 }
 export interface Quantity {
   value: number;
-  unit: Concept;
+  unit?: Concept;
 }
 export interface MedicationProductQuantity {
-  value: number;
-  unit: Concept;
-  productDetails: MedicationProductDetails;
+  value?: number;
+  unit?: Concept;
+  productDetails?: MedicationProductDetails;
 }
 export interface MedicationPackageQuantity {
   value: number;
@@ -42,19 +42,19 @@ export interface ProductDetails {
   otherIdentifyingInformation: string;
 }
 export interface Ingredient {
-  activeIngredient: Concept;
-  preciseIngredient: Concept;
-  basisOfStrengthSubstance: Concept;
-  totalQuantity: Quantity;
-  concentrationStrength: Quantity;
+  activeIngredient?: Concept;
+  preciseIngredient?: Concept;
+  basisOfStrengthSubstance?: Concept;
+  totalQuantity?: Quantity;
+  concentrationStrength?: Quantity;
 }
 export interface MedicationProductDetails {
-  productName: Concept;
-  genericForm: Concept;
-  specificForm: Concept;
-  quantity: Quantity;
-  containerType: Concept;
-  activeIngredients: Ingredient[];
+  productName?: Concept;
+  genericForm?: Concept;
+  specificForm?: Concept;
+  quantity?: Quantity;
+  containerType?: Concept;
+  activeIngredients?: Ingredient[];
 }
 
 export interface MedicationPackageDetails {

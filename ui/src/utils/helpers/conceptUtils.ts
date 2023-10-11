@@ -50,6 +50,16 @@ export function isFsnToggleOn(): boolean {
   return localStorage.getItem('fsn_toggle') === 'true' ? true : false;
 }
 
+
+export function ingredientsExpandedStored(): string[] {
+  const stored =localStorage.getItem('ingredients-expanded');
+  return stored ? stored.split(","): [];
+}
+export function storeIngredientsExpanded(val:string[])  {
+  localStorage.setItem('ingredients-expanded',val.join());
+}
+
+
 export function findRelations(
   edges: Edge[],
   nodeA: string,
@@ -75,4 +85,15 @@ export function filterByActiveConcepts(concepts: Concept[]) {
     return concept.active;
   });
   return activeConcepts;
+}
+export function addOrRemoveFromArray(array:string[], item:string) {
+  const exists = array.includes(item)
+
+  if (exists) {
+    return array.filter((c) => { return c !== item })
+  } else {
+    const result = array
+    result.push(item)
+    return result
+  }
 }
