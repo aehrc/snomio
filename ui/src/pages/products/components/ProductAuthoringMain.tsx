@@ -515,15 +515,12 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                   <Accordion
                       style={{ border: 'none' }}
                       key={getKey(index)}
+                      onChange={() => ingredientsAccordionClicked(getKey(index))}
                       defaultExpanded={expandedIngredients.includes(getKey(index))}
 
                   >
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
-                        onClick={(event) => {
-                          ingredientsAccordionClicked(getKey(index))
-                          // event.stopPropagation();
-                        }}
 
                         aria-controls="panel2a-content"
                         id="panel2a-header"
@@ -567,6 +564,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             id={`${activeIngredientsArray}[${index}].activeIngredient`}
                             optionValues={ingredients}
                             getOptionLabel={(option: Concept) => option.pt.term}
+                            value={activeIngredient.activeIngredient ?? " "}
                             component={ProductAutocomplete}
                             fullWidth
                             variant="outlined"
@@ -583,6 +581,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             optionValues={ingredients}
                             getOptionLabel={(option: Concept) => option.pt.term}
                             component={ProductAutocomplete}
+                            value={activeIngredient.basisOfStrengthSubstance ?? " "}
                             fullWidth
                             variant="outlined"
                             margin="dense"
@@ -598,6 +597,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                 as={TextField}
                                 //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
                                 name={`${activeIngredientsArray}[${index}].totalQuantity.value`}
+                                value={activeIngredient.totalQuantity ? activeIngredient.totalQuantity.value :" "}
                                 fullWidth
                                 variant="outlined"
                                 margin="dense"
@@ -612,6 +612,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                 optionValues={units}
                                 getOptionLabel={(option: Concept) => option.pt.term}
                                 component={ProductAutocomplete}
+                                value={activeIngredient.totalQuantity && activeIngredient.totalQuantity.unit ? activeIngredient.totalQuantity.unit : " "}
                                 required
                             />
                           </Grid>
@@ -627,6 +628,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                 as={TextField}
                                 //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
                                 name={`${activeIngredientsArray}[${index}].concentrationStrength.value`}
+                                value={activeIngredient.concentrationStrength ? activeIngredient.concentrationStrength.value :" "}
                                 fullWidth
                                 variant="outlined"
                                 margin="dense"
@@ -639,6 +641,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                 name={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
                                 optionValues={units}
                                 getOptionLabel={(option: Concept) => option.pt.term}
+                                value={activeIngredient.concentrationStrength && activeIngredient.concentrationStrength.unit ? activeIngredient.concentrationStrength.unit : " "}
                                 component={ProductAutocomplete}
                             />
                           </Grid>
