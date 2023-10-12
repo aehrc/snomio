@@ -54,7 +54,7 @@ export interface MedicationProductDetails {
   specificForm?: Concept;
   quantity?: Quantity;
   containerType?: Concept;
-  activeIngredients?: Ingredient[];
+  activeIngredients: Ingredient[];
 }
 
 export interface MedicationPackageDetails {

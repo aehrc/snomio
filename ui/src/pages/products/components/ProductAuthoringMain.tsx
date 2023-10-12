@@ -31,6 +31,8 @@ import {
 
 import {AddCircle, RemoveCircle} from "@mui/icons-material";
 import CustomTabPanel, {a11yProps} from "./CustomTabPanel.tsx";
+import Ingredients from "./Ingredients.tsx";
+import SearchIcon from '@mui/icons-material/Search';
 
 
 
@@ -246,7 +248,21 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       : `containedProducts[${index}].productDetails.activeIngredients`;
               return (
                 <div key={productKey(index)}>
-                  <br />
+                  <Grid container justifyContent="flex-end" sx={{paddingBottom:"5px"}}>
+                    <Stack direction="row" spacing={0} alignItems="center">
+                      <IconButton  aria-label="create" size="large">
+                        <SearchIcon fontSize="inherit"/>
+                      </IconButton>
+                    <IconButton onClick={ () => {
+                      //storeIngredientsExpanded([]);
+                      const productQuantity:MedicationProductQuantity ={productDetails:{activeIngredients:[{}]}};
+                      arrayHelpers.push(productQuantity);
+
+                    }} aria-label="create" size="large">
+                      <AddCircle fontSize="inherit"/>
+                    </IconButton>
+                    </Stack>
+                  </Grid>
                   <Accordion
                       key={productKey(index)}
                       style={{ border: 'none' }}
@@ -269,15 +285,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                           </Grid>
                           <Grid container justifyContent="flex-end">
                             <Stack direction="row" spacing={0} alignItems="center">
-
-                              <IconButton onClick={ () => {
-                                //storeIngredientsExpanded([]);
-                                const productQuantity:MedicationProductQuantity ={productDetails:{activeIngredients:[{}]}};
-                                arrayHelpers.push(productQuantity);
-
-                              }} aria-label="create" size="large">
-                                <AddCircle fontSize="inherit"/>
-                              </IconButton>
                               <IconButton aria-label="delete" size="large" onClick={ () => arrayHelpers.remove(index)}>
                                 <RemoveCircle fontSize="inherit" />
                               </IconButton>
@@ -332,6 +339,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                         }
                                         partOfPackage={partOfPackage}
                                         arrayHelpers={arrayHelpers}
+                                        units={units}
+                                        ingredients={ingredients}
                                     />
 
                                   </>
@@ -454,208 +463,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     );
   };
 
-  interface IngredientsProps {
-    packageIndex?: number;
-    containedProductIndex: number;
-    partOfPackage: boolean;
-    arrayHelpers:FieldArrayRenderProps;
 
-  }
-  const Ingredients: FC<IngredientsProps> = ({
-                                               containedProductIndex,
-                                               packageIndex,
-                                               partOfPackage,
-                                               arrayHelpers,
-
-                                             }) => {
-    //const [number, setNumber] = React.useState("");
-    const { values } = useFormikContext<MedicationPackageDetails>();
-    const [expandedIngredients, setExpandedIngredients] = useState<string[]>([]);
-    const InnerBox = styled(Box)({
-      border: '0 solid #f0f0f0',
-      color: '#003665',
-      marginTop: '10px',
-      marginBottom: '10px',
-      fontSize: 'small',
-    });
-
-
-
-
-
-    const activeIngredients = partOfPackage
-        ? values.containedPackages[packageIndex as number].packageDetails
-            .containedProducts[containedProductIndex].productDetails
-            ?.activeIngredients
-        : values.containedProducts[containedProductIndex].productDetails
-            ?.activeIngredients;
-
-    const activeIngredientsArray = partOfPackage
-        ? `containedPackages[${packageIndex}].packageDetails.containedProducts[${containedProductIndex}].productDetails.activeIngredients`
-        : `containedProducts[${containedProductIndex}].productDetails.activeIngredients`;
-    const getKey = (index: number) => {
-      return `ingredient-key-${index}`;
-    };
-
-    const ingredientsAccordionClicked = (key: string) => {
-      setExpandedIngredients(addOrRemoveFromArray(expandedIngredients, key))
-      //storeIngredientsExpanded(expandedIngredients);
-
-    };
-
-
-    return (
-        <>
-          <div>
-
-
-            {activeIngredients?.map((activeIngredient: Ingredient, index: number) => (
-                <div key={getKey(index)}>
-                  <br />
-                  <Accordion
-                      style={{ border: 'none' }}
-                      key={getKey(index)}
-                      onChange={() => ingredientsAccordionClicked(getKey(index))}
-                      defaultExpanded={expandedIngredients.includes(getKey(index))}
-
-                  >
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-
-                        aria-controls="panel2a-content"
-                        id="panel2a-header"
-                    >
-                      <Grid xs={40} item={true}>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <Grid item xs={10}>
-                            <Typography>
-                              {activeIngredient.activeIngredient?.pt.term}
-                            </Typography>
-                          </Grid>
-                          <Grid container justifyContent="flex-end">
-                            <Stack direction="row" spacing={0} alignItems="center">
-                              <IconButton onClick={ () => {
-                                //storeIngredientsExpanded([]);
-                                const ingredient:Ingredient ={};
-                                arrayHelpers.push(ingredient);
-
-
-                              }} aria-label="create" size="large">
-                                <AddCircle fontSize="inherit"/>
-                              </IconButton>
-                            <IconButton aria-label="delete" size="large" onClick={ () => arrayHelpers.remove(index)}>
-                              <RemoveCircle fontSize="inherit" />
-                            </IconButton>
-                            </Stack>
-                          </Grid>
-
-                        </Stack>
-
-                      </Grid>
-
-                    </AccordionSummary>
-                    <AccordionDetails>
-
-                      <InnerBox component="fieldset">
-                        <legend>Intended Active Ingredient</legend>
-
-                        <Field
-                            name={`${activeIngredientsArray}[${index}].activeIngredient`}
-                            id={`${activeIngredientsArray}[${index}].activeIngredient`}
-                            optionValues={ingredients}
-                            getOptionLabel={(option: Concept) => option.pt.term}
-                            value={activeIngredient.activeIngredient ?? " "}
-                            component={ProductAutocomplete}
-                            fullWidth
-                            variant="outlined"
-                            margin="dense"
-                            required
-                            disableClearable={true}
-                        />
-                      </InnerBox>
-                      <InnerBox component="fieldset">
-                        <legend>BoSS</legend>
-                        <Field
-                            name={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
-                            id={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
-                            optionValues={ingredients}
-                            getOptionLabel={(option: Concept) => option.pt.term}
-                            component={ProductAutocomplete}
-                            value={activeIngredient.basisOfStrengthSubstance ?? " "}
-                            fullWidth
-                            variant="outlined"
-                            margin="dense"
-                            required
-                        />
-                      </InnerBox>
-                      <InnerBox component="fieldset">
-                        <legend>Strength</legend>
-
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <Grid item xs={4}>
-                            <Field
-                                as={TextField}
-                                //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
-                                name={`${activeIngredientsArray}[${index}].totalQuantity.value`}
-                                value={activeIngredient.totalQuantity ? activeIngredient.totalQuantity.value :" "}
-                                fullWidth
-                                variant="outlined"
-                                margin="dense"
-                                required
-                                InputLabelProps={{ shrink: true }}
-                            />
-                          </Grid>
-                          <Grid item xs={4}>
-                            <Field
-                                id={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
-                                name={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
-                                optionValues={units}
-                                getOptionLabel={(option: Concept) => option.pt.term}
-                                component={ProductAutocomplete}
-                                value={activeIngredient.totalQuantity && activeIngredient.totalQuantity.unit ? activeIngredient.totalQuantity.unit : " "}
-                                required
-                            />
-                          </Grid>
-                        </Stack>
-                      </InnerBox>
-
-                      <InnerBox component="fieldset">
-                        <legend>Concentration Strength</legend>
-
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <Grid item xs={4}>
-                            <Field
-                                as={TextField}
-                                //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
-                                name={`${activeIngredientsArray}[${index}].concentrationStrength.value`}
-                                value={activeIngredient.concentrationStrength ? activeIngredient.concentrationStrength.value :" "}
-                                fullWidth
-                                variant="outlined"
-                                margin="dense"
-                                InputLabelProps={{ shrink: true }}
-                            />
-                          </Grid>
-                          <Grid item xs={4}>
-                            <Field
-                                id={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
-                                name={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
-                                optionValues={units}
-                                getOptionLabel={(option: Concept) => option.pt.term}
-                                value={activeIngredient.concentrationStrength && activeIngredient.concentrationStrength.unit ? activeIngredient.concentrationStrength.unit : " "}
-                                component={ProductAutocomplete}
-                            />
-                          </Grid>
-                        </Stack>
-                      </InnerBox>
-
-                    </AccordionDetails>
-                  </Accordion>
-                </div>
-            ))}
-          </div>
-        </>
-    );
-  };
 
   return (
     <Box sx={{ width: '100%' }}>
