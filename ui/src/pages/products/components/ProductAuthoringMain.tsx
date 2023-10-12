@@ -2,7 +2,6 @@ import React, { FC, useEffect, useState } from 'react';
 import {Field, FieldArray, FieldArrayRenderProps, Form, Formik, useFormikContext} from 'formik';
 import {
   ExternalIdentifier,
-  Ingredient,
   MedicationPackageDetails, MedicationPackageQuantity, MedicationProductQuantity,
 } from '../../../types/authoring.ts';
 import {
@@ -25,9 +24,6 @@ import { experimentalStyled as styled, useTheme } from '@mui/material/styles';
 import { Concept } from '../../../types/concept.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 import conceptService from '../../../api/ConceptService.ts';
-import {
-  addOrRemoveFromArray,
-} from "../../../utils/helpers/conceptUtils.ts";
 
 import {AddCircle, RemoveCircle} from "@mui/icons-material";
 import CustomTabPanel, {a11yProps} from "./CustomTabPanel.tsx";
@@ -241,28 +237,29 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
 
           <ProductBox component="fieldset">
             <legend>Contained Products</legend>
+            <div>
+              <Grid container justifyContent="flex-end" >
+                <Stack direction="row" spacing={0} alignItems="center">
+                  <IconButton  aria-label="create" size="large">
+                    <SearchIcon fontSize="inherit"/>
+                  </IconButton>
+                  <IconButton onClick={ () => {
+                    const productQuantity:MedicationProductQuantity ={productDetails:{activeIngredients:[{}]}};
+                    arrayHelpers.push(productQuantity);
+
+                  }} aria-label="create" size="large">
+                    <AddCircle fontSize="inherit"/>
+                  </IconButton>
+                </Stack>
+              </Grid>
+
 
             {containedProducts.map((containedProduct, index) => {
                   const activeIngredientsArray = partOfPackage
                       ? `containedPackages[${packageIndex}].packageDetails.containedProducts[${index}].productDetails.activeIngredients`
                       : `containedProducts[${index}].productDetails.activeIngredients`;
               return (
-                <div key={productKey(index)}>
-                  <Grid container justifyContent="flex-end" sx={{paddingBottom:"5px"}}>
-                    <Stack direction="row" spacing={0} alignItems="center">
-                      <IconButton  aria-label="create" size="large">
-                        <SearchIcon fontSize="inherit"/>
-                      </IconButton>
-                    <IconButton onClick={ () => {
-                      //storeIngredientsExpanded([]);
-                      const productQuantity:MedicationProductQuantity ={productDetails:{activeIngredients:[{}]}};
-                      arrayHelpers.push(productQuantity);
-
-                    }} aria-label="create" size="large">
-                      <AddCircle fontSize="inherit"/>
-                    </IconButton>
-                    </Stack>
-                  </Grid>
+                <div key={productKey(index)} style={{marginTop:"10px"}}>
                   <Accordion
                       key={productKey(index)}
                       style={{ border: 'none' }}
@@ -403,6 +400,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                       variant="outlined"
                                       margin="dense"
                                       InputLabelProps={{ shrink: true }}
+                                      value={containedProduct.productDetails?.quantity?.value || ""}
                                   />
                                 </Grid>
                                 <Grid item xs={10}>
@@ -434,6 +432,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                       variant="outlined"
                                       margin="dense"
                                       InputLabelProps={{ shrink: true }}
+                                      value={containedProduct.value || ""}
                                   />
                                 </Grid>
                                 <Grid item xs={10}>
@@ -458,6 +457,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
             )
             }
             )}
+            </div>
+
           </ProductBox>
         </>
     );

@@ -136,7 +136,6 @@ const Ingredients: FC<IngredientsProps> = ({
                                         id={`${activeIngredientsArray}[${index}].activeIngredient`}
                                         optionValues={ingredients}
                                         getOptionLabel={(option: Concept) => option.pt.term}
-                                        value={activeIngredient.activeIngredient ?? " "}
                                         component={ProductAutocomplete}
                                         fullWidth
                                         variant="outlined"
@@ -153,7 +152,6 @@ const Ingredients: FC<IngredientsProps> = ({
                                         optionValues={ingredients}
                                         getOptionLabel={(option: Concept) => option.pt.term}
                                         component={ProductAutocomplete}
-                                        value={activeIngredient.basisOfStrengthSubstance ?? " "}
                                         fullWidth
                                         variant="outlined"
                                         margin="dense"
@@ -169,7 +167,7 @@ const Ingredients: FC<IngredientsProps> = ({
                                                 as={TextField}
                                                 //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
                                                 name={`${activeIngredientsArray}[${index}].totalQuantity.value`}
-                                                value={activeIngredient.totalQuantity ? activeIngredient.totalQuantity.value :" "}
+                                                value={activeIngredient.totalQuantity?.value || ""}
                                                 fullWidth
                                                 variant="outlined"
                                                 margin="dense"
@@ -184,7 +182,6 @@ const Ingredients: FC<IngredientsProps> = ({
                                                 optionValues={units}
                                                 getOptionLabel={(option: Concept) => option.pt.term}
                                                 component={ProductAutocomplete}
-                                                value={activeIngredient.totalQuantity && activeIngredient.totalQuantity.unit ? activeIngredient.totalQuantity.unit : " "}
                                                 required
                                             />
                                         </Grid>
@@ -200,7 +197,7 @@ const Ingredients: FC<IngredientsProps> = ({
                                                 as={TextField}
                                                 //name={`containedProducts[${index}].activeIngredients[${ingIndex}].activeIngredient.conceptId`}
                                                 name={`${activeIngredientsArray}[${index}].concentrationStrength.value`}
-                                                value={activeIngredient.concentrationStrength ? activeIngredient.concentrationStrength.value :" "}
+                                                value={ activeIngredient.concentrationStrength?.value || ""}
                                                 fullWidth
                                                 variant="outlined"
                                                 margin="dense"
@@ -213,7 +210,6 @@ const Ingredients: FC<IngredientsProps> = ({
                                                 name={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
                                                 optionValues={units}
                                                 getOptionLabel={(option: Concept) => option.pt.term}
-                                                value={activeIngredient.concentrationStrength && activeIngredient.concentrationStrength.unit ? activeIngredient.concentrationStrength.unit : " "}
                                                 component={ProductAutocomplete}
                                             />
                                         </Grid>

@@ -19,8 +19,9 @@ const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
     <Autocomplete
       {...props}
       {...field}
+      value={field.value as Concept || null}
       onChange={(_, value) => {
-        void setFieldValue(name, value);
+        void setFieldValue(name, value );
         if (setval) {
           setval(value as Concept);
         }
