@@ -32,9 +32,9 @@ export interface MedicationProductQuantity {
   productDetails?: MedicationProductDetails;
 }
 export interface MedicationPackageQuantity {
-  value: number;
-  unit: MedicationPackageDetails;
-  packageDetails: MedicationPackageDetails;
+  value?: number;
+  unit?: MedicationPackageDetails;
+  packageDetails: MedicationPackageDetailsOpt;
 }
 export interface ProductDetails {
   productName: Concept;
@@ -57,10 +57,19 @@ export interface MedicationProductDetails {
   activeIngredients: Ingredient[];
 }
 
+
 export interface MedicationPackageDetails {
   productName: Concept;
   containerType: Concept;
   externalIdentifiers: ExternalIdentifier[];
+  containedProducts: MedicationProductQuantity[];
+  containedPackages: MedicationPackageQuantity[];
+}
+
+export interface MedicationPackageDetailsOpt {
+  productName?: Concept;
+  containerType?: Concept;
+  externalIdentifiers?: ExternalIdentifier[];
   containedProducts: MedicationProductQuantity[];
   containedPackages: MedicationPackageQuantity[];
 }

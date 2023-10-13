@@ -18,6 +18,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {Stack} from "@mui/system";
 import {Concept} from "../../../types/concept.ts";
 import ProductAutocomplete from "./ProductAutocomplete.tsx";
+import {GridDeleteIcon} from "@mui/x-data-grid";
 
 interface IngredientsProps {
     packageIndex?: number;
@@ -109,14 +110,14 @@ const Ingredients: FC<IngredientsProps> = ({
                                     <Stack direction="row" spacing={2} alignItems="center">
                                         <Grid item xs={10}>
                                             <Typography>
-                                                {activeIngredient.activeIngredient?.pt.term}
+                                                {activeIngredient.activeIngredient ? activeIngredient.activeIngredient?.pt.term :"untitled"}
                                             </Typography>
                                         </Grid>
                                         <Grid container justifyContent="flex-end">
                                             <Stack direction="row" spacing={0} alignItems="center">
 
                                                 <IconButton aria-label="delete" size="large" onClick={ () => arrayHelpers.remove(index)}>
-                                                    <RemoveCircle fontSize="inherit" />
+                                                    <GridDeleteIcon fontSize="inherit" />
                                                 </IconButton>
                                             </Stack>
                                         </Grid>
