@@ -29,6 +29,8 @@ import { GridDeleteIcon } from '@mui/x-data-grid';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 import Ingredients from './Ingredients.tsx';
 import { experimentalStyled as styled, useTheme } from '@mui/material/styles';
+import PackageSearchAndAddModal from './PackageSearchAndAddModal.tsx';
+import ProductSearchAndAddModal from './ProductSearchAndAddModal.tsx';
 
 interface ContainedProductsProps {
   packageIndex?: number;
@@ -92,6 +94,15 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   const [selectedDoseForm, setSelectedDoseForm] = useState<Concept>();
   const [expandedProducts, setExpandedProducts] = useState<string[]>([]);
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleToggleModal = () => {
+    setModalOpen(!modalOpen);
+  };
+  const handleSearchAndAddProduct = () => {
+    handleToggleModal();
+    // setValue(newValue);
+  };
+
   const productAccordionClicked = (key: string) => {
     if (expandedProducts.includes(key)) {
       setExpandedProducts(
@@ -128,7 +139,11 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
       <div>
         <Grid container justifyContent="flex-end">
           <Stack direction="row" spacing={0} alignItems="center">
-            <IconButton aria-label="create" size="large">
+            <IconButton
+              aria-label="create"
+              size="large"
+              onClick={handleSearchAndAddProduct}
+            >
               <SearchIcon fontSize="inherit" />
             </IconButton>
             <IconButton
@@ -145,6 +160,11 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
             </IconButton>
           </Stack>
         </Grid>
+        <ProductSearchAndAddModal
+          open={modalOpen}
+          handleClose={handleToggleModal}
+          arrayHelpers={arrayHelpers}
+        />
 
         {containedProducts.map((containedProduct, index) => {
           const activeIngredientsArray = partOfPackage

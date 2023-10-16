@@ -9,7 +9,7 @@ import {
   filterByActiveConcepts,
   mapToConcepts,
 } from '../utils/helpers/conceptUtils.ts';
-import { MedicationPackageDetails } from '../types/authoring.ts';
+import {MedicationPackageDetails, MedicationProductDetails} from '../types/authoring.ts';
 import {
   ECL_BRAND_PRODUCTS,
   ECL_CONTAINER_TYPES,
@@ -120,6 +120,14 @@ const ConceptService = {
     }
     const medicationPackageDetails = response.data as MedicationPackageDetails;
     return medicationPackageDetails;
+  },
+  async fetchMedicationProduct(id: string): Promise<MedicationProductDetails> {
+    const response = await axios.get(`/api/branch/medications/product/${id}`);
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+    const medicationProductDetails = response.data as MedicationProductDetails;
+    return medicationProductDetails;
   },
   async fetchDevice(id: string): Promise<ProductModel> {
     const response = await axios.get(`/api/branch/devices/${id}`);
