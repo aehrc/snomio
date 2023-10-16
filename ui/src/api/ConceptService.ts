@@ -33,8 +33,6 @@ const ConceptService = {
       ecl = providedEcl;
     }
     const url = `/snowstorm/branch/concepts?term=${str}&ecl=${ecl}`;
-    // if(providedEcl)
-    // alert(url);
     const response = await axios.get(url);
     if (response.status != 200) {
       this.handleErrors();
