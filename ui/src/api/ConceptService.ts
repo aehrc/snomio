@@ -10,6 +10,14 @@ import {
   mapToConcepts,
 } from '../utils/helpers/conceptUtils.ts';
 import { MedicationPackageDetails } from '../types/authoring.ts';
+import {
+  ECL_BRAND_PRODUCTS,
+  ECL_CONTAINER_TYPES,
+  ECL_DOSE_FORMS,
+  ECL_GENERIC_CONCEPT_SEARCH,
+  ECL_INGREDIENTS,
+  ECL_UNITS,
+} from '../utils/helpers/EclUtils.ts';
 
 const ConceptService = {
   // TODO more useful way to handle errors? retry? something about tasks service being down etc.
@@ -20,7 +28,7 @@ const ConceptService = {
 
   async searchConcept(str: string, providedEcl?: string): Promise<Concept[]> {
     let concepts: Concept[] = [];
-    let ecl = '%5E%20929360051000036108';
+    let ecl = ECL_GENERIC_CONCEPT_SEARCH;
     if (providedEcl) {
       ecl = providedEcl;
     }
@@ -85,19 +93,19 @@ const ConceptService = {
     return mapToConcepts(conceptSearchResponse.items);
   },
   async getAllUnits(): Promise<Concept[]> {
-    return this.searchConceptByEcl('<767524001');
+    return this.searchConceptByEcl(ECL_UNITS);
   },
   async getAllContainerTypes(): Promise<Concept[]> {
-    return this.searchConceptByEcl('<706437002');
+    return this.searchConceptByEcl(ECL_CONTAINER_TYPES);
   },
   async getAllIngredients(): Promise<Concept[]> {
-    return this.searchConceptByEcl('<105590001');
+    return this.searchConceptByEcl(ECL_INGREDIENTS);
   },
   async getAllDoseForms(): Promise<Concept[]> {
-    return this.searchConceptByEcl('<736542009');
+    return this.searchConceptByEcl(ECL_DOSE_FORMS);
   },
   async getAllBrandProducts(): Promise<Concept[]> {
-    return this.searchConceptByEcl('<774167006');
+    return this.searchConceptByEcl(ECL_BRAND_PRODUCTS);
   },
   async getConceptModel(id: string): Promise<ProductModel> {
     const response = await axios.get(`/api/branch/product-model/${id}`);

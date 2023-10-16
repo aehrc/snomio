@@ -9,6 +9,7 @@ import { Concept } from '../../../types/concept.ts';
 import ConceptService from '../../../api/ConceptService.ts';
 import { FieldArrayRenderProps } from 'formik';
 import { MedicationPackageQuantity } from '../../../types/authoring.ts';
+import { ECL_EXCLUDE_PACKAGES } from '../../../utils/helpers/EclUtils.ts';
 
 interface PackageSearchAndAddModalProps {
   open: boolean;
@@ -48,9 +49,7 @@ export default function PackageSearchAndAddModal({
         <SearchProduct
           disableLinkOpen={true}
           handleChange={handleSelectedProductChange}
-          providedEcl={
-            '%28%5E%20929360051000036108%29%20%3A%20%5B0..0%5D%20999000011000168107%20%3D%20%2A'
-          }
+          providedEcl={ECL_EXCLUDE_PACKAGES}
         />
       </BaseModalBody>
       <BaseModalFooter

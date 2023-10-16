@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import ConceptService from '../../../api/ConceptService';
-import {isSctId } from '../../../utils/helpers/conceptUtils';
+import { isSctId } from '../../../utils/helpers/conceptUtils';
 
 export function useSearchConcept(
   searchFilter: string | undefined,

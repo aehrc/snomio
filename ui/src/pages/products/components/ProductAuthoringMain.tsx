@@ -728,7 +728,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       </Stack>
                     </Level1Box>
 
-                    {/*{packageDetails.containedPackages.length > 0 ? (*/}
                     <div>
                       <FieldArray name="containedPackages">
                         {arrayHelpers => {
@@ -742,11 +741,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       </FieldArray>
                       {/*<pre>{JSON.stringify(values.containedPackages, null, 2)}</pre>*/}
                     </div>
-                    {/*) : (*/}
-                    {/*  <div></div>*/}
-                    {/*)}*/}
-                    {/*</MainBox>*/}
-                    {/*{packageDetails.containedProducts.length > 0 ? (*/}
                     <div>
                       <FieldArray name="containedProducts">
                         {arrayHelpers => {
