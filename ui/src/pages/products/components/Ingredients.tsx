@@ -4,14 +4,13 @@ import {
   Ingredient,
   MedicationPackageDetails,
 } from '../../../types/authoring.ts';
-import { experimentalStyled as styled } from '@mui/material/styles';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
   Grid,
-  IconButton,
+  IconButton, styled,
   TextField,
   Typography,
 } from '@mui/material';
@@ -20,7 +19,7 @@ import {
   ingredientsExpandedStored,
   storeIngredientsExpanded,
 } from '../../../utils/helpers/conceptUtils.ts';
-import { AddCircle, RemoveCircle } from '@mui/icons-material';
+import { AddCircle } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Stack } from '@mui/system';
 import { Concept } from '../../../types/concept.ts';
