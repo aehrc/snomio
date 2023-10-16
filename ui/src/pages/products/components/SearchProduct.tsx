@@ -18,15 +18,15 @@ import IconButton from '../../../components/@extended/IconButton.tsx';
 import { Link } from 'react-router-dom';
 import { isFsnToggleOn } from '../../../utils/helpers/conceptUtils.ts';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import useConceptStore from '../../../stores/ConceptStore.ts';
 import { useSearchConcept } from '../../../hooks/api/products/useSearchConcept.tsx';
 
 export interface SearchProductProps {
-  authoring: boolean;
+  disableLinkOpen: boolean;
+  handleChange?: (concept: Concept | null) => void;
+  providedEcl?: string;
 }
 export default function SearchProduct(props: SearchProductProps) {
-  const { authoring } = props;
-  const { setActiveProduct } = useConceptStore();
+  const { disableLinkOpen, handleChange, providedEcl } = props;
   const localFsnToggle = isFsnToggleOn;
   const [results, setResults] = useState<Concept[]>([]);
   const [open, setOpen] = useState(false);
@@ -56,7 +56,7 @@ export default function SearchProduct(props: SearchProductProps) {
     return fsnToggle ? concept.fsn.term : concept.pt.term;
   };
   const linkPath = (conceptId: string): string => {
-    return authoring
+    return disableLinkOpen
       ? '/dashboard/products/' + conceptId + '/authoring'
       : '/dashboard/products/' + conceptId;
   };
@@ -102,6 +102,7 @@ export default function SearchProduct(props: SearchProductProps) {
     searchFilter,
     debouncedSearch,
     checkItemAlreadyExists,
+    providedEcl,
   );
 
   useEffect(() => {
@@ -146,7 +147,10 @@ export default function SearchProduct(props: SearchProductProps) {
             borderRadius: '0px 4px 4px 0px',
             marginLeft: '0px !important',
           }}
-          onChange={(e, v) => setActiveProduct(v)}
+          // onChange={(e, v) => setActiveProduct(v)}
+          onChange={(e, v) => {
+            if (handleChange) handleChange(v);
+          }}
           open={open}
           getOptionLabel={option =>
             getTermDisplay(option) + '[' + option.conceptId + ']' || ''
@@ -185,7 +189,7 @@ export default function SearchProduct(props: SearchProductProps) {
           )}
           renderOption={(props, option, { selected }) => (
             <li {...props}>
-              {!authoring ? (
+              {!disableLinkOpen ? (
                 <Link
                   to={linkPath(option.conceptId)}
                   style={{ textDecoration: 'none', color: '#003665' }}

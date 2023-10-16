@@ -18,12 +18,16 @@ const ConceptService = {
     throw new Error('invalid concept response');
   },
 
-  async searchConcept(str: string): Promise<Concept[]> {
+  async searchConcept(str: string, providedEcl?: string): Promise<Concept[]> {
     let concepts: Concept[] = [];
-    const response = await axios.get(
-      // `/snowstorm/MAIN/concepts?term=${str}`,
-      `/snowstorm/branch/concepts?term=${str}&ecl=%5E%20929360051000036108`,
-    );
+    let ecl = '%5E%20929360051000036108';
+    if (providedEcl) {
+      ecl = providedEcl;
+    }
+    const url = `/snowstorm/branch/concepts?term=${str}&ecl=${ecl}`;
+    // if(providedEcl)
+    // alert(url);
+    const response = await axios.get(url);
     if (response.status != 200) {
       this.handleErrors();
     }
@@ -46,10 +50,20 @@ const ConceptService = {
     return uniqueConcepts;
   },
 
-  async searchConceptById(id: string): Promise<Concept[]> {
-    const response = await axios.get(`/snowstorm/branch/concepts/${id}`);
+  async searchConceptById(
+    id: string,
+    providedEcl?: string,
+  ): Promise<Concept[]> {
+    const url = providedEcl
+      ? `/snowstorm/branch/concepts?conceptIds=${id}&ecl=${providedEcl}`
+      : `/snowstorm/branch/concepts/${id}`;
+    const response = await axios.get(url);
     if (response.status != 200) {
       this.handleErrors();
+    }
+    if (providedEcl) {
+      const conceptResponse = response.data as ConceptResponse;
+      return conceptResponse.items;
     }
     const concept = [response.data as Concept];
     return concept;

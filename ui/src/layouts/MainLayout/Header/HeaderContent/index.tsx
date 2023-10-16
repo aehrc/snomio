@@ -32,7 +32,7 @@ const HeaderContent = () => {
       {menuOrientation === MenuOrientation.HORIZONTAL && !downLG && (
         <DrawerHeader open={true} />
       )}
-      {!downLG && <SearchProduct authoring={false} />}
+      {!downLG && <SearchProduct disableLinkOpen={false} />}
       {/* {!downLG && megaMenu} */}
       {downLG && <Box sx={{ width: '100%', ml: 1 }} />}
 

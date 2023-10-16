@@ -1,23 +1,5 @@
 import { Concept } from './concept.ts';
 
-// export interface SnowstormConceptMiniComponent {
-//   conceptId: string;
-//   active: boolean;
-//   definitionStatus: DefinitionStatus;
-//   moduleId: string;
-//   effectiveTime: string | null;
-//   fsn: Term;
-//   pt: Term;
-//   descendantCount: string | null;
-//   isLeafInferred: boolean | null;
-//   isLeafStated: any;
-//   id: string;
-//   definitionStatusId: any;
-//   leafInferred: any;
-//   leafStated: any;
-//   extraFields: any;
-//   idAndFsnTerm: string | null;
-// }
 export interface ExternalIdentifier {
   identifierScheme: string;
   identifierValue: string;
@@ -56,7 +38,6 @@ export interface MedicationProductDetails {
   containerType?: Concept;
   activeIngredients: Ingredient[];
 }
-
 
 export interface MedicationPackageDetails {
   productName: Concept;

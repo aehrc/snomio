@@ -12,25 +12,24 @@ import ProductAuthoringMain from './components/ProductAuthoringMain.tsx';
 import { Stack } from '@mui/system';
 import useInitializeConcepts from '../../hooks/api/useInitializeConcepts.tsx';
 import Loading from '../../components/Loading.tsx';
+import { Concept } from '../../types/concept.ts';
 
 function ProductAuthoring() {
   const conceptStore = useConceptStore();
-  const {
-    activeProduct,
-    units,
-    containerTypes,
-    ingredients,
-    doseForms,
-    brandProducts,
-  } = conceptStore;
+  const { units, containerTypes, ingredients, doseForms, brandProducts } =
+    conceptStore;
   const [packageDetails, setPackageDetails] =
     useState<MedicationPackageDetails>();
   const [name, setName] = useState<string>('Random');
   const theme = useTheme();
   const { conceptsLoading } = useInitializeConcepts();
+  const [selectedProduct, setSelectedProduct] = useState<Concept | null>(null);
+  const handleSelectedProductChange = (concept: Concept | null) => {
+    setSelectedProduct(concept);
+  };
   useEffect(() => {
     conceptService
-      .fetchMedication(activeProduct ? activeProduct.conceptId : '')
+      .fetchMedication(selectedProduct ? selectedProduct.conceptId : '')
       .then(mp => {
         setPackageDetails(mp);
         console.log(packageDetails?.productName.conceptId);
@@ -39,7 +38,7 @@ function ProductAuthoring() {
         }
       })
       .catch(error);
-  }, [activeProduct]);
+  }, [selectedProduct]);
   if (conceptsLoading) {
     return <Loading />;
   } else {
@@ -58,7 +57,10 @@ function ProductAuthoring() {
             </span>
           </Grid>
           <Grid item xs={3}>
-            <SearchProduct authoring={true} />
+            <SearchProduct
+              disableLinkOpen={true}
+              handleChange={handleSelectedProductChange}
+            />
           </Grid>
         </Stack>
 
