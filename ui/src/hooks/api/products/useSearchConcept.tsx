@@ -8,9 +8,6 @@ export function useSearchConcept(
   checkItemAlreadyExists: (search: string) => boolean,
   providedEcl?: string,
 ) {
-  const queryKey = providedEcl
-    ? `concept-${searchTerm}-ecl`
-    : `concept-${searchTerm}`;
   const { isLoading, data, error } = useQuery(
     [`concept-${searchTerm}`],
     () => {
