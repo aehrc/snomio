@@ -34,6 +34,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { GridDeleteIcon } from '@mui/x-data-grid';
 import PackageSearchAndAddModal from './PackageSearchAndAddModal.tsx';
 import ContainedProducts from './ContainedProducts.tsx';
+import ArtgAutocomplete from './ArtgAutocomplete.tsx';
 
 export interface ProductAuthoringMainProps {
   packageDetails: MedicationPackageDetails;
@@ -252,7 +253,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               }
                               multiple
                               freeSolo
-                              component={ProductAutocomplete}
+                              component={ArtgAutocomplete}
                               fullWidth
                               variant="outlined"
                               margin="dense"
@@ -387,7 +388,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               }
                               multiple
                               freeSolo
-                              component={ProductAutocomplete}
+                              component={ArtgAutocomplete}
                               fullWidth
                               variant="outlined"
                               margin="dense"

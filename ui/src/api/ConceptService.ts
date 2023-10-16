@@ -9,7 +9,10 @@ import {
   filterByActiveConcepts,
   mapToConcepts,
 } from '../utils/helpers/conceptUtils.ts';
-import {MedicationPackageDetails, MedicationProductDetails} from '../types/authoring.ts';
+import {
+  MedicationPackageDetails,
+  MedicationProductDetails,
+} from '../types/authoring.ts';
 import {
   ECL_BRAND_PRODUCTS,
   ECL_CONTAINER_TYPES,

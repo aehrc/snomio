@@ -8,11 +8,8 @@ import SearchProduct from './SearchProduct.tsx';
 import { Concept } from '../../../types/concept.ts';
 import ConceptService from '../../../api/ConceptService.ts';
 import { FieldArrayRenderProps } from 'formik';
-import {MedicationPackageQuantity, MedicationProductQuantity} from '../../../types/authoring.ts';
-import {
-  ECL_EXCLUDE_PACKAGES,
-  ECL_EXISTING_PRODUCT_TO_PACKAGE,
-} from '../../../utils/helpers/EclUtils.ts';
+import { MedicationProductQuantity } from '../../../types/authoring.ts';
+import { ECL_EXISTING_PRODUCT_TO_PACKAGE } from '../../../utils/helpers/EclUtils.ts';
 
 interface ProductSearchAndAddModalProps {
   open: boolean;
@@ -37,9 +34,9 @@ export default function ProductSearchAndAddModal({
         );
         // packageDetails.containedProducts.map(p => arrayHelpers.push(p));
 
-          const productQuantity: MedicationProductQuantity = {
-              productDetails: productDetails,
-          };
+        const productQuantity: MedicationProductQuantity = {
+          productDetails: productDetails,
+        };
         arrayHelpers.push(productQuantity);
         handleClose();
       })();
