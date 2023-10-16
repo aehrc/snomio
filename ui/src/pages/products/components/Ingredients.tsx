@@ -15,7 +15,11 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { addOrRemoveFromArray } from '../../../utils/helpers/conceptUtils.ts';
+import {
+  addOrRemoveFromArray,
+  ingredientsExpandedStored,
+  storeIngredientsExpanded,
+} from '../../../utils/helpers/conceptUtils.ts';
 import { AddCircle, RemoveCircle } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Stack } from '@mui/system';
@@ -41,7 +45,9 @@ const Ingredients: FC<IngredientsProps> = ({
 }) => {
   //const [number, setNumber] = React.useState("");
   const { values } = useFormikContext<MedicationPackageDetails>();
-  const [expandedIngredients, setExpandedIngredients] = useState<string[]>([]);
+  const [expandedIngredients, setExpandedIngredients] = useState<string[]>(
+    ingredientsExpandedStored,
+  );
   const InnerBox = styled(Box)({
     border: '0 solid #f0f0f0',
     color: '#003665',
@@ -68,7 +74,7 @@ const Ingredients: FC<IngredientsProps> = ({
 
   const ingredientsAccordionClicked = (key: string) => {
     setExpandedIngredients(addOrRemoveFromArray(expandedIngredients, key));
-    //storeIngredientsExpanded(expandedIngredients);
+    storeIngredientsExpanded(expandedIngredients);
   };
 
   return (
@@ -77,7 +83,7 @@ const Ingredients: FC<IngredientsProps> = ({
         <Grid container justifyContent="flex-end">
           <IconButton
             onClick={() => {
-              //storeIngredientsExpanded([]);
+              storeIngredientsExpanded([]);
               const ingredient: Ingredient = {};
               arrayHelpers.push(ingredient);
             }}
@@ -95,9 +101,9 @@ const Ingredients: FC<IngredientsProps> = ({
               <Accordion
                 style={{ border: 'none' }}
                 key={getKey(index)}
-                // onChange={() => ingredientsAccordionClicked(getKey(index))}
-                // defaultExpanded={expandedIngredients.includes(getKey(index))}
-                defaultExpanded={false}
+                onChange={() => ingredientsAccordionClicked(getKey(index))}
+                defaultExpanded={expandedIngredients.includes(getKey(index))}
+                // defaultExpanded={false}
               >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}

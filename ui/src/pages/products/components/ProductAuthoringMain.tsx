@@ -11,12 +11,8 @@ import {
   ExternalIdentifier,
   MedicationPackageDetails,
   MedicationPackageQuantity,
-  MedicationProductQuantity,
 } from '../../../types/authoring.ts';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Button,
   Grid,
@@ -25,22 +21,19 @@ import {
   Tab,
   Tabs,
   TextField,
-  Typography,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { Stack } from '@mui/system';
 import { experimentalStyled as styled, useTheme } from '@mui/material/styles';
 import { Concept } from '../../../types/concept.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
-import conceptService from '../../../api/ConceptService.ts';
 
 import { AddCircle } from '@mui/icons-material';
 import CustomTabPanel, { a11yProps } from './CustomTabPanel.tsx';
-import Ingredients from './Ingredients.tsx';
 import SearchIcon from '@mui/icons-material/Search';
 import { GridDeleteIcon } from '@mui/x-data-grid';
 import PackageSearchAndAddModal from './PackageSearchAndAddModal.tsx';
+import ContainedProducts from './ContainedProducts.tsx';
 
 export interface ProductAuthoringMainProps {
   packageDetails: MedicationPackageDetails;
@@ -78,13 +71,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     color: '#CD7F32',
     fontWeight: 'bold',
     fontSize: 'medium',
-  });
-  const OuterBox = styled(Box)({
-    border: `1px solid ${theme.palette.divider}`,
-    color: 'green',
-    fontWeight: 'bold',
-    fontSize: 'medium',
-    marginBottom: '15px',
   });
   const InnerBox = styled(Box)({
     border: '0 solid #f0f0f0',
@@ -124,9 +110,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     };
 
     const handleSearchAndAddPackage = (newValue: number) => {
-      // setValue(newValue);
-      // const medicationPackageQty:MedicationPackageQuantity = {packageDetails:{externalIdentifiers:[],containedPackages:[], containedProducts:[{productDetails:{activeIngredients:[{}]}}]}}
-      // arrayHelpers.push(medicationPackageQty);
       handleToggleModal();
       // setValue(newValue);
     };
@@ -319,6 +302,10 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       partOfPackage={true}
                       showTPU={true}
                       arrayHelpers={arrayHelpers}
+                      units={units}
+                      doseForms={doseForms}
+                      brandProducts={brandProducts}
+                      ingredients={ingredients}
                     />
                   </>
                 )}
@@ -329,324 +316,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
       </>
     );
   }
-
-  interface ContainedProductsProps {
-    packageIndex?: number;
-    partOfPackage: boolean;
-    showTPU: boolean;
-    arrayHelpers: FieldArrayRenderProps;
-  }
-  const ContainedProducts: FC<ContainedProductsProps> = ({
-    packageIndex,
-    partOfPackage,
-    showTPU,
-    arrayHelpers,
-  }) => {
-    //const [name, setName] = React.useState("");
-    const { values } = useFormikContext<MedicationPackageDetails>();
-
-    const containedProducts = partOfPackage
-      ? values.containedPackages[packageIndex as number].packageDetails
-          ?.containedProducts
-      : values.containedProducts;
-    const productsArray = partOfPackage
-      ? `containedPackages[${packageIndex}].packageDetails.containedProducts`
-      : 'containedProducts';
-
-    const [specialFormDoses, setSpecialFormDoses] = useState<Concept[]>([]);
-    const [selectedDoseForm, setSelectedDoseForm] = useState<Concept>();
-    const [expandedProducts, setExpandedProducts] = useState<string[]>([]);
-
-    const productAccordionClicked = (key: string) => {
-      if (expandedProducts.includes(key)) {
-        setExpandedProducts(
-          expandedProducts.filter((value: string) => value !== key),
-        );
-      } else {
-        setExpandedProducts([...expandedProducts, key]);
-      }
-    };
-    const productKey = (index: number) => {
-      return `product-key-${index}`;
-    };
-    useEffect(() => {
-      async function fetchSpecialFormDoses() {
-        setSpecialFormDoses([]);
-        try {
-          let concepts: Concept[] = [];
-          if (selectedDoseForm) {
-            const conceptId = selectedDoseForm.conceptId.trim();
-            const ecl = '<' + conceptId;
-
-            concepts = await conceptService.searchConceptByEcl(ecl);
-            setSpecialFormDoses(concepts);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
-      void fetchSpecialFormDoses().then(r => r);
-    }, [selectedDoseForm]);
-
-    const ProductDetails = () => {
-      return (
-        <div>
-          <Grid container justifyContent="flex-end">
-            <Stack direction="row" spacing={0} alignItems="center">
-              <IconButton aria-label="create" size="large">
-                <SearchIcon fontSize="inherit" />
-              </IconButton>
-              <IconButton
-                onClick={() => {
-                  const productQuantity: MedicationProductQuantity = {
-                    productDetails: { activeIngredients: [{}] },
-                  };
-                  arrayHelpers.push(productQuantity);
-                }}
-                aria-label="create"
-                size="large"
-              >
-                <AddCircle fontSize="inherit" />
-              </IconButton>
-            </Stack>
-          </Grid>
-
-          {containedProducts.map((containedProduct, index) => {
-            const activeIngredientsArray = partOfPackage
-              ? `containedPackages[${packageIndex}].packageDetails.containedProducts[${index}].productDetails.activeIngredients`
-              : `containedProducts[${index}].productDetails.activeIngredients`;
-            return (
-              <div key={productKey(index)} style={{ marginTop: '10px' }}>
-                <Accordion
-                  key={productKey(index)}
-                  style={{ border: 'none' }}
-                  onChange={() => productAccordionClicked(productKey(index))}
-                  expanded={expandedProducts.includes(productKey(index))}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    //aria-expanded={true}
-
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                  >
-                    <Grid xs={40} item={true}>
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <Grid item xs={10}>
-                          <Typography>
-                            {containedProduct.productDetails?.productName
-                              ? containedProduct.productDetails?.productName?.pt
-                                  .term
-                              : 'untitled'}
-                          </Typography>
-                        </Grid>
-                        <Grid container justifyContent="flex-end">
-                          <Stack
-                            direction="row"
-                            spacing={0}
-                            alignItems="center"
-                          >
-                            <IconButton
-                              aria-label="delete"
-                              size="large"
-                              onClick={() => arrayHelpers.remove(index)}
-                            >
-                              <GridDeleteIcon fontSize="inherit" />
-                            </IconButton>
-                          </Stack>
-                        </Grid>
-                      </Stack>
-                    </Grid>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Grid
-                      container
-                      rowSpacing={1}
-                      columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                    >
-                      <Grid xs={6} key={'left'} item={true}>
-                        {showTPU ? (
-                          <OuterBox component="fieldset">
-                            <legend>Product Details</legend>
-                            <InnerBox component="fieldset">
-                              <legend>Brand Name</legend>
-                              <Field
-                                name={`${productsArray}[${index}].productDetails.productName`}
-                                id={`${productsArray}[${index}].productDetails.productName`}
-                                optionValues={brandProducts}
-                                getOptionLabel={(option: Concept) =>
-                                  option.pt.term
-                                }
-                                component={ProductAutocomplete}
-                                fullWidth
-                                variant="outlined"
-                                margin="dense"
-                                disableClearable={true}
-                              />
-                            </InnerBox>
-                          </OuterBox>
-                        ) : (
-                          <div></div>
-                        )}
-
-                        <OuterBox component="fieldset">
-                          <legend>Active Ingredients</legend>
-                          <FieldArray name={activeIngredientsArray}>
-                            {arrayHelpers => (
-                              <>
-                                <Ingredients
-                                  containedProductIndex={index}
-                                  packageIndex={
-                                    partOfPackage
-                                      ? (packageIndex as number)
-                                      : undefined
-                                  }
-                                  partOfPackage={partOfPackage}
-                                  arrayHelpers={arrayHelpers}
-                                  units={units}
-                                  ingredients={ingredients}
-                                />
-                              </>
-                            )}
-                          </FieldArray>
-                          {/*<pre>{JSON.stringify(values.containedProducts[0].productDetails.activeIngredients, null, 2)}</pre>*/}
-                        </OuterBox>
-                      </Grid>
-                      <Grid xs={6} key={'right'} item={true}>
-                        <OuterBox
-                          component="fieldset"
-                          sx={{
-                            display: 'grid',
-                          }}
-                        >
-                          <legend>Dose Forms</legend>
-                          <InnerBox component="fieldset">
-                            <legend>Generic Dose Form</legend>
-                            <Field
-                              name={`${productsArray}[${index}].productDetails.genericForm`}
-                              id={`${productsArray}[${index}].productDetails.genericForm`}
-                              optionValues={doseForms}
-                              getOptionLabel={(option: Concept) =>
-                                option.pt.term
-                              }
-                              setval={setSelectedDoseForm}
-                              component={ProductAutocomplete}
-                              fullWidth
-                              variant="outlined"
-                              margin="dense"
-                            />
-                          </InnerBox>
-                          <InnerBox component="fieldset">
-                            <legend>Specific Dose Form</legend>
-
-                            <Field
-                              name={`${productsArray}[${index}].productDetails.specificForm`}
-                              id={`${productsArray}[${index}].productDetails.specificForm`}
-                              optionValues={specialFormDoses}
-                              getOptionLabel={(option: Concept) =>
-                                option.pt.term
-                              }
-                              component={ProductAutocomplete}
-                              fullWidth
-                              variant="outlined"
-                              margin="dense"
-                            />
-                          </InnerBox>
-
-                          <InnerBox component="fieldset">
-                            <legend>Unit Size</legend>
-
-                            <Stack
-                              direction="row"
-                              spacing={2}
-                              alignItems={'center'}
-                            >
-                              <Grid item xs={2}>
-                                <Field
-                                  as={TextField}
-                                  name={`${productsArray}[${index}].productDetails.quantity.value`}
-                                  fullWidth
-                                  variant="outlined"
-                                  margin="dense"
-                                  InputLabelProps={{ shrink: true }}
-                                  value={
-                                    containedProduct.productDetails?.quantity
-                                      ?.value || ''
-                                  }
-                                />
-                              </Grid>
-                              <Grid item xs={10}>
-                                <Field
-                                  name={`${productsArray}[${index}].productDetails.quantity.unit`}
-                                  id={`${productsArray}[${index}].productDetails.quantity.unit`}
-                                  optionValues={units}
-                                  getOptionLabel={(option: Concept) =>
-                                    option.pt.term
-                                  }
-                                  component={ProductAutocomplete}
-                                />
-                              </Grid>
-                            </Stack>
-                          </InnerBox>
-                          <InnerBox component="fieldset">
-                            <legend>Pack Size</legend>
-
-                            <Stack
-                              direction="row"
-                              spacing={2}
-                              alignItems={'center'}
-                            >
-                              <Grid item xs={2}>
-                                <Field
-                                  as={TextField}
-                                  name={`${productsArray}[${index}].value`}
-                                  fullWidth
-                                  variant="outlined"
-                                  margin="dense"
-                                  InputLabelProps={{ shrink: true }}
-                                  value={containedProduct.value || ''}
-                                />
-                              </Grid>
-                              <Grid item xs={10}>
-                                <Field
-                                  name={`${productsArray}[${index}].unit`}
-                                  id={`${productsArray}[${index}].unit`}
-                                  optionValues={units}
-                                  getOptionLabel={(option: Concept) =>
-                                    option.pt.term
-                                  }
-                                  component={ProductAutocomplete}
-                                />
-                              </Grid>
-                            </Stack>
-                          </InnerBox>
-                        </OuterBox>
-                      </Grid>
-                    </Grid>
-                  </AccordionDetails>
-                </Accordion>
-              </div>
-            );
-          })}
-        </div>
-      );
-    };
-    return (
-      <>
-        {partOfPackage ? (
-          <Level2Box component="fieldset">
-            <legend>Contained Products</legend>
-            <ProductDetails></ProductDetails>
-          </Level2Box>
-        ) : (
-          <Level1Box component="fieldset">
-            <legend>Contained Products</legend>
-            <ProductDetails></ProductDetails>
-          </Level1Box>
-        )}
-      </>
-    );
-  };
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -751,6 +420,10 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                 showTPU={true}
                                 partOfPackage={false}
                                 arrayHelpers={arrayHelpers}
+                                units={units}
+                                doseForms={doseForms}
+                                brandProducts={brandProducts}
+                                ingredients={ingredients}
                               />
                             </>
                           );

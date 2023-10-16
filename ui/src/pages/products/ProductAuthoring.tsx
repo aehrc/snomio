@@ -13,6 +13,7 @@ import { Stack } from '@mui/system';
 import useInitializeConcepts from '../../hooks/api/useInitializeConcepts.tsx';
 import Loading from '../../components/Loading.tsx';
 import { Concept } from '../../types/concept.ts';
+import { storeIngredientsExpanded } from '../../utils/helpers/conceptUtils.ts';
 
 function ProductAuthoring() {
   const conceptStore = useConceptStore();
@@ -24,6 +25,7 @@ function ProductAuthoring() {
   const theme = useTheme();
   const { conceptsLoading } = useInitializeConcepts();
   const [selectedProduct, setSelectedProduct] = useState<Concept | null>(null);
+  const [isLoadingMedication, setLoadingMedication] = useState(true);
   const handleSelectedProductChange = (concept: Concept | null) => {
     setSelectedProduct(concept);
   };
@@ -36,11 +38,19 @@ function ProductAuthoring() {
         if (packageDetails) {
           setName(packageDetails.productName.conceptId);
         }
+        storeIngredientsExpanded([]);
+        setLoadingMedication(false);
       })
       .catch(error);
   }, [selectedProduct]);
   if (conceptsLoading) {
     return <Loading />;
+  } else if (isLoadingMedication) {
+    return (
+      <Loading
+        message={`Loading Medication details for ${selectedProduct?.conceptId}`}
+      />
+    );
   } else {
     return (
       <Grid>
