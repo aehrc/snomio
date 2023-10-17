@@ -1,8 +1,4 @@
-import {
-  styled,
-  useTheme,
-  withTheme,
-} from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import { ReactNode } from 'react';
 
@@ -51,8 +47,6 @@ export const OuterBox = ({ children, component }: BoxProps) => {
 };
 
 export const InnerBox = ({ children, component }: BoxProps) => {
-  const theme = useTheme();
-
   const StyledBox = styled(Box)({
     border: '0 solid #f0f0f0',
     color: '#003665',

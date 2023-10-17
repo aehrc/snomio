@@ -23,17 +23,13 @@ import {
   Typography,
 } from '@mui/material';
 import { Stack } from '@mui/system';
-import SearchIcon from '@mui/icons-material/Search';
 import { AddCircle, Delete } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { GridDeleteIcon } from '@mui/x-data-grid';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 import Ingredients from './Ingredients.tsx';
 import { experimentalStyled as styled, useTheme } from '@mui/material/styles';
-import PackageSearchAndAddModal from './PackageSearchAndAddModal.tsx';
 import ProductSearchAndAddModal from './ProductSearchAndAddModal.tsx';
-import SearchAndAddIcon from "../../../components/icons/SearchAndAddIcon.tsx";
-
+import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
 
 interface ContainedProductsProps {
   packageIndex?: number;
@@ -163,7 +159,10 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               onClick={handleSearchAndAddProduct}
             >
               <Tooltip title={'Search and add an existing product'}>
-                <SearchAndAddIcon width={"20px"} alt={'Search and add an existing product'}/>
+                <SearchAndAddIcon
+                  width={'20px'}
+                  alt={'Search and add an existing product'}
+                />
               </Tooltip>
             </IconButton>
           </Stack>

@@ -7,14 +7,18 @@ import { ThemeMode } from '../../types/config';
 
 interface SearchAndAddIconProps {
   width: string;
-  alt:string
+  alt: string;
 }
 const SearchAndAddIcon = ({ width, alt }: SearchAndAddIconProps) => {
   const theme = useTheme();
 
   return (
     <img
-      src={theme.palette.mode === ThemeMode.DARK ? searchAndAddIcon : searchAndAddIcon}
+      src={
+        theme.palette.mode === ThemeMode.DARK
+          ? searchAndAddIcon
+          : searchAndAddIcon
+      }
       alt={alt}
       title={alt}
       width={width}

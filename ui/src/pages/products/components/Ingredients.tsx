@@ -8,10 +8,8 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Box,
   Grid,
   IconButton,
-  styled,
   TextField,
   Tooltip,
   Typography,
@@ -26,6 +24,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Stack } from '@mui/system';
 import { Concept } from '../../../types/concept.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
+import { InnerBox } from './style/ProductBoxes.tsx';
 
 interface IngredientsProps {
   packageIndex?: number;
@@ -48,13 +47,6 @@ const Ingredients: FC<IngredientsProps> = ({
   const [expandedIngredients, setExpandedIngredients] = useState<string[]>(
     ingredientsExpandedStored,
   );
-  const InnerBox = styled(Box)({
-    border: '0 solid #f0f0f0',
-    color: '#003665',
-    marginTop: '10px',
-    marginBottom: '10px',
-    fontSize: 'small',
-  });
 
   let activeIngredients: Ingredient[] = [];
 

@@ -21,19 +21,18 @@ import {
 } from '@mui/material';
 
 import { Stack } from '@mui/system';
-import { experimentalStyled as styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { Concept } from '../../../types/concept.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 
 import { AddCircle, Delete } from '@mui/icons-material';
 import CustomTabPanel, { a11yProps } from './CustomTabPanel.tsx';
-import SearchIcon from '@mui/icons-material/Search';
 import PackageSearchAndAddModal from './PackageSearchAndAddModal.tsx';
 import ContainedProducts from './ContainedProducts.tsx';
 import ArtgAutocomplete from './ArtgAutocomplete.tsx';
 import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
 import { Level1Box, Level2Box, InnerBox } from './style/ProductBoxes.tsx';
-import SearchAndAddIcon from "../../../components/icons/SearchAndAddIcon.tsx";
+import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
 
 export interface ProductAuthoringMainProps {
   units: Concept[];
@@ -46,8 +45,6 @@ export interface ProductAuthoringMainProps {
 function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   const { units, containerTypes, ingredients, doseForms, brandProducts } =
     productprops;
-  const theme = useTheme();
-
   interface ContainedPackagesProps {
     arrayHelpers: FieldArrayRenderProps;
   }
@@ -146,7 +143,10 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
               <Tab
                 icon={
                   <Tooltip title="Search and add an existing package">
-                    <SearchAndAddIcon width={"20px"} alt={'Search and add an existing package'}/>
+                    <SearchAndAddIcon
+                      width={'20px'}
+                      alt={'Search and add an existing package'}
+                    />
                   </Tooltip>
                 }
                 onClick={handleSearchAndAddPackage}
