@@ -21,7 +21,6 @@ import {
 } from '@mui/material';
 
 import { Stack } from '@mui/system';
-import { useTheme } from '@mui/material/styles';
 import { Concept } from '../../../types/concept.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 
