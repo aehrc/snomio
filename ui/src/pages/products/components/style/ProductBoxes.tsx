@@ -1,5 +1,5 @@
 import {
-  experimentalStyled as styled,
+  styled,
   useTheme,
   withTheme,
 } from '@mui/material/styles';
