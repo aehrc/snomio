@@ -32,6 +32,7 @@ import PackageSearchAndAddModal from './PackageSearchAndAddModal.tsx';
 import ContainedProducts from './ContainedProducts.tsx';
 import ArtgAutocomplete from './ArtgAutocomplete.tsx';
 import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
+import { Level1Box, Level2Box, InnerBox } from './style/ProductBoxes.tsx';
 
 export interface ProductAuthoringMainProps {
   units: Concept[];
@@ -45,26 +46,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   const { units, containerTypes, ingredients, doseForms, brandProducts } =
     productprops;
   const theme = useTheme();
-
-  const Level1Box = styled(Box)({
-    border: `1px solid ${theme.palette.divider}`,
-    color: '#003665',
-    fontWeight: 'bold',
-    fontSize: 'larger',
-  });
-  const Level2Box = styled(Box)({
-    border: `1px solid ${theme.palette.divider}`,
-    color: '#CD7F32',
-    fontWeight: 'bold',
-    fontSize: 'medium',
-  });
-  const InnerBox = styled(Box)({
-    border: '0 solid #f0f0f0',
-    color: '#003665',
-    marginTop: '10px',
-    marginBottom: '10px',
-    fontSize: 'small',
-  });
 
   interface ContainedPackagesProps {
     arrayHelpers: FieldArrayRenderProps;
