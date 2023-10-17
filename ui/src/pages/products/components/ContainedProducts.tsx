@@ -32,6 +32,8 @@ import Ingredients from './Ingredients.tsx';
 import { experimentalStyled as styled, useTheme } from '@mui/material/styles';
 import PackageSearchAndAddModal from './PackageSearchAndAddModal.tsx';
 import ProductSearchAndAddModal from './ProductSearchAndAddModal.tsx';
+import SearchAndAddIcon from "../../../components/icons/SearchAndAddIcon.tsx";
+
 
 interface ContainedProductsProps {
   packageIndex?: number;
@@ -161,7 +163,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               onClick={handleSearchAndAddProduct}
             >
               <Tooltip title={'Search and add an existing product'}>
-                <SearchIcon fontSize="medium" />
+                <SearchAndAddIcon width={"20px"} alt={'Search and add an existing product'}/>
               </Tooltip>
             </IconButton>
           </Stack>

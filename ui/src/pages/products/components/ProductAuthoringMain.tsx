@@ -32,6 +32,7 @@ import PackageSearchAndAddModal from './PackageSearchAndAddModal.tsx';
 import ContainedProducts from './ContainedProducts.tsx';
 import ArtgAutocomplete from './ArtgAutocomplete.tsx';
 import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
+import SearchAndAddIcon from "../../../components/icons/SearchAndAddIcon.tsx";
 
 export interface ProductAuthoringMainProps {
   units: Concept[];
@@ -164,7 +165,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
               <Tab
                 icon={
                   <Tooltip title="Search and add an existing package">
-                    <SearchIcon />
+                    <SearchAndAddIcon width={"20px"} alt={'Search and add an existing package'}/>
                   </Tooltip>
                 }
                 onClick={handleSearchAndAddPackage}
