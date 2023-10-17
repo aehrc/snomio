@@ -1,10 +1,8 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Field,
   FieldArray,
   FieldArrayRenderProps,
-  Form,
-  Formik,
   useFormikContext,
 } from 'formik';
 import {
@@ -14,13 +12,12 @@ import {
 } from '../../../types/authoring.ts';
 import {
   Box,
-  Button,
   Grid,
   IconButton,
-  Paper,
   Tab,
   Tabs,
   TextField,
+  Tooltip,
 } from '@mui/material';
 
 import { Stack } from '@mui/system';
@@ -28,17 +25,15 @@ import { experimentalStyled as styled, useTheme } from '@mui/material/styles';
 import { Concept } from '../../../types/concept.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 
-import { AddCircle } from '@mui/icons-material';
+import { AddCircle, Delete } from '@mui/icons-material';
 import CustomTabPanel, { a11yProps } from './CustomTabPanel.tsx';
 import SearchIcon from '@mui/icons-material/Search';
-import { GridDeleteIcon } from '@mui/x-data-grid';
 import PackageSearchAndAddModal from './PackageSearchAndAddModal.tsx';
 import ContainedProducts from './ContainedProducts.tsx';
 import ArtgAutocomplete from './ArtgAutocomplete.tsx';
+import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
 
 export interface ProductAuthoringMainProps {
-  packageDetails: MedicationPackageDetails;
-  show: boolean;
   units: Concept[];
   containerTypes: Concept[];
   ingredients: Concept[];
@@ -47,19 +42,9 @@ export interface ProductAuthoringMainProps {
 }
 
 function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
-  const {
-    packageDetails,
-    units,
-    containerTypes,
-    ingredients,
-    doseForms,
-    brandProducts,
-  } = productprops;
+  const { units, containerTypes, ingredients, doseForms, brandProducts } =
+    productprops;
   const theme = useTheme();
-
-  const handleSubmit = (values: MedicationPackageDetails) => {
-    console.log(values);
-  };
 
   const Level1Box = styled(Box)({
     border: `1px solid ${theme.palette.divider}`,
@@ -91,6 +76,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
 
     const [value, setValue] = React.useState(0);
     const [modalOpen, setModalOpen] = useState(false);
+    const [defaultUnit] = useState(getDefaultUnit(units));
     const handleToggleModal = () => {
       setModalOpen(!modalOpen);
     };
@@ -98,8 +84,11 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
       setValue(newValue);
     };
+
     const handlePackageCreation = () => {
       const medicationPackageQty: MedicationPackageQuantity = {
+        unit: defaultUnit,
+        value: 1,
         packageDetails: {
           externalIdentifiers: [],
           containedPackages: [],
@@ -129,9 +118,21 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
               {values.containedPackages?.map((containedPackage, index) => (
                 <Tab
                   label={
-                    containedPackage?.packageDetails?.productName
-                      ? containedPackage?.packageDetails?.productName?.pt.term
-                      : 'untitled*'
+                    <Tooltip
+                      title={
+                        containedPackage?.packageDetails?.productName
+                          ? containedPackage?.packageDetails?.productName?.pt
+                              .term
+                          : 'untitled*'
+                      }
+                    >
+                      <span>
+                        {containedPackage?.packageDetails?.productName
+                          ? containedPackage?.packageDetails?.productName?.pt
+                              .term
+                          : 'untitled*'}
+                      </span>
+                    </Tooltip>
                   }
                   sx={{
                     color: !containedPackage?.packageDetails?.productName
@@ -143,7 +144,11 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                 />
               ))}
               <Tab
-                icon={<AddCircle />}
+                icon={
+                  <Tooltip title="Create new package">
+                    <AddCircle />
+                  </Tooltip>
+                }
                 onClick={handlePackageCreation}
                 {...a11yProps(
                   values.containedPackages?.length
@@ -157,7 +162,11 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                 }
               />
               <Tab
-                icon={<SearchIcon />}
+                icon={
+                  <Tooltip title="Search and add an existing package">
+                    <SearchIcon />
+                  </Tooltip>
+                }
                 onClick={handleSearchAndAddPackage}
                 {...a11yProps(
                   values.containedPackages?.length
@@ -184,10 +193,13 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                   onClick={() => {
                     arrayHelpers.remove(index);
                   }}
-                  aria-label="create"
-                  size="large"
+                  aria-label="delete"
+                  size="small"
+                  color="error"
                 >
-                  <GridDeleteIcon fontSize="inherit" />
+                  <Tooltip title={'Delete Package'}>
+                    <Delete />
+                  </Tooltip>
                 </IconButton>
               </Grid>
               <FieldArray
@@ -272,13 +284,14 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               variant="outlined"
                               margin="dense"
                               InputLabelProps={{ shrink: true }}
-                              value={containedPackage.value || ''}
+                              value={containedPackage.value || 1}
                             />
                           </Grid>
                           <Grid item xs={3}>
                             <Field
                               name={`containedPackages[${index}].unit`}
                               id={`containedPackages[${index}].unit`}
+                              defaultOption={defaultUnit}
                               optionValues={units}
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
@@ -311,152 +324,117 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     );
   }
 
+  const { values } = useFormikContext<MedicationPackageDetails>();
   return (
-    <Box sx={{ width: '100%' }}>
-      <Grid container>
-        <Grid item sm={12} xs={12}>
-          <Paper>
-            <Box m={2} p={2}>
-              <Formik
-                initialValues={{ ...packageDetails }}
-                enableReinitialize={true}
-                onSubmit={handleSubmit}
-              >
-                {({ values }) => (
-                  <Form
-                    onChange={event => {
-                      console.log(event.currentTarget);
-                    }}
-                  >
-                    {/*<MainBox component="fieldset">*/}
-                    <Level1Box component="fieldset">
-                      <legend>Product Details</legend>
+    <div>
+      {/*<MainBox component="fieldset">*/}
+      <Level1Box component="fieldset">
+        <legend>Product Details</legend>
 
-                      <Stack
-                        direction="row"
-                        spacing={3}
-                        // sx={{ marginLeft: '10px' }}
-                        alignItems="center"
-                      >
-                        <Grid item xs={4}>
-                          <InnerBox component="fieldset">
-                            <legend>Brand Name</legend>
-                            <Field
-                              as={TextField}
-                              name={`productName.pt.term`}
-                              fullWidth
-                              variant="outlined"
-                              margin="dense"
-                              InputLabelProps={{ shrink: true }}
-                            />
-                          </InnerBox>
-                        </Grid>
+        <Stack
+          direction="row"
+          spacing={3}
+          // sx={{ marginLeft: '10px' }}
+          alignItems="center"
+        >
+          <Grid item xs={4}>
+            <InnerBox component="fieldset">
+              <legend>Brand Name</legend>
+              <Field
+                as={TextField}
+                name={`productName.pt.term`}
+                value={values.productName?.pt.term || ''}
+                fullWidth
+                variant="outlined"
+                margin="dense"
+                InputLabelProps={{ shrink: true }}
+              />
+            </InnerBox>
+          </Grid>
 
-                        <Grid item xs={4}>
-                          <InnerBox component="fieldset">
-                            <legend>Container Type</legend>
-                            <Field
-                              name={'containerType'}
-                              id={'containerType'}
-                              optionValues={containerTypes}
-                              getOptionLabel={(option: Concept) =>
-                                option.pt.term
-                              }
-                              component={ProductAutocomplete}
-                              fullWidth
-                              variant="outlined"
-                              margin="dense"
-                            />
-                          </InnerBox>
-                        </Grid>
-                        <Grid item xs={3}>
-                          <InnerBox component="fieldset">
-                            <legend>ARTG ID</legend>
-                            <Field
-                              name={'externalIdentifiers'}
-                              id={'externalIdentifiers'}
-                              optionValues={[]}
-                              getOptionLabel={(option: ExternalIdentifier) =>
-                                option.identifierValue
-                              }
-                              multiple
-                              freeSolo
-                              component={ArtgAutocomplete}
-                              fullWidth
-                              variant="outlined"
-                              margin="dense"
-                            />
-                          </InnerBox>
-                        </Grid>
-                      </Stack>
-                    </Level1Box>
+          <Grid item xs={4}>
+            <InnerBox component="fieldset">
+              <legend>Container Type</legend>
+              <Field
+                name={'containerType'}
+                id={'containerType'}
+                optionValues={containerTypes}
+                getOptionLabel={(option: Concept) => option.pt.term}
+                component={ProductAutocomplete}
+                fullWidth
+                variant="outlined"
+                margin="dense"
+              />
+            </InnerBox>
+          </Grid>
+          <Grid item xs={3}>
+            <InnerBox component="fieldset">
+              <legend>ARTG ID</legend>
+              <Field
+                name={'externalIdentifiers'}
+                id={'externalIdentifiers'}
+                optionValues={[]}
+                getOptionLabel={(option: ExternalIdentifier) =>
+                  option.identifierValue
+                }
+                multiple
+                freeSolo
+                component={ArtgAutocomplete}
+                fullWidth
+                variant="outlined"
+                margin="dense"
+              />
+            </InnerBox>
+          </Grid>
+        </Stack>
+      </Level1Box>
 
-                    <div>
-                      <FieldArray name="containedPackages">
-                        {arrayHelpers => {
-                          return (
-                            <>
-                              <br />
-                              <ContainedPackages arrayHelpers={arrayHelpers} />
-                            </>
-                          );
-                        }}
-                      </FieldArray>
-                      {/*<pre>{JSON.stringify(values.containedPackages, null, 2)}</pre>*/}
-                    </div>
-                    <div>
-                      <FieldArray name="containedProducts">
-                        {arrayHelpers => {
-                          return (
-                            <>
-                              <br />
-                              <ContainedProducts
-                                showTPU={true}
-                                partOfPackage={false}
-                                arrayHelpers={arrayHelpers}
-                                units={units}
-                                doseForms={doseForms}
-                                brandProducts={brandProducts}
-                                ingredients={ingredients}
-                              />
-                            </>
-                          );
-                        }}
-                      </FieldArray>
-                    </div>
-                    {/*) : (*/}
-                    {/*    <div></div>*/}
-                    {/*)}*/}
-
-                    <Box m={1} p={1}>
-                      <Stack spacing={2} direction="row" justifyContent="end">
-                        <Button variant="contained" type="submit" color="info">
-                          Save
-                        </Button>
-                        <Button
-                          variant="contained"
-                          type="submit"
-                          color="success"
-                        >
-                          Preview
-                        </Button>
-                        <Button
-                          variant="contained"
-                          type="submit"
-                          color="primary"
-                        >
-                          Commit
-                        </Button>
-                      </Stack>
-                    </Box>
-                  </Form>
-                )}
-              </Formik>
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-    </Box>
+      {values.containedPackages.length > 0 ||
+      (values.containedPackages.length === 0 &&
+        values.containedProducts.length === 0) ? (
+        <div>
+          <FieldArray name="containedPackages">
+            {arrayHelpers => {
+              return (
+                <>
+                  <br />
+                  <ContainedPackages arrayHelpers={arrayHelpers} />
+                </>
+              );
+            }}
+          </FieldArray>
+        </div>
+      ) : (
+        <div></div>
+      )}
+      {values.containedProducts.length > 0 ||
+      (values.containedPackages.length === 0 &&
+        values.containedProducts.length === 0) ? (
+        <div>
+          <FieldArray name="containedProducts">
+            {arrayHelpers => {
+              return (
+                <>
+                  <br />
+                  <ContainedProducts
+                    showTPU={true}
+                    partOfPackage={false}
+                    arrayHelpers={arrayHelpers}
+                    units={units}
+                    doseForms={doseForms}
+                    brandProducts={brandProducts}
+                    ingredients={ingredients}
+                  />
+                </>
+              );
+            }}
+          </FieldArray>
+        </div>
+      ) : (
+        <div></div>
+      )}
+      {/*</MainBox>*/}
+    </div>
   );
 }
 

@@ -56,7 +56,7 @@ export default function PackageSearchAndAddModal({
   };
   return (
     <BaseModal open={open} handleClose={handleClose}>
-      <BaseModalHeader title="Add Package" />
+      <BaseModalHeader title="Add an existing Package" />
       <BaseModalBody>
         <SearchProduct
           disableLinkOpen={true}

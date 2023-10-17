@@ -56,7 +56,7 @@ export default function ProductSearchAndAddModal({
   };
   return (
     <BaseModal open={open} handleClose={handleClose}>
-      <BaseModalHeader title="Add Product" />
+      <BaseModalHeader title="Add an existing Product" />
       <BaseModalBody>
         <SearchProduct
           disableLinkOpen={true}

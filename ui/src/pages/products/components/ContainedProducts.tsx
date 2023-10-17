@@ -19,11 +19,12 @@ import {
   Grid,
   IconButton,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { Stack } from '@mui/system';
 import SearchIcon from '@mui/icons-material/Search';
-import { AddCircle } from '@mui/icons-material';
+import { AddCircle, Delete } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { GridDeleteIcon } from '@mui/x-data-grid';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
@@ -140,13 +141,6 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
         <Grid container justifyContent="flex-end">
           <Stack direction="row" spacing={0} alignItems="center">
             <IconButton
-              aria-label="create"
-              size="large"
-              onClick={handleSearchAndAddProduct}
-            >
-              <SearchIcon fontSize="medium" />
-            </IconButton>
-            <IconButton
               onClick={() => {
                 const productQuantity: MedicationProductQuantity = {
                   productDetails: { activeIngredients: [{}] },
@@ -156,7 +150,19 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               aria-label="create"
               size="large"
             >
-              <AddCircle fontSize="medium" />
+              <Tooltip title={'Create new product'}>
+                <AddCircle fontSize="medium" />
+              </Tooltip>
+            </IconButton>
+
+            <IconButton
+              aria-label="create"
+              size="large"
+              onClick={handleSearchAndAddProduct}
+            >
+              <Tooltip title={'Search and add an existing product'}>
+                <SearchIcon fontSize="medium" />
+              </Tooltip>
             </IconButton>
           </Stack>
         </Grid>
@@ -198,17 +204,21 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                           {containedProduct.productDetails?.productName
                             ? containedProduct.productDetails?.productName?.pt
                                 .term
-                            : 'untitled*'}
+                            : 'Untitled*'}
                         </Typography>
                       </Grid>
                       <Grid container justifyContent="flex-end">
                         <Stack direction="row" spacing={0} alignItems="center">
                           <IconButton
                             aria-label="delete"
-                            size="large"
+                            size="small"
                             onClick={() => arrayHelpers.remove(index)}
+                            color="error"
+                            sx={{ mt: 0.25 }}
                           >
-                            <GridDeleteIcon fontSize="inherit" />
+                            <Tooltip title={'Delete Product'}>
+                              <Delete />
+                            </Tooltip>
                           </IconButton>
                         </Stack>
                       </Grid>

@@ -97,3 +97,6 @@ export function addOrRemoveFromArray(array: string[], item: string) {
     return result;
   }
 }
+export function getDefaultUnit(units: Concept[]) {
+  return units.find(unit => unit.pt.term === 'Each');
+}

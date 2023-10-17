@@ -13,6 +13,7 @@ import {
   IconButton,
   styled,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import {
@@ -20,12 +21,11 @@ import {
   ingredientsExpandedStored,
   storeIngredientsExpanded,
 } from '../../../utils/helpers/conceptUtils.ts';
-import { AddCircle } from '@mui/icons-material';
+import { AddCircle, Delete } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Stack } from '@mui/system';
 import { Concept } from '../../../types/concept.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
-import { GridDeleteIcon } from '@mui/x-data-grid';
 
 interface IngredientsProps {
   packageIndex?: number;
@@ -90,7 +90,9 @@ const Ingredients: FC<IngredientsProps> = ({
             aria-label="create"
             size="large"
           >
-            <AddCircle fontSize="inherit" />
+            <Tooltip title={'Add new Ingredient'}>
+              <AddCircle fontSize="inherit" />
+            </Tooltip>
           </IconButton>
         </Grid>
 
@@ -122,17 +124,21 @@ const Ingredients: FC<IngredientsProps> = ({
                         >
                           {activeIngredient.activeIngredient
                             ? activeIngredient.activeIngredient?.pt.term
-                            : 'untitled*'}
+                            : 'Untitled*'}
                         </Typography>
                       </Grid>
                       <Grid container justifyContent="flex-end">
                         <Stack direction="row" spacing={0} alignItems="center">
                           <IconButton
                             aria-label="delete"
-                            size="large"
+                            size="small"
                             onClick={() => arrayHelpers.remove(index)}
+                            color="error"
+                            sx={{ mt: 0.25 }}
                           >
-                            <GridDeleteIcon fontSize="inherit" />
+                            <Tooltip title={'Delete Ingredient'}>
+                              <Delete />
+                            </Tooltip>
                           </IconButton>
                         </Stack>
                       </Grid>

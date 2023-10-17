@@ -5,11 +5,13 @@ import { FieldProps } from 'formik';
 interface ProductAutocompleteProps {
   setval: (val: any) => void;
   optionValues: any[];
+  defaultOption?: Concept;
 }
 const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
   field,
   form: { touched, setTouched, setFieldValue },
   setval,
+  defaultOption,
   optionValues,
 
   ...props
@@ -19,6 +21,7 @@ const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
     <Autocomplete
       {...props}
       {...field}
+      defaultValue={defaultOption ? defaultOption : null}
       value={(field.value as Concept) || null}
       onChange={(_, value) => {
         void setFieldValue(name, value);
