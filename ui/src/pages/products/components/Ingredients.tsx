@@ -113,10 +113,16 @@ const Ingredients: FC<IngredientsProps> = ({
                   <Grid xs={40} item={true}>
                     <Stack direction="row" spacing={2} alignItems="center">
                       <Grid item xs={10}>
-                        <Typography>
+                        <Typography
+                          sx={{
+                            color: !activeIngredient.activeIngredient
+                              ? 'red'
+                              : 'inherit',
+                          }}
+                        >
                           {activeIngredient.activeIngredient
                             ? activeIngredient.activeIngredient?.pt.term
-                            : 'untitled'}
+                            : 'untitled*'}
                         </Typography>
                       </Grid>
                       <Grid container justifyContent="flex-end">

@@ -55,7 +55,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   const theme = useTheme();
   const Level1Box = styled(Box)({
     border: `1px solid ${theme.palette.divider}`,
-    color: '#6495ed ',
+    color: '#003665',
     fontWeight: 'bold',
     fontSize: 'larger',
   });
@@ -144,7 +144,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               size="large"
               onClick={handleSearchAndAddProduct}
             >
-              <SearchIcon fontSize="inherit" />
+              <SearchIcon fontSize="medium" />
             </IconButton>
             <IconButton
               onClick={() => {
@@ -156,7 +156,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               aria-label="create"
               size="large"
             >
-              <AddCircle fontSize="inherit" />
+              <AddCircle fontSize="medium" />
             </IconButton>
           </Stack>
         </Grid>
@@ -188,11 +188,17 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                   <Grid xs={40} item={true}>
                     <Stack direction="row" spacing={2} alignItems="center">
                       <Grid item xs={10}>
-                        <Typography>
+                        <Typography
+                          sx={{
+                            color: !containedProduct.productDetails?.productName
+                              ? 'red'
+                              : 'inherit',
+                          }}
+                        >
                           {containedProduct.productDetails?.productName
                             ? containedProduct.productDetails?.productName?.pt
                                 .term
-                            : 'untitled'}
+                            : 'untitled*'}
                         </Typography>
                       </Grid>
                       <Grid container justifyContent="flex-end">

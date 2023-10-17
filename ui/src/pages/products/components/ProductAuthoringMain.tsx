@@ -63,7 +63,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
 
   const Level1Box = styled(Box)({
     border: `1px solid ${theme.palette.divider}`,
-    color: '#6495ed ',
+    color: '#003665',
     fontWeight: 'bold',
     fontSize: 'larger',
   });
@@ -98,8 +98,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
       setValue(newValue);
     };
-    const handlePackageCreation = (newValue: number) => {
-      setValue(newValue);
+    const handlePackageCreation = () => {
       const medicationPackageQty: MedicationPackageQuantity = {
         packageDetails: {
           externalIdentifiers: [],
@@ -108,11 +107,12 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
         },
       };
       arrayHelpers.push(medicationPackageQty);
+      setValue(values.containedPackages.length);
     };
 
-    const handleSearchAndAddPackage = (newValue: number) => {
+    const handleSearchAndAddPackage = () => {
       handleToggleModal();
-      // setValue(newValue);
+      setValue(values.containedPackages.length);
     };
 
     return (
@@ -131,21 +131,20 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                   label={
                     containedPackage?.packageDetails?.productName
                       ? containedPackage?.packageDetails?.productName?.pt.term
-                      : 'untitled'
+                      : 'untitled*'
                   }
+                  sx={{
+                    color: !containedPackage?.packageDetails?.productName
+                      ? 'red'
+                      : 'inherit',
+                  }}
                   {...a11yProps(index)}
                   key={index}
                 />
               ))}
               <Tab
                 icon={<AddCircle />}
-                onClick={() =>
-                  handlePackageCreation(
-                    values.containedPackages?.length
-                      ? values.containedPackages?.length + 1
-                      : 0,
-                  )
-                }
+                onClick={handlePackageCreation}
                 {...a11yProps(
                   values.containedPackages?.length
                     ? values.containedPackages?.length + 1
@@ -159,13 +158,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
               />
               <Tab
                 icon={<SearchIcon />}
-                onClick={() =>
-                  handleSearchAndAddPackage(
-                    values.containedPackages?.length
-                      ? values.containedPackages?.length + 2
-                      : 1,
-                  )
-                }
+                onClick={handleSearchAndAddPackage}
                 {...a11yProps(
                   values.containedPackages?.length
                     ? values.containedPackages?.length + 2

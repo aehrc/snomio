@@ -10,6 +10,7 @@ import ConceptService from '../../../api/ConceptService.ts';
 import { FieldArrayRenderProps } from 'formik';
 import { MedicationProductQuantity } from '../../../types/authoring.ts';
 import { ECL_EXISTING_PRODUCT_TO_PACKAGE } from '../../../utils/helpers/EclUtils.ts';
+import { useSnackbar } from 'notistack';
 
 interface ProductSearchAndAddModalProps {
   open: boolean;
@@ -25,20 +26,31 @@ export default function ProductSearchAndAddModal({
   const handleSelectedProductChange = (concept: Concept | null) => {
     setSelectedProduct(concept);
   };
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = () => {
     if (selectedProduct) {
       void (async () => {
-        const productDetails = await ConceptService.fetchMedicationProduct(
-          selectedProduct.conceptId,
-        );
-        // packageDetails.containedProducts.map(p => arrayHelpers.push(p));
+        try {
+          const productDetails = await ConceptService.fetchMedicationProduct(
+            selectedProduct.conceptId,
+          );
+          // packageDetails.containedProducts.map(p => arrayHelpers.push(p));
 
-        const productQuantity: MedicationProductQuantity = {
-          productDetails: productDetails,
-        };
-        arrayHelpers.push(productQuantity);
-        handleClose();
+          const productQuantity: MedicationProductQuantity = {
+            productDetails: productDetails,
+          };
+          arrayHelpers.push(productQuantity);
+          handleClose();
+        } catch (error) {
+          handleClose();
+          enqueueSnackbar(
+            `Unable to load Medications for ${selectedProduct.conceptId}`,
+            {
+              variant: 'error',
+            },
+          );
+        }
       })();
     }
   };
