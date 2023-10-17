@@ -33,6 +33,7 @@ import ContainedProducts from './ContainedProducts.tsx';
 import ArtgAutocomplete from './ArtgAutocomplete.tsx';
 import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
 import { Level1Box, Level2Box, InnerBox } from './style/ProductBoxes.tsx';
+import SearchAndAddIcon from "../../../components/icons/SearchAndAddIcon.tsx";
 
 export interface ProductAuthoringMainProps {
   units: Concept[];
