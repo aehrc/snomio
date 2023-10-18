@@ -34,6 +34,7 @@ import {
   Level2Box,
   OuterBox,
 } from './style/ProductBoxes.tsx';
+import ProductConfirmationModal from "./ProductConfirmationModal.tsx";
 
 interface ContainedProductsProps {
   packageIndex?: number;
@@ -71,6 +72,19 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   const [expandedProducts, setExpandedProducts] = useState<string[]>([]);
 
   const [modalOpen, setModalOpen] = useState(false);
+
+
+
+  const [disabled, setDisabled] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [indexToDelete, setIndexToDelete] = useState(-1);
+  const [deleteModalContent, setDeleteModalContent] = useState('');
+
+  const handleDeleteProduct = () => {
+    arrayHelpers.remove(indexToDelete);
+    setDeleteModalOpen(false);
+  };
+
   const handleToggleModal = () => {
     setModalOpen(!modalOpen);
   };
@@ -141,6 +155,17 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
             </Tooltip>
           </Stack>
         </Grid>
+        <ProductConfirmationModal
+            open={deleteModalOpen}
+            content={deleteModalContent}
+            handleClose={() => {
+              setDeleteModalOpen(false);
+            }}
+            title={"Confirm Delete Product"}
+            disabled={disabled}
+            action={"Delete"}
+            handleDelete={handleDeleteProduct}
+        />
         <ProductSearchAndAddModal
           open={modalOpen}
           handleClose={handleToggleModal}
@@ -159,6 +184,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                 onChange={() => productAccordionClicked(productKey(index))}
                 expanded={expandedProducts.includes(productKey(index))}
               >
+
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   //aria-expanded={true}
@@ -187,7 +213,10 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                           <IconButton
                             aria-label="delete"
                             size="small"
-                            onClick={() => arrayHelpers.remove(index)}
+                            onClick={() => {setIndexToDelete(index);
+                              setDeleteModalContent(`Confirm Delete Product "${containedProduct.productDetails?.productName ? containedProduct.productDetails?.productName?.pt.term : "Untitled" }?"`);
+                              setDeleteModalOpen(true);}
+                            }
                             color="error"
                             sx={{ mt: 0.25 }}
                           >
@@ -195,6 +224,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                               <Delete />
                             </Tooltip>
                           </IconButton>
+
                         </Stack>
                       </Grid>
                     </Stack>

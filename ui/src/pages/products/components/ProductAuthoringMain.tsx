@@ -37,6 +37,8 @@ import ArtgAutocomplete from './ArtgAutocomplete.tsx';
 import { useTheme } from '@mui/material/styles';
 import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
 import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
+import DeleteConfirmationModal from "../../tickets/individual/components/edit/DeleteConfirmationModal.tsx";
+import ProductConfirmationModal from "./ProductConfirmationModal.tsx";
 
 export interface ProductAuthoringMainProps {
   packageDetails: MedicationPackageDetails;
@@ -98,6 +100,16 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     const handleToggleModal = () => {
       setModalOpen(!modalOpen);
     };
+
+    const [disabled, setDisabled] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [indexToDelete, setIndexToDelete] = useState(-1);
+
+    const handleDeletePackage = () => {
+      arrayHelpers.remove(indexToDelete);
+      setDeleteModalOpen(false);
+    };
+
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
       setValue(newValue);
@@ -209,9 +221,23 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
           {values.containedPackages?.map((containedPackage, index) => (
             <CustomTabPanel value={value} index={index} key={index}>
               <Grid container justifyContent="flex-end">
+                <ProductConfirmationModal
+                    open={deleteModalOpen}
+                    content={`Confirm Delete Package "${containedPackage.packageDetails.productName ? containedPackage.packageDetails.productName?.pt.term : "Untitled" }" ?`}
+                    handleClose={() => {
+                      setDeleteModalOpen(false);
+                    }}
+                    title={"Confirm Delete Package"}
+                    disabled={disabled}
+                    id={indexToDelete}
+                    action={"Delete"}
+                    handleDelete={handleDeletePackage}
+                />
                 <IconButton
                   onClick={() => {
-                    arrayHelpers.remove(index);
+                    setIndexToDelete(index)
+                    setDeleteModalOpen(true);
+                    // arrayHelpers.remove(index);
                   }}
                   aria-label="delete"
                   size="small"

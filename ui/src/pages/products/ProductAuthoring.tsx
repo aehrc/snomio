@@ -39,19 +39,21 @@ function ProductAuthoring() {
     setSearchInputValue('');
   };
   useEffect(() => {
-    conceptService
-      .fetchMedication(selectedProduct ? selectedProduct.conceptId : '')
-      .then(mp => {
-        if (mp.productName) {
-          setPackageDetails(mp);
-        }
-        if (packageDetails) {
-          setName(packageDetails.productName?.conceptId as string);
-        }
-        storeIngredientsExpanded([]);
-        setLoadingMedication(false);
-      })
-      .catch(error);
+    if(selectedProduct) {
+      conceptService
+          .fetchMedication(selectedProduct ? selectedProduct.conceptId : '')
+          .then(mp => {
+            if (mp.productName) {
+              setPackageDetails(mp);
+            }
+            if (packageDetails) {
+              setName(packageDetails.productName?.conceptId as string);
+            }
+            storeIngredientsExpanded([]);
+            setLoadingMedication(false);
+          })
+          .catch(error);
+    }
   }, [selectedProduct]);
   if (isLoadingMedication) {
     return (
