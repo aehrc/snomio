@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Log
 public class DeviceService extends AtomicDataService<DeviceProductDetails> {
-  private static final String PACKAGE_CONCEPTS_FOR_ATOMIC_EXTRACTION_ECL =
+  private static final String PACKAGE_CONCEPTS_FOR_ATOMIC_EXTRACTION_DEVICE_ECL =
       "(<id> or (<id>.999000111000168106) "
           + "or (<id>.999000081000168101) "
           + "or (<id>.999000111000168106.999000081000168101) "
@@ -139,7 +139,7 @@ public class DeviceService extends AtomicDataService<DeviceProductDetails> {
 
   @Override
   protected String getPackageAtomicDataEcl() {
-    return PACKAGE_CONCEPTS_FOR_ATOMIC_EXTRACTION_ECL;
+    return PACKAGE_CONCEPTS_FOR_ATOMIC_EXTRACTION_DEVICE_ECL;
   }
 
   @Override
