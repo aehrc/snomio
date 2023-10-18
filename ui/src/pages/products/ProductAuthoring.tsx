@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import { useTheme } from '@mui/material/styles';
 import SearchProduct from './components/SearchProduct.tsx';
 import useConceptStore from '../../stores/ConceptStore.ts';
@@ -15,7 +14,6 @@ import Loading from '../../components/Loading.tsx';
 import { Concept } from '../../types/concept.ts';
 import { storeIngredientsExpanded } from '../../utils/helpers/conceptUtils.ts';
 import { Form, Formik } from 'formik';
-
 function ProductAuthoring() {
   const conceptStore = useConceptStore();
   const { units, containerTypes, ingredients, doseForms, brandProducts } =
@@ -32,20 +30,19 @@ function ProductAuthoring() {
   const { conceptsLoading } = useInitializeConcepts();
   const [selectedProduct, setSelectedProduct] = useState<Concept | null>(null);
   const [isLoadingMedication, setLoadingMedication] = useState(false);
-
+  const [searchInputValue, setSearchInputValue] = useState('');
   const handleSelectedProductChange = (concept: Concept | null) => {
     setSelectedProduct(concept);
   };
   const handleClearForm = () => {
     setSelectedProduct(null);
     setPackageDetails(defaultPackage);
-
+    setSearchInputValue('');
     // setRefresh(false);
   };
   const handleSubmit = (values: MedicationPackageDetails) => {
     console.log(values);
   };
-
   useEffect(() => {
     conceptService
       .fetchMedication(selectedProduct ? selectedProduct.conceptId : '')
@@ -53,7 +50,6 @@ function ProductAuthoring() {
         if (mp.productName) {
           setPackageDetails(mp);
         }
-
         if (packageDetails) {
           setName(packageDetails.productName?.conceptId as string);
         }
@@ -65,7 +61,6 @@ function ProductAuthoring() {
   // if (conceptsLoading) {
   //   return <Loading />;
   // } else
-
   if (isLoadingMedication) {
     return (
       <Loading
@@ -91,10 +86,11 @@ function ProductAuthoring() {
             <SearchProduct
               disableLinkOpen={true}
               handleChange={handleSelectedProductChange}
+              inputValue={searchInputValue}
+              setInputValue={setSearchInputValue}
             />
           </Grid>
         </Stack>
-
         {packageDetails &&
         packageDetails.containedProducts &&
         packageDetails.containedPackages ? (
@@ -121,6 +117,7 @@ function ProductAuthoring() {
                                 onClick={() => {
                                   // setPackageDetails(defaultPackage); handleSelectedProductChange(null);
                                   handleClearForm();
+                                  resetForm;
                                 }}
                                 variant="contained"
                                 color="error"

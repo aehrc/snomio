@@ -140,12 +140,11 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                 }
               />
               <Tab
-                icon={
+                label={
                   <Tooltip title="Search and add an existing package">
-                    <SearchAndAddIcon
-                      width={'20px'}
-                      alt={'Search and add an existing package'}
-                    />
+                    <span>
+                      <SearchAndAddIcon width={'20px'} />
+                    </span>
                   </Tooltip>
                 }
                 onClick={handleSearchAndAddPackage}

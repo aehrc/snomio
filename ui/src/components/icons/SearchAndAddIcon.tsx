@@ -7,9 +7,8 @@ import { ThemeMode } from '../../types/config';
 
 interface SearchAndAddIconProps {
   width: string;
-  alt: string;
 }
-const SearchAndAddIcon = ({ width, alt }: SearchAndAddIconProps) => {
+const SearchAndAddIcon = ({ width }: SearchAndAddIconProps) => {
   const theme = useTheme();
 
   return (
@@ -19,8 +18,6 @@ const SearchAndAddIcon = ({ width, alt }: SearchAndAddIconProps) => {
           ? searchAndAddIcon
           : searchAndAddIcon
       }
-      alt={alt}
-      title={alt}
       width={width}
     />
   );

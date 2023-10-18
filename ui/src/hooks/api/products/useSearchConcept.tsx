@@ -22,7 +22,10 @@ export function useSearchConcept(
     {
       cacheTime: 0,
       staleTime: 20 * (60 * 1000),
-      enabled: searchTerm.length > 2 && !checkItemAlreadyExists(searchTerm),
+      enabled:
+        searchTerm !== undefined &&
+        searchTerm.length > 2 &&
+        !checkItemAlreadyExists(searchTerm),
     },
   );
 

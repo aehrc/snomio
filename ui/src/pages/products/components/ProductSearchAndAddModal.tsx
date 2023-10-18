@@ -27,6 +27,7 @@ export default function ProductSearchAndAddModal({
     setSelectedProduct(concept);
   };
   const { enqueueSnackbar } = useSnackbar();
+  const [searchInputValue, setSearchInputValue] = useState('');
 
   const handleSubmit = () => {
     if (selectedProduct) {
@@ -62,6 +63,8 @@ export default function ProductSearchAndAddModal({
           disableLinkOpen={true}
           handleChange={handleSelectedProductChange}
           providedEcl={ECL_EXISTING_PRODUCT_TO_PACKAGE}
+          inputValue={searchInputValue}
+          setInputValue={setSearchInputValue}
         />
       </BaseModalBody>
       <BaseModalFooter

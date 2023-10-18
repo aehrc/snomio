@@ -153,18 +153,15 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               </Tooltip>
             </IconButton>
 
-            <IconButton
-              aria-label="create"
-              size="large"
-              onClick={handleSearchAndAddProduct}
-            >
-              <Tooltip title={'Search and add an existing product'}>
-                <SearchAndAddIcon
-                  width={'20px'}
-                  alt={'Search and add an existing product'}
-                />
-              </Tooltip>
-            </IconButton>
+            <Tooltip title={'Search and add an existing product'}>
+              <IconButton
+                aria-label="create"
+                size="large"
+                onClick={handleSearchAndAddProduct}
+              >
+                <SearchAndAddIcon width={'20px'} />
+              </IconButton>
+            </Tooltip>
           </Stack>
         </Grid>
         <ProductSearchAndAddModal
