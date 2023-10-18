@@ -6,14 +6,13 @@ import conceptService from '../../api/ConceptService.ts';
 import { Simulate } from 'react-dom/test-utils';
 import error = Simulate.error;
 import { MedicationPackageDetails } from '../../types/authoring.ts';
-import { Box, Button, Grid, Paper } from '@mui/material';
+import { Grid } from '@mui/material';
 import ProductAuthoringMain from './components/ProductAuthoringMain.tsx';
 import { Stack } from '@mui/system';
 import useInitializeConcepts from '../../hooks/api/useInitializeConcepts.tsx';
 import Loading from '../../components/Loading.tsx';
 import { Concept } from '../../types/concept.ts';
 import { storeIngredientsExpanded } from '../../utils/helpers/conceptUtils.ts';
-import { Form, Formik } from 'formik';
 function ProductAuthoring() {
   const conceptStore = useConceptStore();
   const { units, containerTypes, ingredients, doseForms, brandProducts } =
@@ -38,10 +37,6 @@ function ProductAuthoring() {
     setSelectedProduct(null);
     setPackageDetails(defaultPackage);
     setSearchInputValue('');
-    // setRefresh(false);
-  };
-  const handleSubmit = (values: MedicationPackageDetails) => {
-    console.log(values);
   };
   useEffect(() => {
     conceptService
@@ -58,9 +53,6 @@ function ProductAuthoring() {
       })
       .catch(error);
   }, [selectedProduct]);
-  // if (conceptsLoading) {
-  //   return <Loading />;
-  // } else
   if (isLoadingMedication) {
     return (
       <Loading
@@ -95,92 +87,15 @@ function ProductAuthoring() {
         packageDetails.containedProducts &&
         packageDetails.containedPackages ? (
           <Grid>
-            <Box sx={{ width: '100%' }}>
-              <Grid container>
-                <Grid item sm={12} xs={12}>
-                  <Paper>
-                    <Box m={2} p={2}>
-                      <Formik
-                        initialValues={{ ...packageDetails }}
-                        enableReinitialize={true}
-                        onSubmit={handleSubmit}
-                      >
-                        {({ values, resetForm }) => (
-                          <Form
-                            onChange={event => {
-                              console.log(event.currentTarget);
-                            }}
-                          >
-                            <Grid container justifyContent="flex-end">
-                              <Button
-                                type="reset"
-                                onClick={() => {
-                                  // setPackageDetails(defaultPackage); handleSelectedProductChange(null);
-                                  handleClearForm();
-                                  resetForm;
-                                }}
-                                variant="contained"
-                                color="error"
-                              >
-                                Clear
-                              </Button>
-                            </Grid>
-                            <ProductAuthoringMain
-                              units={units}
-                              containerTypes={containerTypes}
-                              ingredients={ingredients}
-                              doseForms={doseForms}
-                              brandProducts={brandProducts}
-                            />{' '}
-                            <Box sx={{ marginTop: '1rem' }}>
-                              <Stack
-                                spacing={2}
-                                direction="row"
-                                justifyContent="end"
-                              >
-                                <Button
-                                  variant="contained"
-                                  type="submit"
-                                  color="info"
-                                >
-                                  Save
-                                </Button>
-                                <Button
-                                  variant="contained"
-                                  type="submit"
-                                  color="success"
-                                >
-                                  Preview
-                                </Button>
-                                <Button
-                                  variant="contained"
-                                  type="submit"
-                                  color="primary"
-                                >
-                                  Commit
-                                </Button>
-                                <Button
-                                  type="reset"
-                                  onClick={() => {
-                                    setPackageDetails(defaultPackage);
-                                    handleSelectedProductChange(null);
-                                    resetForm;
-                                  }}
-                                  variant="contained"
-                                  color="error"
-                                >
-                                  Clear
-                                </Button>
-                              </Stack>
-                            </Box>
-                          </Form>
-                        )}
-                      </Formik>
-                    </Box>
-                  </Paper>
-                </Grid>
-              </Grid>
-            </Box>
+            <ProductAuthoringMain
+              packageDetails={packageDetails}
+              units={units}
+              containerTypes={containerTypes}
+              ingredients={ingredients}
+              doseForms={doseForms}
+              brandProducts={brandProducts}
+              handleClearForm={handleClearForm}
+            />{' '}
           </Grid>
         ) : (
           <Grid></Grid>

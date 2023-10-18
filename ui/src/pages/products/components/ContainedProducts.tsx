@@ -15,7 +15,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Box,
   Grid,
   IconButton,
   TextField,
@@ -27,9 +26,14 @@ import { AddCircle, Delete } from '@mui/icons-material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 import Ingredients from './Ingredients.tsx';
-import { experimentalStyled as styled, useTheme } from '@mui/material/styles';
 import ProductSearchAndAddModal from './ProductSearchAndAddModal.tsx';
 import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
+import {
+  InnerBox,
+  Level1Box,
+  Level2Box,
+  OuterBox,
+} from './style/ProductBoxes.tsx';
 
 interface ContainedProductsProps {
   packageIndex?: number;
@@ -51,33 +55,6 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   ingredients,
   doseForms,
 }) => {
-  const theme = useTheme();
-  const Level1Box = styled(Box)({
-    border: `1px solid ${theme.palette.divider}`,
-    color: '#003665',
-    fontWeight: 'bold',
-    fontSize: 'larger',
-  });
-  const Level2Box = styled(Box)({
-    border: `1px solid ${theme.palette.divider}`,
-    color: '#CD7F32',
-    fontWeight: 'bold',
-    fontSize: 'medium',
-  });
-  const OuterBox = styled(Box)({
-    border: `1px solid ${theme.palette.divider}`,
-    color: 'green',
-    fontWeight: 'bold',
-    fontSize: 'medium',
-    marginBottom: '15px',
-  });
-  const InnerBox = styled(Box)({
-    border: '0 solid #f0f0f0',
-    color: '#003665',
-    marginTop: '10px',
-    marginBottom: '10px',
-    fontSize: 'small',
-  });
   //const [name, setName] = React.useState("");
   const { values } = useFormikContext<MedicationPackageDetails>();
 
@@ -278,12 +255,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                       </OuterBox>
                     </Grid>
                     <Grid xs={6} key={'right'} item={true}>
-                      <OuterBox
-                        component="fieldset"
-                        sx={{
-                          display: 'grid',
-                        }}
-                      >
+                      <OuterBox component="fieldset">
                         <legend>Dose Forms</legend>
                         <InnerBox component="fieldset">
                           <legend>Generic Dose Form</legend>
