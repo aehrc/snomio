@@ -30,6 +30,7 @@ function ProductAuthoring() {
   const [selectedProduct, setSelectedProduct] = useState<Concept | null>(null);
   const [isLoadingMedication, setLoadingMedication] = useState(false);
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [emptyForm, setEmptyForm] = useState(true);
   const handleSelectedProductChange = (concept: Concept | null) => {
     setSelectedProduct(concept);
   };
@@ -38,6 +39,7 @@ function ProductAuthoring() {
     setPackageDetails(defaultPackage);
     setSearchInputValue('');
     storeIngredientsExpanded([]);
+    setEmptyForm(true);
   };
   useEffect(() => {
     if (selectedProduct) {
@@ -52,6 +54,7 @@ function ProductAuthoring() {
           }
           storeIngredientsExpanded([]);
           setLoadingMedication(false);
+          setEmptyForm(false);
         })
         .catch(error);
     }
@@ -83,7 +86,7 @@ function ProductAuthoring() {
               handleChange={handleSelectedProductChange}
               inputValue={searchInputValue}
               setInputValue={setSearchInputValue}
-              showConfirmationModalOnChange={true}
+              showConfirmationModalOnChange={!emptyForm}
             />
           </Grid>
         </Stack>
@@ -99,6 +102,8 @@ function ProductAuthoring() {
               doseForms={doseForms}
               brandProducts={brandProducts}
               handleClearForm={handleClearForm}
+              emptyForm={emptyForm}
+              setEmptyForm={setEmptyForm}
             />{' '}
           </Grid>
         ) : (

@@ -38,6 +38,7 @@ import { useTheme } from '@mui/material/styles';
 import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
 import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
 import ProductConfirmationModal from './ProductConfirmationModal.tsx';
+import { shallowEqual } from 'react-redux';
 
 export interface ProductAuthoringMainProps {
   packageDetails: MedicationPackageDetails;
@@ -47,6 +48,8 @@ export interface ProductAuthoringMainProps {
   doseForms: Concept[];
   brandProducts: Concept[];
   handleClearForm: () => void;
+  emptyForm: boolean;
+  setEmptyForm: (value: boolean) => void;
 }
 
 function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
@@ -58,6 +61,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     doseForms,
     brandProducts,
     handleClearForm,
+    emptyForm,
+    setEmptyForm,
   } = productprops;
   const theme = useTheme();
 
@@ -385,10 +390,14 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                 enableReinitialize={true}
                 onSubmit={handleSubmit}
               >
-                {({ values, resetForm }) => (
+                {({ values, resetForm, initialValues }) => (
                   <Form
                     onChange={event => {
                       console.log(event.currentTarget);
+                      const hasChanged = !shallowEqual(initialValues, values);
+                      if (emptyForm && hasChanged) {
+                        setEmptyForm(false);
+                      }
                     }}
                   >
                     <ProductConfirmationModal
