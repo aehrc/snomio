@@ -37,6 +37,7 @@ function ProductAuthoring() {
     setSelectedProduct(null);
     setPackageDetails(defaultPackage);
     setSearchInputValue('');
+    storeIngredientsExpanded([]);
   };
   useEffect(() => {
     if(selectedProduct) {

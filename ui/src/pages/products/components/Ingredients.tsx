@@ -1,5 +1,5 @@
 import { Field, FieldArrayRenderProps, useFormikContext } from 'formik';
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Ingredient,
   MedicationPackageDetails,
@@ -7,15 +7,14 @@ import {
 import {
   Accordion,
   AccordionDetails,
-  AccordionSummary, Box,
+  AccordionSummary,
   Grid,
-  IconButton, styled,
+  IconButton,
   TextField,
   Tooltip,
   Typography,
 } from '@mui/material';
 import {
-  addOrRemoveFromArray,
   ingredientsExpandedStored,
   storeIngredientsExpanded,
 } from '../../../utils/helpers/conceptUtils.ts';
@@ -25,7 +24,7 @@ import { Stack } from '@mui/system';
 import { Concept } from '../../../types/concept.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 import ProductConfirmationModal from "./ProductConfirmationModal.tsx";
-import {store} from "../../../store";
+import {InnerBox} from "./style/ProductBoxes.tsx";
 
 interface IngredientsProps {
   packageIndex?: number;
@@ -47,13 +46,15 @@ function Ingredients(props:IngredientsProps) {
   //const [number, setNumber] = React.useState("");
   const { values } = useFormikContext<MedicationPackageDetails>();
   const [expandedIngredients, setExpandedIngredients] = useState<string[]>(
-      ingredientsExpandedStored
+     ingredientsExpandedStored
   );
 
   const [disabled, setDisabled] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [indexToDelete, setIndexToDelete] = useState<number|undefined>();
   const [deleteModalContent, setDeleteModalContent] = useState('');
+
+
 
 
   let activeIngredients: Ingredient[] = [];
@@ -70,41 +71,37 @@ function Ingredients(props:IngredientsProps) {
       : `containedProducts[${containedProductIndex}].productDetails.activeIngredients`;
 
 
-  const handleClearIngredientsExpanded = () => {
-    setExpandedIngredients([]);
-    storeIngredientsExpanded([]);
-  };
-
   const handleDeleteIngredient = () => {
     if(indexToDelete !== undefined){
       arrayHelpers.remove(indexToDelete);
     }
     setDeleteModalOpen(false);
     setIndexToDelete(undefined);
-    // storeIngredientsExpanded([]);
+    storeIngredientsExpanded([]);
   };
 
   const getKey = (index: number) => {
-    return `${index}`;
+    return `ing-${index}`;
   };
-  const InnerBox = styled(Box)({
-    border: '0 solid #f0f0f0',
-    color: '#003665',
-    marginTop: '10px',
-    marginBottom: '10px',
-    fontSize: 'small',
-  });
 
-
-  const ingredientsAccordionClicked = (key: string) => {
+  const ingredientsAccordionClicked = (key: string) => (event: React.SyntheticEvent)=> {
     if (expandedIngredients.includes(key)) {
+      const temp = expandedIngredients.filter((value: string) => value !== key);
+      storeIngredientsExpanded(temp);
       setExpandedIngredients(
-          expandedIngredients.filter((value: string) => value !== key),
+          temp
       );
+
     } else {
-      setExpandedIngredients([...expandedIngredients, key]);
+      const temp = [...expandedIngredients, key];
+      storeIngredientsExpanded(temp);
+      setExpandedIngredients(
+          temp
+      );
     }
-    storeIngredientsExpanded(expandedIngredients);
+
+
+    // alert(expandedIngredients);
   };
 
   return (
@@ -113,7 +110,6 @@ function Ingredients(props:IngredientsProps) {
           <Grid container justifyContent="flex-end">
             <IconButton
                 onClick={() => {
-                  handleClearIngredientsExpanded();
                   const ingredient: Ingredient = {};
                   arrayHelpers.push(ingredient);
                 }}
@@ -144,8 +140,8 @@ function Ingredients(props:IngredientsProps) {
                     <Accordion
                         style={{ border: 'none' }}
                         key={getKey(index)}
-                        onChange={() => ingredientsAccordionClicked(getKey(index))}
-                        expanded={expandedIngredients.includes(getKey(index))}
+                        id={getKey(index)}
+                        expanded={expandedIngredients.includes(getKey(index))} onChange={ingredientsAccordionClicked(getKey(index))}
                         // defaultExpanded={false}
                     >
                       <AccordionSummary
