@@ -1,9 +1,8 @@
 import { Button } from '@mui/material';
-import BaseModal from "../../../components/modal/BaseModal.tsx";
-import BaseModalHeader from "../../../components/modal/BaseModalHeader.tsx";
-import BaseModalFooter from "../../../components/modal/BaseModalFooter.tsx";
-import BaseModalBody from "../../../components/modal/BaseModalBody.tsx";
-
+import BaseModal from '../../../components/modal/BaseModal.tsx';
+import BaseModalHeader from '../../../components/modal/BaseModalHeader.tsx';
+import BaseModalFooter from '../../../components/modal/BaseModalFooter.tsx';
+import BaseModalBody from '../../../components/modal/BaseModalBody.tsx';
 
 interface ProductConfirmationModalProps {
   open: boolean;
@@ -11,9 +10,8 @@ interface ProductConfirmationModalProps {
   content: string;
   handleAction: () => void;
   disabled: boolean;
-  title:string;
-  action:string
-
+  title: string;
+  action: string;
 }
 
 export default function ProductConfirmationModal({
@@ -22,8 +20,8 @@ export default function ProductConfirmationModal({
   content,
   handleAction,
   disabled,
-    title,
-    action
+  title,
+  action,
 }: ProductConfirmationModalProps) {
   return (
     <BaseModal open={open} handleClose={handleClose}>
@@ -39,7 +37,7 @@ export default function ProductConfirmationModal({
             onClick={handleAction}
             disabled={disabled}
           >
-              {action}
+            {action}
           </Button>
         }
       />

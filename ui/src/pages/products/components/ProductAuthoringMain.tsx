@@ -37,7 +37,7 @@ import ArtgAutocomplete from './ArtgAutocomplete.tsx';
 import { useTheme } from '@mui/material/styles';
 import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
 import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
-import ProductConfirmationModal from "./ProductConfirmationModal.tsx";
+import ProductConfirmationModal from './ProductConfirmationModal.tsx';
 
 export interface ProductAuthoringMainProps {
   packageDetails: MedicationPackageDetails;
@@ -85,7 +85,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     fontSize: 'small',
   });
 
-
   const [resetModalDisabled, setResetModalDisabled] = useState(false);
   const [resetModalOpen, setResetModalOpen] = useState(false);
 
@@ -112,7 +111,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
       arrayHelpers.remove(indexToDelete);
       setDeleteModalOpen(false);
     };
-
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
       setValue(newValue);
@@ -225,19 +223,23 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
             <CustomTabPanel value={value} index={index} key={index}>
               <Grid container justifyContent="flex-end">
                 <ProductConfirmationModal
-                    open={deleteModalOpen}
-                    content={`Remove the package "${containedPackage.packageDetails.productName ? containedPackage.packageDetails.productName?.pt.term : "Untitled" }" ?`}
-                    handleClose={() => {
-                      setDeleteModalOpen(false);
-                    }}
-                    title={"Confirm Delete Package"}
-                    disabled={disabled}
-                    action={"Delete"}
-                    handleAction={handleDeletePackage}
+                  open={deleteModalOpen}
+                  content={`Remove the package "${
+                    containedPackage.packageDetails.productName
+                      ? containedPackage.packageDetails.productName?.pt.term
+                      : 'Untitled'
+                  }" ?`}
+                  handleClose={() => {
+                    setDeleteModalOpen(false);
+                  }}
+                  title={'Confirm Delete Package'}
+                  disabled={disabled}
+                  action={'Delete'}
+                  handleAction={handleDeletePackage}
                 />
                 <IconButton
                   onClick={() => {
-                    setIndexToDelete(index)
+                    setIndexToDelete(index);
                     setDeleteModalOpen(true);
                     // arrayHelpers.remove(index);
                   }}
@@ -374,8 +376,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
 
   return (
     <Box sx={{ width: '100%' }}>
-
-
       <Grid container>
         <Grid item sm={12} xs={12}>
           <Paper>
@@ -392,28 +392,25 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                     }}
                   >
                     <ProductConfirmationModal
-                        open={resetModalOpen}
-                        content={`Confirm clear?. This will reset the unsaved changes`}
-                        handleClose={() => {
-                          setResetModalOpen(false);
-                        }}
-                        title={"Confirm Clear"}
-                        disabled={resetModalDisabled}
-                        action={"Clear"}
-                        handleAction={() => {
-                          resetForm();
-                          handleClearForm();
-                          setResetModalOpen(false);
-
-                         }
-                        }
+                      open={resetModalOpen}
+                      content={`Confirm clear?. This will reset the unsaved changes`}
+                      handleClose={() => {
+                        setResetModalOpen(false);
+                      }}
+                      title={'Confirm Clear'}
+                      disabled={resetModalDisabled}
+                      action={'Clear'}
+                      handleAction={() => {
+                        resetForm();
+                        handleClearForm();
+                        setResetModalOpen(false);
+                      }}
                     />
                     <Grid container justifyContent="flex-end">
                       <Button
                         type="reset"
                         onClick={() => {
                           setResetModalOpen(true);
-
                         }}
                         variant="contained"
                         color="error"

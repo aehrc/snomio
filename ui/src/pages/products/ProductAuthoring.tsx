@@ -40,20 +40,20 @@ function ProductAuthoring() {
     storeIngredientsExpanded([]);
   };
   useEffect(() => {
-    if(selectedProduct) {
+    if (selectedProduct) {
       conceptService
-          .fetchMedication(selectedProduct ? selectedProduct.conceptId : '')
-          .then(mp => {
-            if (mp.productName) {
-              setPackageDetails(mp);
-            }
-            if (packageDetails) {
-              setName(packageDetails.productName?.conceptId as string);
-            }
-            storeIngredientsExpanded([]);
-            setLoadingMedication(false);
-          })
-          .catch(error);
+        .fetchMedication(selectedProduct ? selectedProduct.conceptId : '')
+        .then(mp => {
+          if (mp.productName) {
+            setPackageDetails(mp);
+          }
+          if (packageDetails) {
+            setName(packageDetails.productName?.conceptId as string);
+          }
+          storeIngredientsExpanded([]);
+          setLoadingMedication(false);
+        })
+        .catch(error);
     }
   }, [selectedProduct]);
   if (isLoadingMedication) {
