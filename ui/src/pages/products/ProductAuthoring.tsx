@@ -82,6 +82,7 @@ function ProductAuthoring() {
               handleChange={handleSelectedProductChange}
               inputValue={searchInputValue}
               setInputValue={setSearchInputValue}
+              showConfirmationModalOnChange={true}
             />
           </Grid>
         </Stack>

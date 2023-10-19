@@ -46,7 +46,7 @@ export default function ProductSearchAndAddModal({
         } catch (error) {
           handleClose();
           enqueueSnackbar(
-            `Unable to load Medications for ${selectedProduct.conceptId}`,
+            `Unable to load Medications for ${selectedProduct.pt.term}[${selectedProduct.conceptId}]`,
             {
               variant: 'error',
             },

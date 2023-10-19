@@ -9,7 +9,7 @@ interface ProductConfirmationModalProps {
   open: boolean;
   handleClose: () => void;
   content: string;
-  handleDelete: () => void;
+  handleAction: () => void;
   disabled: boolean;
   title:string;
   action:string
@@ -20,7 +20,7 @@ export default function ProductConfirmationModal({
   open,
   handleClose,
   content,
-  handleDelete,
+  handleAction,
   disabled,
     title,
     action
@@ -36,7 +36,7 @@ export default function ProductConfirmationModal({
             color="error"
             size="small"
             variant="contained"
-            onClick={handleDelete}
+            onClick={handleAction}
             disabled={disabled}
           >
               {action}

@@ -37,7 +37,6 @@ import ArtgAutocomplete from './ArtgAutocomplete.tsx';
 import { useTheme } from '@mui/material/styles';
 import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
 import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
-import DeleteConfirmationModal from "../../tickets/individual/components/edit/DeleteConfirmationModal.tsx";
 import ProductConfirmationModal from "./ProductConfirmationModal.tsx";
 
 export interface ProductAuthoringMainProps {
@@ -85,6 +84,10 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     marginBottom: '10px',
     fontSize: 'small',
   });
+
+
+  const [resetModalDisabled, setResetModalDisabled] = useState(false);
+  const [resetModalOpen, setResetModalOpen] = useState(false);
 
   interface ContainedPackagesProps {
     arrayHelpers: FieldArrayRenderProps;
@@ -229,9 +232,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                     }}
                     title={"Confirm Delete Package"}
                     disabled={disabled}
-                    id={indexToDelete}
                     action={"Delete"}
-                    handleDelete={handleDeletePackage}
+                    handleAction={handleDeletePackage}
                 />
                 <IconButton
                   onClick={() => {
@@ -372,6 +374,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
 
   return (
     <Box sx={{ width: '100%' }}>
+
+
       <Grid container>
         <Grid item sm={12} xs={12}>
           <Paper>
@@ -387,12 +391,29 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       console.log(event.currentTarget);
                     }}
                   >
+                    <ProductConfirmationModal
+                        open={resetModalOpen}
+                        content={`Confirm clear?. This will reset the unsaved changes`}
+                        handleClose={() => {
+                          setResetModalOpen(false);
+                        }}
+                        title={"Confirm Clear"}
+                        disabled={resetModalDisabled}
+                        action={"Clear"}
+                        handleAction={() => {
+                          resetForm();
+                          handleClearForm();
+                          setResetModalOpen(false);
+
+                         }
+                        }
+                    />
                     <Grid container justifyContent="flex-end">
                       <Button
                         type="reset"
                         onClick={() => {
-                          resetForm();
-                          handleClearForm();
+                          setResetModalOpen(true);
+
                         }}
                         variant="contained"
                         color="error"

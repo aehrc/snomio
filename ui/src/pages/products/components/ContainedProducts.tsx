@@ -124,6 +124,10 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
     void fetchSpecialFormDoses().then(r => r);
   }, [selectedDoseForm]);
 
+
+
+
+
   const ProductDetails = () => {
     return (
       <div>
@@ -164,7 +168,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
             title={"Confirm Delete Product"}
             disabled={disabled}
             action={"Delete"}
-            handleDelete={handleDeleteProduct}
+            handleAction={handleDeleteProduct}
         />
         <ProductSearchAndAddModal
           open={modalOpen}
