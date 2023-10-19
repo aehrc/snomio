@@ -226,7 +226,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
               <Grid container justifyContent="flex-end">
                 <ProductConfirmationModal
                     open={deleteModalOpen}
-                    content={`Confirm Delete Package "${containedPackage.packageDetails.productName ? containedPackage.packageDetails.productName?.pt.term : "Untitled" }" ?`}
+                    content={`Remove the package "${containedPackage.packageDetails.productName ? containedPackage.packageDetails.productName?.pt.term : "Untitled" }" ?`}
                     handleClose={() => {
                       setDeleteModalOpen(false);
                     }}

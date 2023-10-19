@@ -219,7 +219,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                             size="small"
                             onClick={(e) => {setIndexToDelete(index);
 
-                              setDeleteModalContent(`Confirm Delete Product "${containedProduct.productDetails?.productName ? containedProduct.productDetails?.productName?.pt.term : "Untitled" }?"`);
+                              setDeleteModalContent(`Remove the product  "${containedProduct.productDetails?.productName ? containedProduct.productDetails?.productName?.pt.term : "Untitled" }?"`);
                               setDeleteModalOpen(true);
                             e.stopPropagation();
                             }

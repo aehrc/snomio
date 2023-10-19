@@ -175,7 +175,7 @@ function Ingredients(props:IngredientsProps) {
                                   size="small"
                                   onClick={(event) => {
                                     setIndexToDelete(index);
-                                    setDeleteModalContent(`Confirm Delete Ingredient "${activeIngredient.activeIngredient ? activeIngredient.activeIngredient?.pt.term : "Untitled" }" ?`);
+                                    setDeleteModalContent(`Remove the ingredient "${activeIngredient.activeIngredient ? activeIngredient.activeIngredient?.pt.term : "Untitled" }" ?`);
                                     setDeleteModalOpen(true);
                                     event.stopPropagation();
                                   }}
