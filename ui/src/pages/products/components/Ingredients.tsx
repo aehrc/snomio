@@ -23,8 +23,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Stack } from '@mui/system';
 import { Concept } from '../../../types/concept.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
-import ProductConfirmationModal from './ProductConfirmationModal.tsx';
 import { InnerBox } from './style/ProductBoxes.tsx';
+import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
 
 interface IngredientsProps {
   packageIndex?: number;
@@ -114,7 +114,7 @@ function Ingredients(props: IngredientsProps) {
             </Tooltip>
           </IconButton>
         </Grid>
-        <ProductConfirmationModal
+        <ConfirmationModal
           open={deleteModalOpen}
           content={deleteModalContent}
           handleClose={() => {

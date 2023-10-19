@@ -34,7 +34,7 @@ import {
   Level2Box,
   OuterBox,
 } from './style/ProductBoxes.tsx';
-import ProductConfirmationModal from './ProductConfirmationModal.tsx';
+import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
 
 interface ContainedProductsProps {
   packageIndex?: number;
@@ -153,7 +153,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
             </Tooltip>
           </Stack>
         </Grid>
-        <ProductConfirmationModal
+        <ConfirmationModal
           open={deleteModalOpen}
           content={deleteModalContent}
           handleClose={() => {

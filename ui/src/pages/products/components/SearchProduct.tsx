@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 import { isFsnToggleOn } from '../../../utils/helpers/conceptUtils.ts';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useSearchConcept } from '../../../hooks/api/products/useSearchConcept.tsx';
-import ProductConfirmationModal from './ProductConfirmationModal.tsx';
+import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
 export interface SearchProductProps {
   disableLinkOpen: boolean;
   handleChange?: (concept: Concept | null) => void;
@@ -128,7 +128,7 @@ export default function SearchProduct({
   }, [data]);
   return (
     <Grid item xs={12} sm={12} md={12} lg={12}>
-      <ProductConfirmationModal
+      <ConfirmationModal
         open={changeModalOpen}
         content={
           'Unsaved changes to the product details will be lost. Continue?'

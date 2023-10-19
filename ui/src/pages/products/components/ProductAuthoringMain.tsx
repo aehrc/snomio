@@ -37,8 +37,8 @@ import ArtgAutocomplete from './ArtgAutocomplete.tsx';
 import { useTheme } from '@mui/material/styles';
 import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
 import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
-import ProductConfirmationModal from './ProductConfirmationModal.tsx';
 import { shallowEqual } from 'react-redux';
+import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
 
 export interface ProductAuthoringMainProps {
   packageDetails: MedicationPackageDetails;
@@ -227,7 +227,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
           {values.containedPackages?.map((containedPackage, index) => (
             <CustomTabPanel value={value} index={index} key={index}>
               <Grid container justifyContent="flex-end">
-                <ProductConfirmationModal
+                <ConfirmationModal
                   open={deleteModalOpen}
                   content={`Remove the package "${
                     containedPackage.packageDetails.productName
@@ -400,7 +400,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       }
                     }}
                   >
-                    <ProductConfirmationModal
+                    <ConfirmationModal
                       open={resetModalOpen}
                       content={`Confirm clear?. This will reset the unsaved changes`}
                       handleClose={() => {
