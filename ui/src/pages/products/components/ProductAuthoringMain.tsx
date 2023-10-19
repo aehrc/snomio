@@ -222,6 +222,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
               open={modalOpen}
               handleClose={handleToggleModal}
               arrayHelpers={arrayHelpers}
+              defaultUnit={defaultUnit as Concept}
             />
           </Box>
           {values.containedPackages?.map((containedPackage, index) => (
