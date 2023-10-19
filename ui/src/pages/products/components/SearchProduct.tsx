@@ -132,11 +132,11 @@ export default function SearchProduct({
     <Grid item xs={12} sm={12} md={12} lg={12}>
         <ProductConfirmationModal
             open={changeModalOpen}
-            content={"Confirm change product. This will reset the unsaved chnages"}
+            content={"Confirm load product. This will reset the unsaved changes"}
             handleClose={() => {
                 setChangeModalOpen(false);
             }}
-            title={"Confirm Change Product"}
+            title={"Confirm load product"}
             disabled={disabled}
             action={"Change"}
             handleAction={handleOnChange}
@@ -176,7 +176,7 @@ export default function SearchProduct({
           }}
           // onChange={(e, v) => setActiveProduct(v)}
           onChange={(e, v) => {
-              if(showConfirmationModalOnChange) {
+              if(showConfirmationModalOnChange && v !== null) {
                   setSelectedValue(v !== null ? v : undefined);
                   setChangeModalOpen(true);
               }else {

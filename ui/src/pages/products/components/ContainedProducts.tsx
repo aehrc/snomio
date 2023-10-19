@@ -217,9 +217,12 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                           <IconButton
                             aria-label="delete"
                             size="small"
-                            onClick={() => {setIndexToDelete(index);
+                            onClick={(e) => {setIndexToDelete(index);
+
                               setDeleteModalContent(`Confirm Delete Product "${containedProduct.productDetails?.productName ? containedProduct.productDetails?.productName?.pt.term : "Untitled" }?"`);
-                              setDeleteModalOpen(true);}
+                              setDeleteModalOpen(true);
+                            e.stopPropagation();
+                            }
                             }
                             color="error"
                             sx={{ mt: 0.25 }}
