@@ -25,6 +25,7 @@ import { Concept } from '../../../types/concept.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 import { InnerBox } from './style/ProductBoxes.tsx';
 import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
+import { ConceptSearchType } from '../../../types/conceptSearch.ts';
 
 interface IngredientsProps {
   packageIndex?: number;
@@ -32,7 +33,6 @@ interface IngredientsProps {
   partOfPackage: boolean;
   arrayHelpers: FieldArrayRenderProps;
   units: Concept[];
-  ingredients: Concept[];
 }
 function Ingredients(props: IngredientsProps) {
   const {
@@ -41,7 +41,6 @@ function Ingredients(props: IngredientsProps) {
     partOfPackage,
     arrayHelpers,
     units,
-    ingredients,
   } = props;
   //const [number, setNumber] = React.useState("");
   const { values } = useFormikContext<MedicationPackageDetails>();
@@ -193,14 +192,15 @@ function Ingredients(props: IngredientsProps) {
                     <Field
                       name={`${activeIngredientsArray}[${index}].activeIngredient`}
                       id={`${activeIngredientsArray}[${index}].activeIngredient`}
-                      optionValues={ingredients}
+                      // optionValues={ingredients}
                       getOptionLabel={(option: Concept) => option.pt.term}
+                      searchType={ConceptSearchType.ingredients}
                       component={ProductAutocomplete}
                       fullWidth
                       variant="outlined"
                       margin="dense"
                       required
-                      disableClearable={true}
+                      // disableClearable={true}
                     />
                   </InnerBox>
                   <InnerBox component="fieldset">
@@ -208,7 +208,7 @@ function Ingredients(props: IngredientsProps) {
                     <Field
                       name={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
                       id={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
-                      optionValues={ingredients}
+                      searchType={ConceptSearchType.ingredients}
                       getOptionLabel={(option: Concept) => option.pt.term}
                       component={ProductAutocomplete}
                       fullWidth
@@ -240,6 +240,7 @@ function Ingredients(props: IngredientsProps) {
                           name={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
                           optionValues={units}
                           getOptionLabel={(option: Concept) => option.pt.term}
+                          searchType={ConceptSearchType.units}
                           component={ProductAutocomplete}
                           required
                         />
@@ -270,6 +271,7 @@ function Ingredients(props: IngredientsProps) {
                           name={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
                           optionValues={units}
                           getOptionLabel={(option: Concept) => option.pt.term}
+                          searchType={ConceptSearchType.units}
                           component={ProductAutocomplete}
                         />
                       </Grid>

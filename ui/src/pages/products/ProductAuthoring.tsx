@@ -87,6 +87,7 @@ function ProductAuthoring() {
               inputValue={searchInputValue}
               setInputValue={setSearchInputValue}
               showConfirmationModalOnChange={!emptyForm}
+              showDeviceSearch={true}
             />
           </Grid>
         </Stack>
@@ -98,9 +99,7 @@ function ProductAuthoring() {
               packageDetails={packageDetails}
               units={units}
               containerTypes={containerTypes}
-              ingredients={ingredients}
               doseForms={doseForms}
-              brandProducts={brandProducts}
               handleClearForm={handleClearForm}
               emptyForm={emptyForm}
               setEmptyForm={setEmptyForm}

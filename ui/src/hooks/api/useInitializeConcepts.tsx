@@ -3,11 +3,14 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import useConceptStore from '../../stores/ConceptStore.ts';
 import ConceptService from '../../api/ConceptService.ts';
+import { ConceptSearchType } from '../../types/conceptSearch.ts';
+import { getECLForSearch } from '../../utils/helpers/conceptUtils.ts';
+import { Concept } from '../../types/concept.ts';
 
 export default function useInitializeConcepts() {
   const { unitsIsLoading } = useInitializeUnits();
   const { containerTypesIsLoading } = useInitializeContainerTypes();
-  const { brandProductsIsLoading } = useInitializeBrandProducts();
+  // const { brandProductsIsLoading } = useInitializeBrandProducts();
   const { ingredientsIsLoading } = useInitializeIngredients();
   const { doseFormsIsLoading } = useInitializeDoseForms();
 
@@ -15,7 +18,7 @@ export default function useInitializeConcepts() {
     conceptsLoading:
       unitsIsLoading ||
       containerTypesIsLoading ||
-      brandProductsIsLoading ||
+      // brandProductsIsLoading ||
       ingredientsIsLoading ||
       doseFormsIsLoading,
   };
@@ -111,3 +114,43 @@ export function useInitializeDoseForms() {
 
   return { doseFormsIsLoading, doseForms };
 }
+export function useSearchConcepts(
+  searchString: string,
+  searchType: ConceptSearchType,
+  concept?: Concept,
+  ecl?: string,
+) {
+  const eclSearch = ecl ? ecl : getECLForSearch(searchType);
+
+  const { isLoading, data } = useQuery(
+    [`search-products-${searchType}-${searchString}`],
+    () => {
+      if (concept && concept.conceptId) {
+        return ConceptService.searchConceptById(concept.conceptId);
+      }
+
+      return ConceptService.searchConcept(searchString, eclSearch);
+    },
+    {
+      staleTime: 0.5 * (60 * 1000),
+      enabled: searchString !== undefined && searchString.length > 2,
+    },
+  );
+
+  return { isLoading, data };
+}
+// export function useSpecialDoseFormSearch(searchString: string, ecl: string) {
+//   const { isLoading, data } = useQuery(
+//     [`search-products-special-dose-${searchString}`],
+//     () => {
+//       // if(searchString.length > 2 && eclSearch && eclSearch.length >0)
+//       return ConceptService.searchConcept(searchString, ecl);
+//     },
+//     {
+//       cacheTime: 0,
+//       staleTime: 20 * (60 * 1000),
+//     },
+//   );
+//
+//   return { isLoading, data };
+// }

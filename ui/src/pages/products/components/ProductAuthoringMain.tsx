@@ -39,14 +39,13 @@ import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
 import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
 import { shallowEqual } from 'react-redux';
 import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
+import { ConceptSearchType } from '../../../types/conceptSearch.ts';
 
 export interface ProductAuthoringMainProps {
   packageDetails: MedicationPackageDetails;
   units: Concept[];
   containerTypes: Concept[];
-  ingredients: Concept[];
   doseForms: Concept[];
-  brandProducts: Concept[];
   handleClearForm: () => void;
   emptyForm: boolean;
   setEmptyForm: (value: boolean) => void;
@@ -57,9 +56,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     packageDetails,
     units,
     containerTypes,
-    ingredients,
     doseForms,
-    brandProducts,
     handleClearForm,
     emptyForm,
     setEmptyForm,
@@ -272,15 +269,15 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             <Field
                               name={`containedPackages[${index}].packageDetails.productName`}
                               id={`containedPackages[${index}].packageDetails.productName`}
-                              optionValues={brandProducts}
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
                               }
+                              searchType={ConceptSearchType.brandProducts}
                               component={ProductAutocomplete}
                               fullWidth
                               variant="outlined"
                               margin="dense"
-                              disableClearable={true}
+                              // disableClearable={true}
                             />
                           </InnerBox>
                         </Grid>
@@ -291,10 +288,11 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             <Field
                               name={`containedPackages[${index}].packageDetails.containerType`}
                               id={`containedPackages[${index}].packageDetails.containerType`}
-                              optionValues={containerTypes}
+                              // optionValues={containerTypes}
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
                               }
+                              searchType={ConceptSearchType.containerTypes}
                               component={ProductAutocomplete}
                               fullWidth
                               variant="outlined"
@@ -352,6 +350,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
                               }
+                              searchType={ConceptSearchType.units}
                               component={ProductAutocomplete}
                               sx={{ maxWidth: '95%' }}
                             />
@@ -367,8 +366,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       arrayHelpers={arrayHelpers}
                       units={units}
                       doseForms={doseForms}
-                      brandProducts={brandProducts}
-                      ingredients={ingredients}
                     />
                   </>
                 )}
@@ -396,9 +393,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                     onChange={event => {
                       console.log(event.currentTarget);
                       const hasChanged = !shallowEqual(initialValues, values);
-                      if (emptyForm && hasChanged) {
-                        setEmptyForm(false);
-                      }
+                      setEmptyForm(!hasChanged);
                     }}
                   >
                     <ConfirmationModal
@@ -424,6 +419,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                         }}
                         variant="contained"
                         color="error"
+                        disabled={emptyForm}
                       >
                         Clear
                       </Button>
@@ -463,6 +459,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
                               }
+                              searchType={ConceptSearchType.containerTypes}
                               component={ProductAutocomplete}
                               fullWidth
                               variant="outlined"
@@ -527,8 +524,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                   arrayHelpers={arrayHelpers}
                                   units={units}
                                   doseForms={doseForms}
-                                  brandProducts={brandProducts}
-                                  ingredients={ingredients}
                                 />
                               </>
                             );

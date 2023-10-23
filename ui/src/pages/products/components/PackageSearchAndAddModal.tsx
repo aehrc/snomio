@@ -68,6 +68,7 @@ export default function PackageSearchAndAddModal({
           providedEcl={ECL_EXCLUDE_PACKAGES}
           inputValue={searchInputValue}
           setInputValue={setSearchInputValue}
+          showDeviceSearch={false}
         />
       </BaseModalBody>
       <BaseModalFooter

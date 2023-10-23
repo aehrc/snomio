@@ -4,6 +4,14 @@ import {
   Edge,
   Product,
 } from '../../types/concept.ts';
+import { ConceptSearchType } from '../../types/conceptSearch.ts';
+import {
+  ECL_BRAND_PRODUCTS,
+  ECL_CONTAINER_TYPES,
+  ECL_DOSE_FORMS,
+  ECL_INGREDIENTS,
+  ECL_UNITS,
+} from './EclUtils.ts';
 
 function isNumeric(value: string) {
   return /^\d+$/.test(value);
@@ -99,4 +107,29 @@ export function addOrRemoveFromArray(array: string[], item: string) {
 }
 export function getDefaultUnit(units: Concept[]) {
   return units.find(unit => unit.pt.term === 'Each');
+}
+
+export function getECLForSearch(
+  searchType: ConceptSearchType,
+): string | undefined {
+  switch (searchType) {
+    case ConceptSearchType.brandProducts:
+      return ECL_BRAND_PRODUCTS;
+      break;
+    case ConceptSearchType.ingredients:
+      return ECL_INGREDIENTS;
+      break;
+    case ConceptSearchType.doseForms:
+      return ECL_DOSE_FORMS;
+      break;
+    case ConceptSearchType.units:
+      return ECL_UNITS;
+      break;
+    case ConceptSearchType.containerTypes:
+      return ECL_CONTAINER_TYPES;
+      break;
+
+    default:
+      return undefined;
+  }
 }
