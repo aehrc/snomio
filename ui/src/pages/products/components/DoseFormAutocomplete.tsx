@@ -3,50 +3,54 @@ import React, { FC, useEffect, useState } from 'react';
 import { Concept } from '../../../types/concept.ts';
 import { FieldProps } from 'formik';
 import useDebounce from '../../../hooks/useDebounce.tsx';
+import { useSpecialDoseFormSearch } from '../../../hooks/api/useInitializeConcepts.tsx';
 
-import { useSearchConcepts } from '../../../hooks/api/useInitializeConcepts.tsx';
-import { ConceptSearchType } from '../../../types/conceptSearch.ts';
-interface ProductAutocompleteProps {
-  setval: (val: Concept | null) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  optionValues?: any[];
+interface DoseFormAutocompleteProps {
+  optionValues: Concept[];
   defaultOption?: Concept;
-  searchType: ConceptSearchType;
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  parent: Concept;
 }
-const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
+const DoseFormAutocomplete: FC<DoseFormAutocompleteProps & FieldProps> = ({
   field,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   form: { touched, setTouched, setFieldValue },
-  setval,
   defaultOption,
   optionValues,
-  searchType,
+  inputValue,
+  setInputValue,
+  parent,
 
   ...props
 }) => {
   const { name } = field;
-  const [inputValue, setInputValue] = useState('');
+
   const debouncedSearch = useDebounce(inputValue, 1000);
   const [options, setOptions] = useState<Concept[]>(
     optionValues ? optionValues : [],
   );
-  const { isLoading, data } = useSearchConcepts(
+  const { isLoading, data } = useSpecialDoseFormSearch(
     debouncedSearch,
-    searchType,
-    field.value ? (field.value as Concept) : undefined,
+    parent ? `< ${parent.conceptId}` : undefined,
   );
   const [open, setOpen] = useState(false);
   useEffect(() => {
     mapDataToOptions();
   }, [data]);
-
+  useEffect(() => {
+    if(inputValue === '' && field.value !== null){
+      void setFieldValue(name, null);
+    }
+  }, [inputValue]);
   const mapDataToOptions = () => {
     if (data) {
       setOptions(data);
-    }else if(optionValues){
-     setOptions(optionValues)
     }
   };
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  console.log(inputValue);
+  console.log(`value: ${field.value}`);
   return (
     <Autocomplete
       loading={isLoading}
@@ -61,9 +65,6 @@ const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
       }}
       onChange={(_, value) => {
         void setFieldValue(name, value);
-        if (setval) {
-          setval(value as Concept);
-        }
       }}
       inputValue={inputValue}
       onInputChange={(e, value) => {
@@ -72,7 +73,7 @@ const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
           setOpen(false);
         }
       }}
-      options={options}
+      options={optionValues}
       onBlur={() => void setTouched({ [name]: true })}
       renderInput={props => (
         // <div {...props}></div>
@@ -81,4 +82,4 @@ const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
     />
   );
 };
-export default ProductAutocomplete;
+export default DoseFormAutocomplete;

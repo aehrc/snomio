@@ -65,6 +65,7 @@ export default function ProductSearchAndAddModal({
           providedEcl={ECL_EXISTING_PRODUCT_TO_PACKAGE}
           inputValue={searchInputValue}
           setInputValue={setSearchInputValue}
+          showDeviceSearch={false}
         />
       </BaseModalBody>
       <BaseModalFooter
