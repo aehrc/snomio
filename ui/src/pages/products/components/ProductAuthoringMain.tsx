@@ -46,6 +46,8 @@ export interface ProductAuthoringMainProps {
   units: Concept[];
   containerTypes: Concept[];
   doseForms: Concept[];
+  ingredients:Concept[];
+  brandProducts:Concept[]
   handleClearForm: () => void;
   emptyForm: boolean;
   setEmptyForm: (value: boolean) => void;
@@ -57,6 +59,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     units,
     containerTypes,
     doseForms,
+    ingredients,
+      brandProducts,
     handleClearForm,
     emptyForm,
     setEmptyForm,
@@ -272,6 +276,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
                               }
+                              optionValues={brandProducts}
                               searchType={ConceptSearchType.brandProducts}
                               component={ProductAutocomplete}
                               fullWidth
@@ -288,7 +293,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                             <Field
                               name={`containedPackages[${index}].packageDetails.containerType`}
                               id={`containedPackages[${index}].packageDetails.containerType`}
-                              // optionValues={containerTypes}
+                              optionValues={containerTypes}
                               getOptionLabel={(option: Concept) =>
                                 option.pt.term
                               }
@@ -366,6 +371,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       arrayHelpers={arrayHelpers}
                       units={units}
                       doseForms={doseForms}
+                      brandProducts={brandProducts}
+                      ingredients={ingredients}
                     />
                   </>
                 )}
@@ -524,6 +531,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                                   arrayHelpers={arrayHelpers}
                                   units={units}
                                   doseForms={doseForms}
+                                  brandProducts={brandProducts}
+                                  ingredients={ingredients}
                                 />
                               </>
                             );

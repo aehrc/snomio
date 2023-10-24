@@ -43,6 +43,8 @@ const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
   const mapDataToOptions = () => {
     if (data) {
       setOptions(data);
+    }else if(optionValues){
+     setOptions(optionValues)
     }
   };
   return (

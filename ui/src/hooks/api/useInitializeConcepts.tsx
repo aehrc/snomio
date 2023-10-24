@@ -10,7 +10,7 @@ import { Concept } from '../../types/concept.ts';
 export default function useInitializeConcepts() {
   const { unitsIsLoading } = useInitializeUnits();
   const { containerTypesIsLoading } = useInitializeContainerTypes();
-  // const { brandProductsIsLoading } = useInitializeBrandProducts();
+  const { brandProductsIsLoading } = useInitializeBrandProducts();
   const { ingredientsIsLoading } = useInitializeIngredients();
   const { doseFormsIsLoading } = useInitializeDoseForms();
 
@@ -18,7 +18,7 @@ export default function useInitializeConcepts() {
     conceptsLoading:
       unitsIsLoading ||
       containerTypesIsLoading ||
-      // brandProductsIsLoading ||
+      brandProductsIsLoading ||
       ingredientsIsLoading ||
       doseFormsIsLoading,
   };
@@ -139,18 +139,24 @@ export function useSearchConcepts(
 
   return { isLoading, data };
 }
-// export function useSpecialDoseFormSearch(searchString: string, ecl: string) {
-//   const { isLoading, data } = useQuery(
-//     [`search-products-special-dose-${searchString}`],
-//     () => {
-//       // if(searchString.length > 2 && eclSearch && eclSearch.length >0)
-//       return ConceptService.searchConcept(searchString, ecl);
-//     },
-//     {
-//       cacheTime: 0,
-//       staleTime: 20 * (60 * 1000),
-//     },
-//   );
-//
-//   return { isLoading, data };
-// }
+export function useSpecialDoseFormSearch(
+  searchString: string,
+  ecl: string | undefined,
+) {
+  const { isLoading, data } = useQuery(
+    [`search-products-special-dose-${searchString}`],
+    () => {
+      // if(searchString.length > 2 && eclSearch && eclSearch.length >0)
+      return ConceptService.searchConcept(searchString, ecl);
+    },
+    {
+      staleTime: 0.5 * (60 * 1000),
+      enabled:
+        ecl !== undefined &&
+        searchString !== undefined &&
+        searchString.length > 2,
+    },
+  );
+
+  return { isLoading, data };
+}

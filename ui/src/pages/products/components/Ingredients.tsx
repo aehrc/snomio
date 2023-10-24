@@ -33,6 +33,7 @@ interface IngredientsProps {
   partOfPackage: boolean;
   arrayHelpers: FieldArrayRenderProps;
   units: Concept[];
+  ingredients:Concept[];
 }
 function Ingredients(props: IngredientsProps) {
   const {
@@ -41,6 +42,7 @@ function Ingredients(props: IngredientsProps) {
     partOfPackage,
     arrayHelpers,
     units,
+      ingredients
   } = props;
   //const [number, setNumber] = React.useState("");
   const { values } = useFormikContext<MedicationPackageDetails>();
@@ -192,7 +194,7 @@ function Ingredients(props: IngredientsProps) {
                     <Field
                       name={`${activeIngredientsArray}[${index}].activeIngredient`}
                       id={`${activeIngredientsArray}[${index}].activeIngredient`}
-                      // optionValues={ingredients}
+                      optionValues={ingredients}
                       getOptionLabel={(option: Concept) => option.pt.term}
                       searchType={ConceptSearchType.ingredients}
                       component={ProductAutocomplete}
@@ -210,6 +212,7 @@ function Ingredients(props: IngredientsProps) {
                       id={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
                       searchType={ConceptSearchType.ingredients}
                       getOptionLabel={(option: Concept) => option.pt.term}
+                      optionValues={ingredients}
                       component={ProductAutocomplete}
                       fullWidth
                       variant="outlined"

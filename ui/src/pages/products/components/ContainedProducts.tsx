@@ -22,6 +22,8 @@ interface ContainedProductsProps {
   arrayHelpers: FieldArrayRenderProps;
   units: Concept[];
   doseForms: Concept[];
+  brandProducts:Concept[];
+  ingredients:Concept[];
 }
 const ContainedProducts: FC<ContainedProductsProps> = ({
   packageIndex,
@@ -30,6 +32,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   arrayHelpers,
   units,
   doseForms,
+    brandProducts,ingredients
 }) => {
   //const [name, setName] = React.useState("");
   const { values } = useFormikContext<MedicationPackageDetails>();
@@ -105,6 +108,8 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               packageIndex={packageIndex}
               key={`product-${index}`}
               doseForms={doseForms}
+              brandProducts={brandProducts}
+              ingredients={ingredients}
             />
           );
         })}

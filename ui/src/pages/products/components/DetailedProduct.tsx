@@ -35,6 +35,8 @@ interface DetailedProductProps {
   partOfPackage: boolean;
   packageIndex?: number;
   doseForms: Concept[];
+  brandProducts:Concept[];
+  ingredients:Concept[];
 }
 function DetailedProduct(props: DetailedProductProps) {
   const {
@@ -49,6 +51,8 @@ function DetailedProduct(props: DetailedProductProps) {
     productsArray,
     partOfPackage,
     packageIndex,
+      brandProducts,
+      ingredients
   } = props;
 
   const [specialFormDoses, setSpecialFormDoses] = useState<Concept[]>([]);
@@ -192,6 +196,7 @@ function DetailedProduct(props: DetailedProductProps) {
                       id={`${productsArray}[${index}].productDetails.productName`}
                       getOptionLabel={(option: Concept) => option.pt.term}
                       searchType={ConceptSearchType.brandProducts}
+                      optionValues={brandProducts}
                       component={ProductAutocomplete}
                       fullWidth
                       variant="outlined"
@@ -217,6 +222,7 @@ function DetailedProduct(props: DetailedProductProps) {
                         partOfPackage={partOfPackage}
                         arrayHelpers={arrayHelpers}
                         units={units}
+                        ingredients={ingredients}
                       />
                     </>
                   )}
@@ -252,6 +258,7 @@ function DetailedProduct(props: DetailedProductProps) {
                     optionValues={specialFormDoses}
                     inputValue={doseFormsearchInputValue}
                     setInputValue={setDoseFormsearchInputValue}
+                    parent={selectedDoseForm}
                     component={DoseFormAutocomplete}
                     fullWidth
                     variant="outlined"

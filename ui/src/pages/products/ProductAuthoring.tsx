@@ -100,6 +100,8 @@ function ProductAuthoring() {
               units={units}
               containerTypes={containerTypes}
               doseForms={doseForms}
+              ingredients={ingredients}
+              brandProducts={brandProducts}
               handleClearForm={handleClearForm}
               emptyForm={emptyForm}
               setEmptyForm={setEmptyForm}
