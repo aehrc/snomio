@@ -6,7 +6,7 @@ interface ArtgAutocompleteProps {
   setval: (val: any) => void;
   optionValues: any[];
 }
-const ArtgAutocomplete: FC<ArtgAutocompleteProps & FieldProps> = ({
+const ArtgAutocomplete: FC<ArtgAutocompleteProps & dof > = ({
   field,
   form: { touched, setTouched, setFieldValue },
   setval,

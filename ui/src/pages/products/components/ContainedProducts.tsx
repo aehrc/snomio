@@ -14,33 +14,40 @@ import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
 import { Level1Box, Level2Box } from './style/ProductBoxes.tsx';
 
 import DetailedProduct from './DetailedProduct.tsx';
+import {Control, useFieldArray, UseFormRegister} from "react-hook-form";
 
 interface ContainedProductsProps {
   packageIndex?: number;
   partOfPackage: boolean;
   showTPU: boolean;
-  arrayHelpers: FieldArrayRenderProps;
+
   units: Concept[];
   doseForms: Concept[];
   brandProducts:Concept[];
   ingredients:Concept[];
+  control:	Control<MedicationPackageDetails>
+  register:UseFormRegister<MedicationPackageDetails>;
 }
 const ContainedProducts: FC<ContainedProductsProps> = ({
   packageIndex,
   partOfPackage,
   showTPU,
-  arrayHelpers,
   units,
   doseForms,
-    brandProducts,ingredients
+    brandProducts,ingredients,
+    control,
+    register
 }) => {
   //const [name, setName] = React.useState("");
-  const { values } = useFormikContext<MedicationPackageDetails>();
+  const { fields:productFields, append:productAppend, remove:productRemove } = useFieldArray({
+    control,
+    name: "containedProducts",
+  });
 
-  const containedProducts = partOfPackage
-    ? values.containedPackages[packageIndex as number].packageDetails
-        ?.containedProducts
-    : values.containedProducts;
+  // const containedProducts = partOfPackage
+  //   ? values.containedPackages[packageIndex as number].packageDetails
+  //       ?.containedProducts
+  //   : values.containedProducts;
   const productsArray = partOfPackage
     ? `containedPackages[${packageIndex}].packageDetails.containedProducts`
     : 'containedProducts';
@@ -66,7 +73,8 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                 const productQuantity: MedicationProductQuantity = {
                   productDetails: { activeIngredients: [{}] },
                 };
-                arrayHelpers.push(productQuantity);
+                productAppend(productQuantity);
+                // arrayHelpers.push(productQuantity);
               }}
               aria-label="create"
               size="large"
@@ -87,17 +95,16 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
             </Tooltip>
           </Stack>
         </Grid>
-        <ProductSearchAndAddModal
-          open={modalOpen}
-          handleClose={handleToggleModal}
-          arrayHelpers={arrayHelpers}
-        />
+        {/*<ProductSearchAndAddModal*/}
+        {/*  open={modalOpen}*/}
+        {/*  handleClose={handleToggleModal}*/}
+        {/*  arrayHelpers={arrayHelpers}*/}
+        {/*/>*/}
 
-        {containedProducts.map((containedProduct, index) => {
+        {productFields.map((containedProduct, index) => {
           return (
             <DetailedProduct
               index={index}
-              arrayHelpers={arrayHelpers}
               units={units}
               expandedProducts={expandedProducts}
               setExpandedProducts={setExpandedProducts}
@@ -110,6 +117,8 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               doseForms={doseForms}
               brandProducts={brandProducts}
               ingredients={ingredients}
+              control={control}
+              register={register}
             />
           );
         })}

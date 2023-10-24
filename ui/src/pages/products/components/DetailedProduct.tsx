@@ -1,6 +1,6 @@
 import { Field, FieldArray, FieldArrayRenderProps } from 'formik';
 import { Concept } from '../../../types/concept.ts';
-import { MedicationProductQuantity } from '../../../types/authoring.ts';
+import {MedicationPackageDetails, MedicationProductQuantity} from '../../../types/authoring.ts';
 import React, { useEffect, useState } from 'react';
 import {
   Accordion,
@@ -22,10 +22,12 @@ import Ingredients from './Ingredients.tsx';
 import ConceptService from '../../../api/ConceptService.ts';
 import DoseFormAutocomplete from './DoseFormAutocomplete.tsx';
 import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
+import ProductAutocompleteNew from "./ProductAutocompleteNew.tsx";
+import {Control, Controller, UseFormRegister} from "react-hook-form";
+import DoseFormAutocompleteNew from "./DoseFormAutoCompleteNew.tsx";
 
 interface DetailedProductProps {
   index: number;
-  arrayHelpers: FieldArrayRenderProps;
   units: Concept[];
   expandedProducts: string[];
   setExpandedProducts: (value: string[]) => void;
@@ -37,13 +39,15 @@ interface DetailedProductProps {
   doseForms: Concept[];
   brandProducts:Concept[];
   ingredients:Concept[];
+  control:	Control
+  register:UseFormRegister<MedicationPackageDetails>;
 }
 function DetailedProduct(props: DetailedProductProps) {
   const {
     index,
     expandedProducts,
     setExpandedProducts,
-    arrayHelpers,
+
     units,
     doseForms,
     containedProduct,
@@ -52,7 +56,9 @@ function DetailedProduct(props: DetailedProductProps) {
     partOfPackage,
     packageIndex,
       brandProducts,
-      ingredients
+      ingredients,
+      control,
+      register
   } = props;
 
   const [specialFormDoses, setSpecialFormDoses] = useState<Concept[]>([]);
@@ -68,7 +74,7 @@ function DetailedProduct(props: DetailedProductProps) {
   const [deleteModalContent, setDeleteModalContent] = useState('');
 
   const handleDeleteProduct = () => {
-    arrayHelpers.remove(indexToDelete);
+    // arrayHelpers.remove(indexToDelete);
     setDeleteModalOpen(false);
   };
   const productKey = (index: number) => {
@@ -191,78 +197,104 @@ function DetailedProduct(props: DetailedProductProps) {
                   <legend>Product Details</legend>
                   <InnerBox component="fieldset">
                     <legend>Brand Name</legend>
-                    <Field
-                      name={`${productsArray}[${index}].productDetails.productName`}
-                      id={`${productsArray}[${index}].productDetails.productName`}
-                      getOptionLabel={(option: Concept) => option.pt.term}
-                      searchType={ConceptSearchType.brandProducts}
-                      optionValues={brandProducts}
-                      component={ProductAutocomplete}
-                      fullWidth
-                      variant="outlined"
-                      margin="dense"
-                      // disableClearable={true}
+
+                    <Controller
+                        name={`${productsArray}[${index}].productDetails.productName`}
+                        // name="containerType"
+                        control={control}
+                        render={({ field:{onChange,value}, ...props }) => (
+                            <ProductAutocompleteNew onChange={onChange} value={value ? value as Concept : null} optionValues={brandProducts} searchType={ConceptSearchType.brandProducts}/>
+                        )}
                     />
+
+                    {/*<Field*/}
+                    {/*  name={`${productsArray}[${index}].productDetails.productName`}*/}
+                    {/*  id={`${productsArray}[${index}].productDetails.productName`}*/}
+                    {/*  getOptionLabel={(option: Concept) => option.pt.term}*/}
+                    {/*  searchType={ConceptSearchType.brandProducts}*/}
+                    {/*  optionValues={brandProducts}*/}
+                    {/*  component={ProductAutocomplete}*/}
+                    {/*  fullWidth*/}
+                    {/*  variant="outlined"*/}
+                    {/*  margin="dense"*/}
+                    {/*  // disableClearable={true}*/}
+                    {/*/>*/}
                   </InnerBox>
                 </OuterBox>
               ) : (
                 <div></div>
               )}
 
-              <OuterBox component="fieldset">
-                <legend>Active Ingredients</legend>
-                <FieldArray name={activeIngredientsArray}>
-                  {arrayHelpers => (
-                    <>
-                      <Ingredients
-                        containedProductIndex={index}
-                        packageIndex={
-                          partOfPackage ? (packageIndex as number) : undefined
-                        }
-                        partOfPackage={partOfPackage}
-                        arrayHelpers={arrayHelpers}
-                        units={units}
-                        ingredients={ingredients}
-                      />
-                    </>
-                  )}
-                </FieldArray>
-                {/*<pre>{JSON.stringify(values.containedProducts[0].productDetails.activeIngredients, null, 2)}</pre>*/}
-              </OuterBox>
+              {/*<OuterBox component="fieldset">*/}
+              {/*  <legend>Active Ingredients</legend>*/}
+              {/*  <FieldArray name={activeIngredientsArray}>*/}
+              {/*    {arrayHelpers => (*/}
+              {/*      <>*/}
+              {/*        <Ingredients*/}
+              {/*          containedProductIndex={index}*/}
+              {/*          packageIndex={*/}
+              {/*            partOfPackage ? (packageIndex as number) : undefined*/}
+              {/*          }*/}
+              {/*          partOfPackage={partOfPackage}*/}
+              {/*          arrayHelpers={arrayHelpers}*/}
+              {/*          units={units}*/}
+              {/*          ingredients={ingredients}*/}
+              {/*        />*/}
+              {/*      </>*/}
+              {/*    )}*/}
+              {/*  </FieldArray>*/}
+              {/*  /!*<pre>{JSON.stringify(values.containedProducts[0].productDetails.activeIngredients, null, 2)}</pre>*!/*/}
+              {/*</OuterBox>*/}
             </Grid>
             <Grid xs={6} key={'right'} item={true}>
               <OuterBox component="fieldset">
                 <legend>Dose Forms</legend>
                 <InnerBox component="fieldset">
                   <legend>Generic Dose Form</legend>
-                  <Field
-                    name={`${productsArray}[${index}].productDetails.genericForm`}
-                    id={`${productsArray}[${index}].productDetails.genericForm`}
-                    getOptionLabel={(option: Concept) => option.pt.term}
-                    setval={setSelectedDoseForm}
-                    optionValues={doseForms}
-                    searchType={ConceptSearchType.doseForms}
-                    component={ProductAutocomplete}
-                    fullWidth
-                    variant="outlined"
-                    margin="dense"
+                  {/*<Field*/}
+                  {/*  name={`${productsArray}[${index}].productDetails.genericForm`}*/}
+                  {/*  id={`${productsArray}[${index}].productDetails.genericForm`}*/}
+                  {/*  getOptionLabel={(option: Concept) => option.pt.term}*/}
+                  {/*  setval={setSelectedDoseForm}*/}
+                  {/*  optionValues={doseForms}*/}
+                  {/*  searchType={ConceptSearchType.doseForms}*/}
+                  {/*  component={ProductAutocomplete}*/}
+                  {/*  fullWidth*/}
+                  {/*  variant="outlined"*/}
+                  {/*  margin="dense"*/}
+                  {/*/>*/}
+                  <Controller
+                      name={`${productsArray}[${index}].productDetails.genericForm`}
+                      // name="containerType"
+                      control={control}
+                      render={({ field:{onChange,value}, ...props }) => (
+                          <DoseFormAutocompleteNew onChange={onChange} value={value ? value as Concept : null} optionValues={doseForms} searchType={ConceptSearchType.doseForms} setval={setSelectedDoseForm}/>
+                      )}
                   />
                 </InnerBox>
                 <InnerBox component="fieldset">
                   <legend>Specific Dose Form</legend>
 
-                  <Field
-                    name={`${productsArray}[${index}].productDetails.specificForm`}
-                    id={`${productsArray}[${index}].productDetails.specificForm`}
-                    getOptionLabel={(option: Concept) => option.pt.term}
-                    optionValues={specialFormDoses}
-                    inputValue={doseFormsearchInputValue}
-                    setInputValue={setDoseFormsearchInputValue}
-                    parent={selectedDoseForm}
-                    component={DoseFormAutocomplete}
-                    fullWidth
-                    variant="outlined"
-                    margin="dense"
+                  {/*<Field*/}
+                  {/*  name={`${productsArray}[${index}].productDetails.specificForm`}*/}
+                  {/*  id={`${productsArray}[${index}].productDetails.specificForm`}*/}
+                  {/*  getOptionLabel={(option: Concept) => option.pt.term}*/}
+                  {/*  optionValues={specialFormDoses}*/}
+                  {/*  inputValue={doseFormsearchInputValue}*/}
+                  {/*  setInputValue={setDoseFormsearchInputValue}*/}
+                  {/*  parent={selectedDoseForm}*/}
+                  {/*  component={DoseFormAutocomplete}*/}
+                  {/*  fullWidth*/}
+                  {/*  variant="outlined"*/}
+                  {/*  margin="dense"*/}
+                  {/*/>*/}
+                  <Controller
+                      name={`${productsArray}[${index}].productDetails.specificForm`}
+                      // name="containerType"
+                      control={control}
+                      render={({ field:{onChange,value}, ...props }) => (
+                          <ProductAutocompleteNew onChange={onChange} value={value ? value as Concept : null} optionValues={specialFormDoses} searchType={ConceptSearchType.specialDoseForms}/>
+                      )}
                   />
                 </InnerBox>
 
@@ -271,26 +303,31 @@ function DetailedProduct(props: DetailedProductProps) {
 
                   <Stack direction="row" spacing={2} alignItems={'center'}>
                     <Grid item xs={2}>
-                      <Field
-                        as={TextField}
-                        name={`${productsArray}[${index}].productDetails.quantity.value`}
-                        fullWidth
-                        variant="outlined"
-                        margin="dense"
-                        InputLabelProps={{ shrink: true }}
-                        value={
-                          containedProduct.productDetails?.quantity?.value || ''
-                        }
-                      />
+                      {/*<Field*/}
+                      {/*  as={TextField}*/}
+                      {/*  name={`${productsArray}[${index}].productDetails.quantity.value`}*/}
+                      {/*  fullWidth*/}
+                      {/*  variant="outlined"*/}
+                      {/*  margin="dense"*/}
+                      {/*  InputLabelProps={{ shrink: true }}*/}
+                      {/*  value={*/}
+                      {/*    containedProduct.productDetails?.quantity?.value || ''*/}
+                      {/*  }*/}
+                      {/*/>*/}
+                      <TextField {...register(`${productsArray}[${index}].productDetails.quantity.value`)} fullWidth
+                                 variant="outlined"
+                                 margin="dense" InputLabelProps={{ shrink: true }}/>
                     </Grid>
                     <Grid item xs={10}>
-                      <Field
-                        name={`${productsArray}[${index}].productDetails.quantity.unit`}
-                        id={`${productsArray}[${index}].productDetails.quantity.unit`}
-                        optionValues={units}
-                        getOptionLabel={(option: Concept) => option.pt.term}
-                        searchType={ConceptSearchType.units}
-                        component={ProductAutocomplete}
+
+
+                      <Controller
+                          name={`${productsArray}[${index}].productDetails.quantity.unit`}
+                          // name="containerType"
+                          control={control}
+                          render={({ field:{onChange,value}, ...props }) => (
+                              <ProductAutocompleteNew onChange={onChange} value={value ? value as Concept : null} optionValues={units} searchType={ConceptSearchType.units}/>
+                          )}
                       />
                     </Grid>
                   </Stack>
@@ -300,24 +337,35 @@ function DetailedProduct(props: DetailedProductProps) {
 
                   <Stack direction="row" spacing={2} alignItems={'center'}>
                     <Grid item xs={2}>
-                      <Field
-                        as={TextField}
-                        name={`${productsArray}[${index}].value`}
-                        fullWidth
-                        variant="outlined"
-                        margin="dense"
-                        InputLabelProps={{ shrink: true }}
-                        value={containedProduct.value || ''}
-                      />
+                      {/*<Field*/}
+                      {/*  as={TextField}*/}
+                      {/*  name={`${productsArray}[${index}].value`}*/}
+                      {/*  fullWidth*/}
+                      {/*  variant="outlined"*/}
+                      {/*  margin="dense"*/}
+                      {/*  InputLabelProps={{ shrink: true }}*/}
+                      {/*  value={containedProduct.value || ''}*/}
+                      {/*/>*/}
+                      <TextField {...register(`${productsArray}[${index}].value`)} fullWidth
+                                 variant="outlined"
+                                 margin="dense" InputLabelProps={{ shrink: true }}/>
                     </Grid>
                     <Grid item xs={10}>
-                      <Field
-                        name={`${productsArray}[${index}].unit`}
-                        id={`${productsArray}[${index}].unit`}
-                        optionValues={units}
-                        getOptionLabel={(option: Concept) => option.pt.term}
-                        searchType={ConceptSearchType.units}
-                        component={ProductAutocomplete}
+                      {/*<Field*/}
+                      {/*  name={`${productsArray}[${index}].unit`}*/}
+                      {/*  id={`${productsArray}[${index}].unit`}*/}
+                      {/*  optionValues={units}*/}
+                      {/*  getOptionLabel={(option: Concept) => option.pt.term}*/}
+                      {/*  searchType={ConceptSearchType.units}*/}
+                      {/*  component={ProductAutocomplete}*/}
+                      {/*/>*/}
+                      <Controller
+                          name={`${productsArray}[${index}].unit`}
+                          // name="containerType"
+                          control={control}
+                          render={({ field:{onChange,value}, ...props }) => (
+                              <ProductAutocompleteNew onChange={onChange} value={value ? value as Concept : null} optionValues={units} searchType={ConceptSearchType.units}/>
+                          )}
                       />
                     </Grid>
                   </Stack>
