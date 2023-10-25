@@ -28,6 +28,7 @@ import {
   useWatch,
 } from 'react-hook-form';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
+import {ingredientsExpandedStored, storeIngredientsExpanded} from "../../../utils/helpers/conceptUtils.ts";
 
 interface IngredientsProps {
   packageIndex?: number;
@@ -49,7 +50,7 @@ function Ingredients(props: IngredientsProps) {
     register,
   } = props;
   //const [number, setNumber] = React.useState("");
-  const [expandedIngredients, setExpandedIngredients] = useState<string[]>([]);
+  const [expandedIngredients, setExpandedIngredients] = useState<string[]>(ingredientsExpandedStored);
 
   const [disabled, setDisabled] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -78,7 +79,8 @@ function Ingredients(props: IngredientsProps) {
     setDeleteModalOpen(false);
     setIndexToDelete(undefined);
     setExpandedIngredients([]);
-    // storeIngredientsExpanded([]);
+    storeIngredientsExpanded([]);
+    console.log("On delete",ingredientFields.length)
   };
 
   const getKey = (index: number) => {
@@ -91,10 +93,11 @@ function Ingredients(props: IngredientsProps) {
         const temp = expandedIngredients.filter(
           (value: string) => value !== key,
         );
-
+        storeIngredientsExpanded(temp);
         setExpandedIngredients(temp);
       } else {
         const temp = [...expandedIngredients, key];
+        storeIngredientsExpanded(temp);
         setExpandedIngredients(temp);
       }
     };
@@ -107,6 +110,7 @@ function Ingredients(props: IngredientsProps) {
             onClick={() => {
               const ingredient: Ingredient = {};
               ingredientAppend(ingredient);
+              console.log("On create",ingredientFields.length)
             }}
             aria-label="create"
             size="large"

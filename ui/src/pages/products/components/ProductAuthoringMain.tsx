@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import {
-  ExternalIdentifier,
   MedicationPackageDetails,
 } from '../../../types/authoring.ts';
 import {
-  Controller,
   SubmitHandler,
   useFieldArray,
   useForm,
@@ -81,18 +79,14 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     console.log(data);
 
   const {
-    fields: productFields,
-    append: productAppend,
-    remove: productRemove,
+    fields: productFields
   } = useFieldArray({
     control,
     name: 'containedProducts',
   });
 
   const {
-    fields: packageFields,
-    append: packageAppend,
-    remove: packageRemove,
+    fields: packageFields
   } = useFieldArray({
     control,
     name: 'containedPackages',
@@ -135,7 +129,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                     Clear
                   </Button>
                 </Grid>
-                {/*<MainBox component="fieldset">*/}
                 <Level1Box component="fieldset">
                   <legend>Product Details</legend>
 
@@ -196,7 +189,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       containerTypes={containerTypes}
                       control={control}
                       register={register}
-                      // watch={watch}
                     />
                   </div>
                 ) : (

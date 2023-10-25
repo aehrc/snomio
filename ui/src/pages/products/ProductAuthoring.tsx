@@ -12,6 +12,7 @@ import { Stack } from '@mui/system';
 import useInitializeConcepts from '../../hooks/api/useInitializeConcepts.tsx';
 import Loading from '../../components/Loading.tsx';
 import { Concept } from '../../types/concept.ts';
+import {storeIngredientsExpanded} from "../../utils/helpers/conceptUtils.ts";
 function ProductAuthoring() {
   const conceptStore = useConceptStore();
   const { units, containerTypes, ingredients, doseForms, brandProducts } =
@@ -37,6 +38,7 @@ function ProductAuthoring() {
     setSelectedProduct(null);
     setPackageDetails(defaultPackage);
     setSearchInputValue('');
+    storeIngredientsExpanded([]);
     setIsFormEditted(true);
   };
   useEffect(() => {
@@ -50,6 +52,7 @@ function ProductAuthoring() {
           if (packageDetails) {
             setName(packageDetails.productName?.conceptId as string);
           }
+          storeIngredientsExpanded([]);
           setLoadingMedication(false);
           setIsFormEditted(false);
         })
