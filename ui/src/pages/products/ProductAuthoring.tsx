@@ -12,7 +12,6 @@ import { Stack } from '@mui/system';
 import useInitializeConcepts from '../../hooks/api/useInitializeConcepts.tsx';
 import Loading from '../../components/Loading.tsx';
 import { Concept } from '../../types/concept.ts';
-import { storeIngredientsExpanded } from '../../utils/helpers/conceptUtils.ts';
 function ProductAuthoring() {
   const conceptStore = useConceptStore();
   const { units, containerTypes, ingredients, doseForms, brandProducts } =
@@ -30,7 +29,7 @@ function ProductAuthoring() {
   const [selectedProduct, setSelectedProduct] = useState<Concept | null>(null);
   const [isLoadingMedication, setLoadingMedication] = useState(false);
   const [searchInputValue, setSearchInputValue] = useState('');
-  const [emptyForm, setEmptyForm] = useState(true);
+  const [isFormEditted, setIsFormEditted] = useState(false);
   const handleSelectedProductChange = (concept: Concept | null) => {
     setSelectedProduct(concept);
   };
@@ -38,8 +37,7 @@ function ProductAuthoring() {
     setSelectedProduct(null);
     setPackageDetails(defaultPackage);
     setSearchInputValue('');
-    storeIngredientsExpanded([]);
-    setEmptyForm(true);
+    setIsFormEditted(true);
   };
   useEffect(() => {
     if (selectedProduct) {
@@ -52,9 +50,8 @@ function ProductAuthoring() {
           if (packageDetails) {
             setName(packageDetails.productName?.conceptId as string);
           }
-          storeIngredientsExpanded([]);
           setLoadingMedication(false);
-          setEmptyForm(false);
+          setIsFormEditted(false);
         })
         .catch(error);
     }
@@ -86,7 +83,7 @@ function ProductAuthoring() {
               handleChange={handleSelectedProductChange}
               inputValue={searchInputValue}
               setInputValue={setSearchInputValue}
-              showConfirmationModalOnChange={!emptyForm}
+              showConfirmationModalOnChange={isFormEditted}
               showDeviceSearch={true}
             />
           </Grid>
@@ -103,8 +100,8 @@ function ProductAuthoring() {
               ingredients={ingredients}
               brandProducts={brandProducts}
               handleClearForm={handleClearForm}
-              emptyForm={emptyForm}
-              setEmptyForm={setEmptyForm}
+              isFormEdited={isFormEditted}
+              setIsFormEdited={setIsFormEditted}
             />{' '}
           </Grid>
         ) : (

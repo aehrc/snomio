@@ -1,4 +1,3 @@
-import { FieldArrayRenderProps, useFormikContext } from 'formik';
 import React, { FC, useState } from 'react';
 import {
   MedicationPackageDetails,
@@ -14,19 +13,24 @@ import SearchAndAddIcon from '../../../components/icons/SearchAndAddIcon.tsx';
 import { Level1Box, Level2Box } from './style/ProductBoxes.tsx';
 
 import DetailedProduct from './DetailedProduct.tsx';
-import {Control, useFieldArray, UseFormRegister} from "react-hook-form";
+import {
+  Control,
+  FieldArrayWithId,
+  useFieldArray,
+  UseFormRegister,
+} from 'react-hook-form';
 
 interface ContainedProductsProps {
   packageIndex?: number;
   partOfPackage: boolean;
-  showTPU: boolean;
+  showTPU?: boolean;
 
   units: Concept[];
   doseForms: Concept[];
-  brandProducts:Concept[];
-  ingredients:Concept[];
-  control:	Control<MedicationPackageDetails>
-  register:UseFormRegister<MedicationPackageDetails>;
+  brandProducts: Concept[];
+  ingredients: Concept[];
+  control: Control<MedicationPackageDetails>;
+  register: UseFormRegister<MedicationPackageDetails>;
 }
 const ContainedProducts: FC<ContainedProductsProps> = ({
   packageIndex,
@@ -34,24 +38,25 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   showTPU,
   units,
   doseForms,
-    brandProducts,ingredients,
-    control,
-    register
+  brandProducts,
+  ingredients,
+  control,
+  register,
 }) => {
-  //const [name, setName] = React.useState("");
-  const { fields:productFields, append:productAppend, remove:productRemove } = useFieldArray({
-    control,
-    name: "containedProducts",
-  });
-
-  // const containedProducts = partOfPackage
-  //   ? values.containedPackages[packageIndex as number].packageDetails
-  //       ?.containedProducts
-  //   : values.containedProducts;
   const productsArray = partOfPackage
     ? `containedPackages[${packageIndex}].packageDetails.containedProducts`
     : 'containedProducts';
 
+  const {
+    fields: productFields,
+    append: productAppend,
+    remove: productRemove,
+  } = useFieldArray({
+    control,
+    name: partOfPackage
+      ? (`containedPackages[${packageIndex}.packageDetails.containedProducts` as 'containedProducts')
+      : 'containedProducts',
+  });
   const [expandedProducts, setExpandedProducts] = useState<string[]>([]);
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -60,7 +65,6 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   };
   const handleSearchAndAddProduct = () => {
     handleToggleModal();
-    // setValue(newValue);
   };
 
   const ProductDetails = () => {
@@ -95,11 +99,11 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
             </Tooltip>
           </Stack>
         </Grid>
-        {/*<ProductSearchAndAddModal*/}
-        {/*  open={modalOpen}*/}
-        {/*  handleClose={handleToggleModal}*/}
-        {/*  arrayHelpers={arrayHelpers}*/}
-        {/*/>*/}
+        <ProductSearchAndAddModal
+          open={modalOpen}
+          handleClose={handleToggleModal}
+          productAppend={productAppend}
+        />
 
         {productFields.map((containedProduct, index) => {
           return (
@@ -108,7 +112,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               units={units}
               expandedProducts={expandedProducts}
               setExpandedProducts={setExpandedProducts}
-              containedProduct={containedProduct}
+              containedProduct={containedProduct as MedicationProductQuantity}
               showTPU={showTPU}
               productsArray={productsArray}
               partOfPackage={partOfPackage}
@@ -119,6 +123,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               ingredients={ingredients}
               control={control}
               register={register}
+              productRemove={productRemove}
             />
           );
         })}

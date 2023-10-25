@@ -3,34 +3,37 @@ import React, { FC, useEffect, useState } from 'react';
 import { Concept } from '../../../types/concept.ts';
 import useDebounce from '../../../hooks/useDebounce.tsx';
 
-import { useSearchConcepts } from '../../../hooks/api/useInitializeConcepts.tsx';
+import { useSpecialDoseFormSearch } from '../../../hooks/api/useInitializeConcepts.tsx';
 import { ConceptSearchType } from '../../../types/conceptSearch.ts';
 import { Control, UseFormRegister, Controller } from 'react-hook-form';
 import { MedicationPackageDetails } from '../../../types/authoring.ts';
-interface DoseFormAutocompleteNewProps {
+interface SpecialDoseFormAutocompleteProps {
   optionValues: Concept[];
   searchType: ConceptSearchType;
-  setval: (val: Concept) => void;
   control: Control<MedicationPackageDetails>;
   register: UseFormRegister<MedicationPackageDetails>;
   name: string;
+  inputValue: string;
+  setInputValue: (val: string) => void;
+  ecl: string | undefined;
 }
-const DoseFormAutocompleteNew: FC<DoseFormAutocompleteNewProps> = ({
+const SpecialDoseFormAutocomplete: FC<SpecialDoseFormAutocompleteProps> = ({
   optionValues,
   searchType,
-  setval,
+  inputValue,
+  setInputValue,
   control,
   register,
   name,
+  ecl,
 
   ...props
 }) => {
-  const [inputValue, setInputValue] = useState('');
   const debouncedSearch = useDebounce(inputValue, 1000);
   const [options, setOptions] = useState<Concept[]>(
     optionValues ? optionValues : [],
   );
-  const { isLoading, data } = useSearchConcepts(debouncedSearch, searchType);
+  const { isLoading, data } = useSpecialDoseFormSearch(debouncedSearch, ecl);
   const [open, setOpen] = useState(false);
   useEffect(() => {
     mapDataToOptions();
@@ -45,11 +48,11 @@ const DoseFormAutocompleteNew: FC<DoseFormAutocompleteNewProps> = ({
   };
   return (
     <Controller
-      name={name as 'containedProducts.0.productDetails.genericForm'}
+      name={name as 'containedProducts.0.productDetails.specificForm'}
       control={control}
       render={({ field: { onChange, value }, ...props }) => (
         <Autocomplete
-          loading={isLoading}
+          // loading={isLoading}
           options={options}
           getOptionLabel={option => option.pt.term}
           renderInput={params => <TextField {...params} />}
@@ -67,13 +70,12 @@ const DoseFormAutocompleteNew: FC<DoseFormAutocompleteNewProps> = ({
           inputValue={inputValue}
           onChange={(e, data) => {
             onChange(data);
-            setval(data as Concept);
           }}
           {...props}
-          value={(value as Concept) || null}
+          value={inputValue === '' ? null : (value as Concept)}
         />
       )}
     />
   );
 };
-export default DoseFormAutocompleteNew;
+export default SpecialDoseFormAutocomplete;

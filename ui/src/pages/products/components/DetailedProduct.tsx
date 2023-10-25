@@ -1,7 +1,9 @@
-import { Field, FieldArray, FieldArrayRenderProps } from 'formik';
 import { Concept } from '../../../types/concept.ts';
-import {MedicationPackageDetails, MedicationProductQuantity} from '../../../types/authoring.ts';
-import React, { useEffect, useState } from 'react';
+import {
+  MedicationPackageDetails,
+  MedicationProductQuantity,
+} from '../../../types/authoring.ts';
+import React, { useState } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -17,14 +19,19 @@ import { Stack } from '@mui/system';
 import { Delete } from '@mui/icons-material';
 import { InnerBox, OuterBox } from './style/ProductBoxes.tsx';
 import { ConceptSearchType } from '../../../types/conceptSearch.ts';
-import ProductAutocomplete from './ProductAutocomplete.tsx';
 import Ingredients from './Ingredients.tsx';
-import ConceptService from '../../../api/ConceptService.ts';
-import DoseFormAutocomplete from './DoseFormAutocomplete.tsx';
+
 import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
-import ProductAutocompleteNew from "./ProductAutocompleteNew.tsx";
-import {Control, Controller, UseFormRegister} from "react-hook-form";
-import DoseFormAutocompleteNew from "./DoseFormAutoCompleteNew.tsx";
+import ProductAutocomplete from './ProductAutocomplete.tsx';
+import {
+  Control,
+  Controller,
+  UseFieldArrayAppend,
+  UseFieldArrayRemove,
+  UseFormRegister,
+  useWatch,
+} from 'react-hook-form';
+import DoseForms from './DoseForm.tsx';
 
 interface DetailedProductProps {
   index: number;
@@ -32,15 +39,16 @@ interface DetailedProductProps {
   expandedProducts: string[];
   setExpandedProducts: (value: string[]) => void;
   containedProduct: MedicationProductQuantity;
-  showTPU: boolean;
+  showTPU?: boolean;
   productsArray: string;
   partOfPackage: boolean;
   packageIndex?: number;
   doseForms: Concept[];
-  brandProducts:Concept[];
-  ingredients:Concept[];
-  control:	Control
-  register:UseFormRegister<MedicationPackageDetails>;
+  brandProducts: Concept[];
+  ingredients: Concept[];
+  control: Control<MedicationPackageDetails>;
+  register: UseFormRegister<MedicationPackageDetails>;
+  productRemove: UseFieldArrayRemove;
 }
 function DetailedProduct(props: DetailedProductProps) {
   const {
@@ -55,26 +63,20 @@ function DetailedProduct(props: DetailedProductProps) {
     productsArray,
     partOfPackage,
     packageIndex,
-      brandProducts,
-      ingredients,
-      control,
-      register
+    brandProducts,
+    ingredients,
+    control,
+    register,
+    productRemove,
   } = props;
 
-  const [specialFormDoses, setSpecialFormDoses] = useState<Concept[]>([]);
-  const [selectedDoseForm, setSelectedDoseForm] = useState<Concept | null>(
-    containedProduct.productDetails?.genericForm
-      ? containedProduct.productDetails?.genericForm
-      : null,
-  );
-  const [doseFormsearchInputValue, setDoseFormsearchInputValue] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [indexToDelete, setIndexToDelete] = useState(-1);
   const [deleteModalContent, setDeleteModalContent] = useState('');
 
   const handleDeleteProduct = () => {
-    // arrayHelpers.remove(indexToDelete);
+    productRemove(indexToDelete);
     setDeleteModalOpen(false);
   };
   const productKey = (index: number) => {
@@ -93,26 +95,6 @@ function DetailedProduct(props: DetailedProductProps) {
     ? `containedPackages[${packageIndex}].packageDetails.containedProducts[${index}].productDetails.activeIngredients`
     : `containedProducts[${index}].productDetails.activeIngredients`;
 
-  useEffect(() => {
-    async function fetchSpecialFormDoses() {
-      setSpecialFormDoses([]);
-      try {
-        // alert(selectedDoseForm);
-        if (selectedDoseForm != null) {
-          const conceptId = selectedDoseForm.conceptId.trim();
-          const ecl = '<' + conceptId;
-
-          const concepts = await ConceptService.searchConceptByEcl(ecl);
-          setSpecialFormDoses(concepts);
-        } else {
-          setDoseFormsearchInputValue('');
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    void fetchSpecialFormDoses().then(r => r);
-  }, [selectedDoseForm]);
   return (
     <div key={productKey(index)} style={{ marginTop: '10px' }}>
       <ConfirmationModal
@@ -142,17 +124,11 @@ function DetailedProduct(props: DetailedProductProps) {
           <Grid xs={40} item={true}>
             <Stack direction="row" spacing={2} alignItems="center">
               <Grid item xs={10}>
-                <Typography
-                  sx={{
-                    color: !containedProduct.productDetails?.productName
-                      ? 'red'
-                      : 'inherit',
-                  }}
-                >
-                  {containedProduct.productDetails?.productName
-                    ? containedProduct.productDetails?.productName?.pt.term
-                    : 'Untitled*'}
-                </Typography>
+                <ProductNameWatched
+                  control={control}
+                  index={index}
+                  productsArray={productsArray}
+                />
               </Grid>
               <Grid container justifyContent="flex-end">
                 <Stack direction="row" spacing={0} alignItems="center">
@@ -197,185 +173,72 @@ function DetailedProduct(props: DetailedProductProps) {
                   <legend>Product Details</legend>
                   <InnerBox component="fieldset">
                     <legend>Brand Name</legend>
-
-                    <Controller
-                        name={`${productsArray}[${index}].productDetails.productName`}
-                        // name="containerType"
-                        control={control}
-                        render={({ field:{onChange,value}, ...props }) => (
-                            <ProductAutocompleteNew onChange={onChange} value={value ? value as Concept : null} optionValues={brandProducts} searchType={ConceptSearchType.brandProducts}/>
-                        )}
+                    <ProductAutocomplete
+                      optionValues={brandProducts}
+                      searchType={ConceptSearchType.brandProducts}
+                      name={`${productsArray}[${index}].productDetails.productName`}
+                      control={control}
+                      register={register}
                     />
-
-                    {/*<Field*/}
-                    {/*  name={`${productsArray}[${index}].productDetails.productName`}*/}
-                    {/*  id={`${productsArray}[${index}].productDetails.productName`}*/}
-                    {/*  getOptionLabel={(option: Concept) => option.pt.term}*/}
-                    {/*  searchType={ConceptSearchType.brandProducts}*/}
-                    {/*  optionValues={brandProducts}*/}
-                    {/*  component={ProductAutocomplete}*/}
-                    {/*  fullWidth*/}
-                    {/*  variant="outlined"*/}
-                    {/*  margin="dense"*/}
-                    {/*  // disableClearable={true}*/}
-                    {/*/>*/}
                   </InnerBox>
                 </OuterBox>
               ) : (
                 <div></div>
               )}
 
-              {/*<OuterBox component="fieldset">*/}
-              {/*  <legend>Active Ingredients</legend>*/}
-              {/*  <FieldArray name={activeIngredientsArray}>*/}
-              {/*    {arrayHelpers => (*/}
-              {/*      <>*/}
-              {/*        <Ingredients*/}
-              {/*          containedProductIndex={index}*/}
-              {/*          packageIndex={*/}
-              {/*            partOfPackage ? (packageIndex as number) : undefined*/}
-              {/*          }*/}
-              {/*          partOfPackage={partOfPackage}*/}
-              {/*          arrayHelpers={arrayHelpers}*/}
-              {/*          units={units}*/}
-              {/*          ingredients={ingredients}*/}
-              {/*        />*/}
-              {/*      </>*/}
-              {/*    )}*/}
-              {/*  </FieldArray>*/}
-              {/*  /!*<pre>{JSON.stringify(values.containedProducts[0].productDetails.activeIngredients, null, 2)}</pre>*!/*/}
-              {/*</OuterBox>*/}
-            </Grid>
-            <Grid xs={6} key={'right'} item={true}>
               <OuterBox component="fieldset">
-                <legend>Dose Forms</legend>
-                <InnerBox component="fieldset">
-                  <legend>Generic Dose Form</legend>
-                  {/*<Field*/}
-                  {/*  name={`${productsArray}[${index}].productDetails.genericForm`}*/}
-                  {/*  id={`${productsArray}[${index}].productDetails.genericForm`}*/}
-                  {/*  getOptionLabel={(option: Concept) => option.pt.term}*/}
-                  {/*  setval={setSelectedDoseForm}*/}
-                  {/*  optionValues={doseForms}*/}
-                  {/*  searchType={ConceptSearchType.doseForms}*/}
-                  {/*  component={ProductAutocomplete}*/}
-                  {/*  fullWidth*/}
-                  {/*  variant="outlined"*/}
-                  {/*  margin="dense"*/}
-                  {/*/>*/}
-                  <Controller
-                      name={`${productsArray}[${index}].productDetails.genericForm`}
-                      // name="containerType"
-                      control={control}
-                      render={({ field:{onChange,value}, ...props }) => (
-                          <DoseFormAutocompleteNew onChange={onChange} value={value ? value as Concept : null} optionValues={doseForms} searchType={ConceptSearchType.doseForms} setval={setSelectedDoseForm}/>
-                      )}
-                  />
-                </InnerBox>
-                <InnerBox component="fieldset">
-                  <legend>Specific Dose Form</legend>
+                <legend>Active Ingredients</legend>
 
-                  {/*<Field*/}
-                  {/*  name={`${productsArray}[${index}].productDetails.specificForm`}*/}
-                  {/*  id={`${productsArray}[${index}].productDetails.specificForm`}*/}
-                  {/*  getOptionLabel={(option: Concept) => option.pt.term}*/}
-                  {/*  optionValues={specialFormDoses}*/}
-                  {/*  inputValue={doseFormsearchInputValue}*/}
-                  {/*  setInputValue={setDoseFormsearchInputValue}*/}
-                  {/*  parent={selectedDoseForm}*/}
-                  {/*  component={DoseFormAutocomplete}*/}
-                  {/*  fullWidth*/}
-                  {/*  variant="outlined"*/}
-                  {/*  margin="dense"*/}
-                  {/*/>*/}
-                  <Controller
-                      name={`${productsArray}[${index}].productDetails.specificForm`}
-                      // name="containerType"
-                      control={control}
-                      render={({ field:{onChange,value}, ...props }) => (
-                          <ProductAutocompleteNew onChange={onChange} value={value ? value as Concept : null} optionValues={specialFormDoses} searchType={ConceptSearchType.specialDoseForms}/>
-                      )}
-                  />
-                </InnerBox>
-
-                <InnerBox component="fieldset">
-                  <legend>Unit Size</legend>
-
-                  <Stack direction="row" spacing={2} alignItems={'center'}>
-                    <Grid item xs={2}>
-                      {/*<Field*/}
-                      {/*  as={TextField}*/}
-                      {/*  name={`${productsArray}[${index}].productDetails.quantity.value`}*/}
-                      {/*  fullWidth*/}
-                      {/*  variant="outlined"*/}
-                      {/*  margin="dense"*/}
-                      {/*  InputLabelProps={{ shrink: true }}*/}
-                      {/*  value={*/}
-                      {/*    containedProduct.productDetails?.quantity?.value || ''*/}
-                      {/*  }*/}
-                      {/*/>*/}
-                      <TextField {...register(`${productsArray}[${index}].productDetails.quantity.value`)} fullWidth
-                                 variant="outlined"
-                                 margin="dense" InputLabelProps={{ shrink: true }}/>
-                    </Grid>
-                    <Grid item xs={10}>
-
-
-                      <Controller
-                          name={`${productsArray}[${index}].productDetails.quantity.unit`}
-                          // name="containerType"
-                          control={control}
-                          render={({ field:{onChange,value}, ...props }) => (
-                              <ProductAutocompleteNew onChange={onChange} value={value ? value as Concept : null} optionValues={units} searchType={ConceptSearchType.units}/>
-                          )}
-                      />
-                    </Grid>
-                  </Stack>
-                </InnerBox>
-                <InnerBox component="fieldset">
-                  <legend>Pack Size</legend>
-
-                  <Stack direction="row" spacing={2} alignItems={'center'}>
-                    <Grid item xs={2}>
-                      {/*<Field*/}
-                      {/*  as={TextField}*/}
-                      {/*  name={`${productsArray}[${index}].value`}*/}
-                      {/*  fullWidth*/}
-                      {/*  variant="outlined"*/}
-                      {/*  margin="dense"*/}
-                      {/*  InputLabelProps={{ shrink: true }}*/}
-                      {/*  value={containedProduct.value || ''}*/}
-                      {/*/>*/}
-                      <TextField {...register(`${productsArray}[${index}].value`)} fullWidth
-                                 variant="outlined"
-                                 margin="dense" InputLabelProps={{ shrink: true }}/>
-                    </Grid>
-                    <Grid item xs={10}>
-                      {/*<Field*/}
-                      {/*  name={`${productsArray}[${index}].unit`}*/}
-                      {/*  id={`${productsArray}[${index}].unit`}*/}
-                      {/*  optionValues={units}*/}
-                      {/*  getOptionLabel={(option: Concept) => option.pt.term}*/}
-                      {/*  searchType={ConceptSearchType.units}*/}
-                      {/*  component={ProductAutocomplete}*/}
-                      {/*/>*/}
-                      <Controller
-                          name={`${productsArray}[${index}].unit`}
-                          // name="containerType"
-                          control={control}
-                          render={({ field:{onChange,value}, ...props }) => (
-                              <ProductAutocompleteNew onChange={onChange} value={value ? value as Concept : null} optionValues={units} searchType={ConceptSearchType.units}/>
-                          )}
-                      />
-                    </Grid>
-                  </Stack>
-                </InnerBox>
+                <Ingredients
+                  containedProductIndex={index}
+                  packageIndex={
+                    partOfPackage ? (packageIndex as number) : undefined
+                  }
+                  partOfPackage={partOfPackage}
+                  units={units}
+                  ingredients={ingredients}
+                  control={control}
+                  register={register}
+                />
               </OuterBox>
             </Grid>
+            <DoseForms
+              productsArray={productsArray}
+              control={control}
+              register={register}
+              doseForms={doseForms}
+              units={units}
+              index={index}
+              containedProduct={containedProduct}
+            />
           </Grid>
         </AccordionDetails>
       </Accordion>
     </div>
+  );
+}
+function ProductNameWatched({
+  control,
+  index,
+  productsArray,
+}: {
+  control: Control<MedicationPackageDetails>;
+  index: number;
+  productsArray: string;
+}) {
+  const productName = useWatch({
+    control,
+    name: `${productsArray}[${index}].productDetails.productName` as 'containedProducts.0.productDetails.productName', // without supply name will watch the entire form, or ['firstName', 'lastName'] to watch both
+  }) as Concept;
+
+  return (
+    <Typography
+      sx={{
+        color: !productName ? 'red' : 'inherit',
+      }}
+    >
+      {productName ? productName.pt.term : 'Untitled*'}
+    </Typography>
   );
 }
 export default DetailedProduct;

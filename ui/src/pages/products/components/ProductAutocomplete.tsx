@@ -1,40 +1,33 @@
 import { Autocomplete, TextField } from '@mui/material';
 import React, { FC, useEffect, useState } from 'react';
 import { Concept } from '../../../types/concept.ts';
-import { FieldProps } from 'formik';
 import useDebounce from '../../../hooks/useDebounce.tsx';
 
 import { useSearchConcepts } from '../../../hooks/api/useInitializeConcepts.tsx';
 import { ConceptSearchType } from '../../../types/conceptSearch.ts';
+import { Control, Controller, UseFormRegister } from 'react-hook-form';
+import { MedicationPackageDetails } from '../../../types/authoring.ts';
 interface ProductAutocompleteProps {
-  setval: (val: Concept | null) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  optionValues?: any[];
-  defaultOption?: Concept;
+  control: Control<MedicationPackageDetails>;
+  register: UseFormRegister<MedicationPackageDetails>;
+  optionValues: Concept[];
   searchType: ConceptSearchType;
+  name: string;
 }
-const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
-  field,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  form: { touched, setTouched, setFieldValue },
-  setval,
-  defaultOption,
+const ProductAutocomplete: FC<ProductAutocompleteProps> = ({
+  control,
   optionValues,
   searchType,
+  name,
 
   ...props
 }) => {
-  const { name } = field;
   const [inputValue, setInputValue] = useState('');
   const debouncedSearch = useDebounce(inputValue, 1000);
   const [options, setOptions] = useState<Concept[]>(
     optionValues ? optionValues : [],
   );
-  const { isLoading, data } = useSearchConcepts(
-    debouncedSearch,
-    searchType,
-    field.value ? (field.value as Concept) : undefined,
-  );
+  const { isLoading, data } = useSearchConcepts(debouncedSearch, searchType);
   const [open, setOpen] = useState(false);
   useEffect(() => {
     mapDataToOptions();
@@ -43,40 +36,37 @@ const ProductAutocomplete: FC<ProductAutocompleteProps & FieldProps> = ({
   const mapDataToOptions = () => {
     if (data) {
       setOptions(data);
-    }else if(optionValues){
-     setOptions(optionValues)
+    } else if (optionValues) {
+      setOptions(optionValues);
     }
   };
   return (
-    <Autocomplete
-      loading={isLoading}
-      {...props}
-      {...field}
-      defaultValue={defaultOption ? defaultOption : null}
-      value={(field.value as Concept) || null}
-      onOpen={() => {
-        if (inputValue) {
-          setOpen(true);
-        }
-      }}
-      onChange={(_, value) => {
-        void setFieldValue(name, value);
-        if (setval) {
-          setval(value as Concept);
-        }
-      }}
-      inputValue={inputValue}
-      onInputChange={(e, value) => {
-        setInputValue(value);
-        if (!value) {
-          setOpen(false);
-        }
-      }}
-      options={options}
-      onBlur={() => void setTouched({ [name]: true })}
-      renderInput={props => (
-        // <div {...props}></div>
-        <TextField {...props} />
+    <Controller
+      name={name as 'productName'}
+      control={control}
+      render={({ field: { onChange, value }, ...props }) => (
+        <Autocomplete
+          loading={isLoading}
+          options={options}
+          fullWidth
+          getOptionLabel={option => option.pt.term}
+          renderInput={params => <TextField {...params} />}
+          onOpen={() => {
+            if (inputValue) {
+              setOpen(true);
+            }
+          }}
+          onInputChange={(e, value) => {
+            setInputValue(value);
+            if (!value) {
+              setOpen(false);
+            }
+          }}
+          inputValue={inputValue}
+          onChange={(e, data) => onChange(data)}
+          {...props}
+          value={(value as Concept) || null}
+        />
       )}
     />
   );
