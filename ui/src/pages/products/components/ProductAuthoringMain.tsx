@@ -1,12 +1,6 @@
-import React, { useState } from 'react';
-import {
-  MedicationPackageDetails,
-} from '../../../types/authoring.ts';
-import {
-  SubmitHandler,
-  useFieldArray,
-  useForm,
-} from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { MedicationPackageDetails } from '../../../types/authoring.ts';
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { Box, Button, Grid, Paper, styled, TextField } from '@mui/material';
 
 import { Stack } from '@mui/system';
@@ -73,26 +67,44 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   const [resetModalDisabled, setResetModalDisabled] = useState(false);
   const [resetModalOpen, setResetModalOpen] = useState(false);
 
-  const { register, control, handleSubmit, formState, reset } =
+  const { register, control, handleSubmit, reset } =
     useForm<MedicationPackageDetails>({ values: packageDetails });
   const onSubmit: SubmitHandler<MedicationPackageDetails> = data =>
     console.log(data);
 
+  // const [resetModalDisabled, setResetModalDisabled] = useState(false);
+  // const [resetModalOpen, setResetModalOpen] = useState(false);
+  //
+  // const { register, control, reset,handleSubmit, setValue } =
+  //     useForm();
+  //
+  // const [medication, setMedication] = useState(null);
+  // useEffect(() => {
+  //   // simulate async api call with set timeout
+  //   setMedication(packageDetails);
+  // }, []);
+  // useEffect(() => {
+  //   // reset form with user data
+  //   reset(medication);
+  // }, [medication]);
+
   const {
-    fields: productFields
+    fields: productFields,
+    append: productAppend,
+    remove: productRemove,
   } = useFieldArray({
     control,
     name: 'containedProducts',
   });
 
   const {
-    fields: packageFields
+    fields: packageFields,
+    append: packageAppend,
+    remove: packageRemove,
   } = useFieldArray({
     control,
     name: 'containedPackages',
   });
-  const formUpdated = formState.isDirty;
-  setIsFormEdited(formUpdated);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -100,7 +112,14 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
         <Grid item sm={12} xs={12}>
           <Paper>
             <Box m={2} p={2}>
-              <form onSubmit={() => handleSubmit(onSubmit)}>
+              <form
+                onSubmit={() => handleSubmit(onSubmit)}
+                onChange={() => {
+                  if (!isFormEdited) {
+                    setIsFormEdited(true);
+                  }
+                }}
+              >
                 <ConfirmationModal
                   open={resetModalOpen}
                   content={`Confirm clear?. This will reset the unsaved changes`}
@@ -189,6 +208,9 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       containerTypes={containerTypes}
                       control={control}
                       register={register}
+                      packageFields={packageFields}
+                      packageAppend={packageAppend}
+                      packageRemove={packageRemove}
                     />
                   </div>
                 ) : (
@@ -206,6 +228,9 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       ingredients={ingredients}
                       control={control}
                       register={register}
+                      productFields={productFields}
+                      productAppend={productAppend}
+                      productRemove={productRemove}
                     />
                   </div>
                 ) : (

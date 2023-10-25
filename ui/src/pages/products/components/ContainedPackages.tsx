@@ -19,6 +19,8 @@ import {
   Control,
   FieldArrayWithId,
   useFieldArray,
+  UseFieldArrayAppend,
+  UseFieldArrayRemove,
   UseFormRegister,
   useWatch,
 } from 'react-hook-form';
@@ -34,6 +36,16 @@ interface ContainedPackagesProps {
   containerTypes: Concept[];
   control: Control<MedicationPackageDetails>;
   register: UseFormRegister<MedicationPackageDetails>;
+  packageFields: FieldArrayWithId<
+    MedicationPackageDetails,
+    'containedPackages',
+    'id'
+  >[];
+  packageAppend: UseFieldArrayAppend<
+    MedicationPackageDetails,
+    'containedPackages'
+  >;
+  packageRemove: UseFieldArrayRemove;
   // watch: UseFormWatch<MedicationPackageDetails>;
 }
 
@@ -46,6 +58,9 @@ function ContainedPackages(props: ContainedPackagesProps) {
     containerTypes,
     control,
     register,
+    packageFields,
+    packageRemove,
+    packageAppend,
     // watch,
   } = props;
 
@@ -53,14 +68,14 @@ function ContainedPackages(props: ContainedPackagesProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [defaultUnit] = useState(getDefaultUnit(units));
 
-  const {
-    fields: packageFields,
-    append: packageAppend,
-    remove: packageRemove,
-  } = useFieldArray({
-    control,
-    name: 'containedPackages',
-  });
+  // const {
+  //   fields: packageFields,
+  //   append: packageAppend,
+  //   remove: packageRemove,
+  // } = useFieldArray({
+  //   control,
+  //   name: 'containedPackages',
+  // });
   const handleToggleModal = () => {
     setModalOpen(!modalOpen);
   };
@@ -251,7 +266,9 @@ function ContainedPackages(props: ContainedPackagesProps) {
                   <Stack direction="row" spacing={1} alignItems={'center'}>
                     <Grid item xs={1}>
                       <TextField
-                        {...register(`containedPackages.[${index}].value` as "containedPackages.0.value")}
+                        {...register(
+                          `containedPackages.[${index}].value` as 'containedPackages.0.value',
+                        )}
                         fullWidth
                         variant="outlined"
                         margin="dense"
@@ -303,8 +320,16 @@ function PackageNameWatched({
   });
 
   return (
-    <Tooltip title={packageName ? packageName.productName?.pt.term : 'untitled*'}>
-      <span>{packageName ? packageName.productName?.pt.term : 'untitled*'}</span>
+    <Tooltip
+      title={
+        packageName.productName ? packageName.productName?.pt.term : 'untitled*'
+      }
+    >
+      <span>
+        {packageName.productName
+          ? packageName.productName?.pt.term
+          : 'untitled*'}
+      </span>
     </Tooltip>
   );
 }

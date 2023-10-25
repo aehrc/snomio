@@ -17,6 +17,8 @@ import {
   Control,
   FieldArrayWithId,
   useFieldArray,
+  UseFieldArrayAppend,
+  UseFieldArrayRemove,
   UseFormRegister,
 } from 'react-hook-form';
 
@@ -31,6 +33,16 @@ interface ContainedProductsProps {
   ingredients: Concept[];
   control: Control<MedicationPackageDetails>;
   register: UseFormRegister<MedicationPackageDetails>;
+  productFields?: FieldArrayWithId<
+    MedicationPackageDetails,
+    'containedProducts',
+    'id'
+  >[];
+  productAppend?: UseFieldArrayAppend<
+    MedicationPackageDetails,
+    'containedProducts'
+  >;
+  productRemove?: UseFieldArrayRemove;
 }
 const ContainedProducts: FC<ContainedProductsProps> = ({
   packageIndex,
@@ -42,15 +54,18 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   ingredients,
   control,
   register,
+  productFields,
+  productAppend,
+  productRemove,
 }) => {
   const productsArray = partOfPackage
     ? `containedPackages[${packageIndex}].packageDetails.containedProducts`
     : 'containedProducts';
 
   const {
-    fields: productFields,
-    append: productAppend,
-    remove: productRemove,
+    fields: packageProductFields,
+    append: packageProductAppend,
+    remove: packageProductRemove,
   } = useFieldArray({
     control,
     name: partOfPackage
@@ -66,6 +81,13 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   const handleSearchAndAddProduct = () => {
     handleToggleModal();
   };
+  const append = (value: MedicationProductQuantity) => {
+    if (productAppend) {
+      productAppend(value);
+    } else {
+      packageProductAppend(value);
+    }
+  };
 
   const ProductDetails = () => {
     return (
@@ -77,7 +99,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                 const productQuantity: MedicationProductQuantity = {
                   productDetails: { activeIngredients: [{}] },
                 };
-                productAppend(productQuantity);
+                append(productQuantity);
               }}
               aria-label="create"
               size="large"
@@ -101,31 +123,35 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
         <ProductSearchAndAddModal
           open={modalOpen}
           handleClose={handleToggleModal}
-          productAppend={productAppend}
+          productAppend={productAppend ? productAppend : packageProductAppend}
         />
 
-        {productFields.map((containedProduct, index) => {
-          return (
-            <DetailedProduct
-              index={index}
-              units={units}
-              expandedProducts={expandedProducts}
-              setExpandedProducts={setExpandedProducts}
-              containedProduct={containedProduct as MedicationProductQuantity}
-              showTPU={showTPU}
-              productsArray={productsArray}
-              partOfPackage={partOfPackage}
-              packageIndex={packageIndex}
-              key={`product-${containedProduct.id}`}
-              doseForms={doseForms}
-              brandProducts={brandProducts}
-              ingredients={ingredients}
-              control={control}
-              register={register}
-              productRemove={productRemove}
-            />
-          );
-        })}
+        {(productFields ? productFields : packageProductFields).map(
+          (containedProduct, index) => {
+            return (
+              <DetailedProduct
+                index={index}
+                units={units}
+                expandedProducts={expandedProducts}
+                setExpandedProducts={setExpandedProducts}
+                containedProduct={containedProduct as MedicationProductQuantity}
+                showTPU={showTPU}
+                productsArray={productsArray}
+                partOfPackage={partOfPackage}
+                packageIndex={packageIndex}
+                key={`product-${containedProduct.id}`}
+                doseForms={doseForms}
+                brandProducts={brandProducts}
+                ingredients={ingredients}
+                control={control}
+                register={register}
+                productRemove={
+                  productRemove ? productRemove : packageProductRemove
+                }
+              />
+            );
+          },
+        )}
       </div>
     );
   };

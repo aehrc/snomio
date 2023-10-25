@@ -28,7 +28,10 @@ import {
   useWatch,
 } from 'react-hook-form';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
-import {ingredientsExpandedStored, storeIngredientsExpanded} from "../../../utils/helpers/conceptUtils.ts";
+import {
+  ingredientsExpandedStored,
+  storeIngredientsExpanded,
+} from '../../../utils/helpers/conceptUtils.ts';
 
 interface IngredientsProps {
   packageIndex?: number;
@@ -50,7 +53,9 @@ function Ingredients(props: IngredientsProps) {
     register,
   } = props;
   //const [number, setNumber] = React.useState("");
-  const [expandedIngredients, setExpandedIngredients] = useState<string[]>(ingredientsExpandedStored);
+  const [expandedIngredients, setExpandedIngredients] = useState<string[]>(
+    ingredientsExpandedStored,
+  );
 
   const [disabled, setDisabled] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -191,6 +196,7 @@ function Ingredients(props: IngredientsProps) {
                       name={`${activeIngredientsArray}[${index}].activeIngredient`}
                       control={control}
                       register={register}
+                      key={activeIngredient.id}
                     />
                   </InnerBox>
                   <InnerBox component="fieldset">
@@ -201,6 +207,7 @@ function Ingredients(props: IngredientsProps) {
                       name={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
                       control={control}
                       register={register}
+                      key={activeIngredient.id}
                     />
                   </InnerBox>
                   <InnerBox component="fieldset">
@@ -212,6 +219,10 @@ function Ingredients(props: IngredientsProps) {
                           {...register(
                             `${activeIngredientsArray}[${index}].totalQuantity.value` as 'containedProducts.0.productDetails.activeIngredients.0.totalQuantity.value',
                           )}
+                          key={activeIngredient.id}
+                          defaultValue={
+                            activeIngredient.totalQuantity?.value || ''
+                          }
                           fullWidth
                           variant="outlined"
                           margin="dense"
