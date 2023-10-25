@@ -235,20 +235,6 @@ function ContainedPackages(props: ContainedPackagesProps) {
                   <Grid item xs={3}>
                     <InnerBox component="fieldset">
                       <legend>ARTG ID</legend>
-                      {/*<Field*/}
-                      {/*  name={`containedPackages[${index}].packageDetails.externalIdentifiers`}*/}
-                      {/*  id={`containedPackages[${index}].packageDetails.externalIdentifiers`}*/}
-                      {/*  optionValues={[]}*/}
-                      {/*  getOptionLabel={(option: ExternalIdentifier) =>*/}
-                      {/*    option.identifierValue*/}
-                      {/*  }*/}
-                      {/*  multiple*/}
-                      {/*  freeSolo*/}
-                      {/*  component={ArtgAutocomplete}*/}
-                      {/*  fullWidth*/}
-                      {/*  variant="outlined"*/}
-                      {/*  margin="dense"*/}
-                      {/*/>*/}
                       <ArtgAutoComplete
                         control={control}
                         name={`containedPackages[${index}].packageDetails.externalIdentifiers`}
@@ -265,7 +251,7 @@ function ContainedPackages(props: ContainedPackagesProps) {
                   <Stack direction="row" spacing={1} alignItems={'center'}>
                     <Grid item xs={1}>
                       <TextField
-                        {...register(`containedPackages.${index}.value`)}
+                        {...register(`containedPackages.[${index}].value` as "containedPackages.0.value")}
                         fullWidth
                         variant="outlined"
                         margin="dense"
@@ -313,13 +299,13 @@ function PackageNameWatched({
 }) {
   const packageName = useWatch({
     control,
-    name: `containedPackages[${index}].packageDetails.productName` as 'containedPackages.0.packageDetails.productName',
-  }) as Concept;
+    name: `containedPackages[${index}].packageDetails` as 'containedPackages.0.packageDetails',
+  });
 
   return (
-    <Tooltip title={packageName ? packageName.pt.term : 'untitled*'}>
-      <span>{packageName ? packageName.pt.term : 'untitled*'}</span>
+    <Tooltip title={packageName ? packageName.productName?.pt.term : 'untitled*'}>
+      <span>{packageName ? packageName.productName?.pt.term : 'untitled*'}</span>
     </Tooltip>
-  ); // only re-render at the component level, when firstName changes
+  );
 }
 export default ContainedPackages;

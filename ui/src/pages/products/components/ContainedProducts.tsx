@@ -78,7 +78,6 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                   productDetails: { activeIngredients: [{}] },
                 };
                 productAppend(productQuantity);
-                // arrayHelpers.push(productQuantity);
               }}
               aria-label="create"
               size="large"
@@ -117,7 +116,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
               productsArray={productsArray}
               partOfPackage={partOfPackage}
               packageIndex={packageIndex}
-              key={`product-${index}`}
+              key={`product-${containedProduct.id}`}
               doseForms={doseForms}
               brandProducts={brandProducts}
               ingredients={ingredients}

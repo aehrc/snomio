@@ -60,7 +60,6 @@ function Ingredients(props: IngredientsProps) {
   const activeIngredientsArray = partOfPackage
     ? `containedPackages[${packageIndex}].packageDetails.containedProducts[${containedProductIndex}].productDetails.activeIngredients`
     : `containedProducts[${containedProductIndex}].productDetails.activeIngredients`;
-
   const {
     fields: ingredientFields,
     append: ingredientAppend,
@@ -80,7 +79,6 @@ function Ingredients(props: IngredientsProps) {
     setIndexToDelete(undefined);
     setExpandedIngredients([]);
     storeIngredientsExpanded([]);
-    console.log("On delete",ingredientFields.length)
   };
 
   const getKey = (index: number) => {
@@ -110,7 +108,6 @@ function Ingredients(props: IngredientsProps) {
             onClick={() => {
               const ingredient: Ingredient = {};
               ingredientAppend(ingredient);
-              console.log("On create",ingredientFields.length)
             }}
             aria-label="create"
             size="large"
@@ -133,9 +130,6 @@ function Ingredients(props: IngredientsProps) {
         />
 
         {ingredientFields.map((activeIngredient, index) => {
-          const name = activeIngredient.activeIngredient
-            ? activeIngredient.activeIngredient?.pt.term
-            : 'Untitled*';
           return (
             <div key={getKey(index)}>
               <br />
@@ -145,7 +139,6 @@ function Ingredients(props: IngredientsProps) {
                 id={getKey(index)}
                 expanded={expandedIngredients.includes(getKey(index))}
                 onChange={ingredientsAccordionClicked(getKey(index))}
-                // defaultExpanded={false}
               >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -223,7 +216,6 @@ function Ingredients(props: IngredientsProps) {
                           variant="outlined"
                           margin="dense"
                           InputLabelProps={{ shrink: true }}
-                          // defaultValue={activeIngredient.totalQuantity?.value || ''}
                         />
                       </Grid>
                       <Grid item xs={4}>
