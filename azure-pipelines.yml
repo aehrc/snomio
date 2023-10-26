@@ -1,4 +1,7 @@
-name: snomio-$(Date:yyyyMMdd)$(Rev:.r)_${{ replace(replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', ''), '/', '-') }}
+name: snomio-$(Date:yyyyMMdd)$(Rev:.r)_${{ if eq(variables['System.PullRequest.SourceBranch'], '') }}:
+                                    ${{ replace(variables['Build.SourceBranch'], 'refs/heads/', '') }}
+                                  ${{ else }}:
+                                    ${{ replace(replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', ''), '/', '-') }}
 
 pool:
   vmImage: ubuntu-latest
