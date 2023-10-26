@@ -15,6 +15,7 @@ import ArtgAutoComplete from './ArtgAutoComplete.tsx';
 import conceptService from '../../../api/ConceptService.ts';
 import { Simulate } from 'react-dom/test-utils';
 import error = Simulate.error;
+import {InnerBox, Level1Box} from "./style/ProductBoxes.tsx";
 
 export interface ProductAuthoringMainProps {
   selectedProduct: Concept | null;
@@ -42,25 +43,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   } = productprops;
   const theme = useTheme();
 
-  const Level1Box = styled(Box)({
-    border: `1px solid ${theme.palette.divider}`,
-    color: '#003665',
-    fontWeight: 'bold',
-    fontSize: 'larger',
-  });
-  const Level2Box = styled(Box)({
-    border: `1px solid ${theme.palette.divider}`,
-    color: '#CD7F32',
-    fontWeight: 'bold',
-    fontSize: 'medium',
-  });
-  const InnerBox = styled(Box)({
-    border: '0 solid #f0f0f0',
-    color: '#003665',
-    marginTop: '10px',
-    marginBottom: '10px',
-    fontSize: 'small',
-  });
 
   const defaultForm: MedicationPackageDetails = {
     containedProducts: [],
