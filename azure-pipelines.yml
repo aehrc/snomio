@@ -1,4 +1,4 @@
-name: snomio-$(Date:yyyyMMdd)$(Rev:.r)_${{ replace(replace(replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', ''), '/','-'), '-merge', coalesce(variables['System.PullRequest.SourceBranch'], '')) }}
+name: snomio-$(Date:yyyyMMdd)$(Rev:.r)_${{ replace(replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), format('refs/pull/{0}-merge', variables['System.PullRequest.PullRequestId']), variables['System.PullRequest.SourceBranch']), '/', '-') }}
 
 pool:
   vmImage: ubuntu-latest
