@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { getDefaultUnit } from '../../../utils/helpers/conceptUtils.ts';
+import {
+  defaultPackage,
+  getDefaultUnit,
+  isValidConceptName,
+} from '../../../utils/helpers/conceptUtils.ts';
 import {
   MedicationPackageDetails,
   MedicationPackageQuantity,
@@ -95,17 +99,7 @@ function ContainedPackages(props: ContainedPackagesProps) {
   };
 
   const handlePackageCreation = () => {
-    const medicationPackageQty: MedicationPackageQuantity = {
-      unit: defaultUnit,
-      value: 1,
-      packageDetails: {
-        externalIdentifiers: [],
-        containedPackages: [],
-        containedProducts: [{ productDetails: { activeIngredients: [{}] } }],
-      },
-    };
-
-    packageAppend(medicationPackageQty);
+    packageAppend(defaultPackage(defaultUnit as Concept));
     setValue(packageFields.length);
   };
 
@@ -322,11 +316,13 @@ function PackageNameWatched({
   return (
     <Tooltip
       title={
-        packageName.productName ? packageName.productName?.pt.term : 'untitled*'
+        isValidConceptName(packageName.productName as Concept)
+          ? packageName.productName?.pt.term
+          : 'untitled*'
       }
     >
       <span>
-        {packageName.productName
+        {isValidConceptName(packageName.productName as Concept)
           ? packageName.productName?.pt.term
           : 'untitled*'}
       </span>

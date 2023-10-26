@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import SearchProduct from './components/SearchProduct.tsx';
 import useConceptStore from '../../stores/ConceptStore.ts';
-import conceptService from '../../api/ConceptService.ts';
 import { Simulate } from 'react-dom/test-utils';
-import error = Simulate.error;
 import { MedicationPackageDetails } from '../../types/authoring.ts';
 import { Grid } from '@mui/material';
 import ProductAuthoringMain from './components/ProductAuthoringMain.tsx';
@@ -43,20 +41,7 @@ function ProductAuthoring() {
   };
   useEffect(() => {
     if (selectedProduct) {
-      conceptService
-        .fetchMedication(selectedProduct ? selectedProduct.conceptId : '')
-        .then(mp => {
-          if (mp.productName) {
-            setPackageDetails(mp);
-          }
-          if (packageDetails) {
-            setName(packageDetails.productName?.conceptId as string);
-          }
-          storeIngredientsExpanded([]);
-          setLoadingMedication(false);
-          setIsFormEditted(false);
-        })
-        .catch(error);
+      setLoadingMedication(false);
     }
   }, [selectedProduct]);
   if (isLoadingMedication) {
@@ -96,7 +81,7 @@ function ProductAuthoring() {
         packageDetails.containedPackages ? (
           <Grid>
             <ProductAuthoringMain
-              packageDetails={packageDetails}
+              selectedProduct={selectedProduct}
               units={units}
               containerTypes={containerTypes}
               doseForms={doseForms}

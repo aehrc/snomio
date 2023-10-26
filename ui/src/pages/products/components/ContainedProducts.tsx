@@ -21,6 +21,11 @@ import {
   UseFieldArrayRemove,
   UseFormRegister,
 } from 'react-hook-form';
+import {
+  defaultIngredient,
+  defaultProduct,
+  getDefaultUnit,
+} from '../../../utils/helpers/conceptUtils.ts';
 
 interface ContainedProductsProps {
   packageIndex?: number;
@@ -88,6 +93,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
       packageProductAppend(value);
     }
   };
+  const [defaultUnit] = useState(getDefaultUnit(units));
 
   const ProductDetails = () => {
     return (
@@ -96,10 +102,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
           <Stack direction="row" spacing={0} alignItems="center">
             <IconButton
               onClick={() => {
-                const productQuantity: MedicationProductQuantity = {
-                  productDetails: { activeIngredients: [{}] },
-                };
-                append(productQuantity);
+                append(defaultProduct(defaultUnit as Concept));
               }}
               aria-label="create"
               size="large"

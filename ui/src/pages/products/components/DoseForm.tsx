@@ -12,7 +12,7 @@ import {
 import { Concept } from '../../../types/concept.ts';
 import DoseFormAutoCompleteNew from './DoseFormAutoCompleteNew.tsx';
 import ConceptService from '../../../api/ConceptService.ts';
-import SpecialDoseFormAutocomplete from './SpecialDoseFormAutoComplet.tsx';
+import SpecialDoseFormAutocomplete from './SpecialDoseFormAutoComplete.tsx';
 
 interface DoseFormProps {
   productsArray: string;
@@ -89,7 +89,6 @@ export default function DoseForms(props: DoseFormProps) {
 
           <SpecialDoseFormAutocomplete
             optionValues={specialFormDoses}
-            searchType={ConceptSearchType.specialDoseForms}
             name={`${productsArray}[${index}].productDetails.specificForm`}
             control={control}
             register={register}

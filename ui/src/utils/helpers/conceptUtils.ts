@@ -12,6 +12,11 @@ import {
   ECL_INGREDIENTS,
   ECL_UNITS,
 } from './EclUtils.ts';
+import {
+  Ingredient,
+  MedicationPackageQuantity,
+  MedicationProductQuantity,
+} from '../../types/authoring.ts';
 
 function isNumeric(value: string) {
   return /^\d+$/.test(value);
@@ -133,3 +138,48 @@ export function getECLForSearch(
       return undefined;
   }
 }
+export const isValidConceptName = (concept: Concept) => {
+  return concept && concept.pt.term !== '' && concept.pt.term !== 'Untitled';
+};
+
+export const defaultIngredient = (defaultUnit: Concept) => {
+  const ingredient: Ingredient = {
+    activeIngredient: {
+      pt: { term: 'Untitled' },
+    },
+    basisOfStrengthSubstance: { pt: { term: '' } },
+    // concentrationStrength:{value:0,unit:defaultUnit},
+    totalQuantity: { value: 0, unit: defaultUnit },
+  };
+  return ingredient;
+};
+export const defaultProduct = (defaultUnit: Concept) => {
+  const productQuantity: MedicationProductQuantity = {
+    productDetails: {
+      activeIngredients: [defaultIngredient(defaultUnit)],
+      productName: { pt: { term: 'Untitled' } },
+      genericForm: {
+        pt: { term: '' },
+      },
+    },
+    value: 1,
+    unit: defaultUnit,
+  };
+  return productQuantity;
+};
+export const defaultPackage = (defaultUnit: Concept) => {
+  const medicationPackageQty: MedicationPackageQuantity = {
+    productName: { pt: { term: 'Untitled' } },
+    unit: defaultUnit,
+    value: 1,
+    packageDetails: {
+      productName: { pt: { term: '' } },
+      containerType: { pt: { term: '' } },
+
+      externalIdentifiers: [],
+      containedPackages: [],
+      containedProducts: [defaultProduct(defaultUnit)],
+    },
+  };
+  return medicationPackageQty;
+};

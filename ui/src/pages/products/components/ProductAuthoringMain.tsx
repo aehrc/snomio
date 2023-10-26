@@ -12,9 +12,12 @@ import ProductAutocomplete from './ProductAutocomplete.tsx';
 import ContainedPackages from './ContainedPackages.tsx';
 import ContainedProducts from './ContainedProducts.tsx';
 import ArtgAutoComplete from './ArtgAutoComplete.tsx';
+import conceptService from '../../../api/ConceptService.ts';
+import { Simulate } from 'react-dom/test-utils';
+import error = Simulate.error;
 
 export interface ProductAuthoringMainProps {
-  packageDetails: MedicationPackageDetails;
+  selectedProduct: Concept | null;
   units: Concept[];
   containerTypes: Concept[];
   doseForms: Concept[];
@@ -27,7 +30,7 @@ export interface ProductAuthoringMainProps {
 
 function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   const {
-    packageDetails,
+    selectedProduct,
     units,
     containerTypes,
     doseForms,
@@ -67,30 +70,35 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   const [resetModalDisabled, setResetModalDisabled] = useState(false);
   const [resetModalOpen, setResetModalOpen] = useState(false);
 
-  const { register, control, handleSubmit, reset } =
-    useForm<MedicationPackageDetails>({ values: packageDetails });
+  const [medication, setMedication] = useState(null);
+
+  const { register, unregister, control, handleSubmit, reset } =
+    useForm<MedicationPackageDetails>({
+      defaultValues: {
+        containedPackages: [],
+        containedProducts: [],
+      },
+    });
   const onSubmit: SubmitHandler<MedicationPackageDetails> = data =>
     console.log(data);
 
-  // const [resetModalDisabled, setResetModalDisabled] = useState(false);
-  // const [resetModalOpen, setResetModalOpen] = useState(false);
-  //
-  // const { register, control, reset,handleSubmit, setValue } =
-  //     useForm();
-  //
-  // const [medication, setMedication] = useState(null);
-  // useEffect(() => {
-  //   // simulate async api call with set timeout
-  //   setMedication(packageDetails);
-  // }, []);
-  // useEffect(() => {
-  //   // reset form with user data
-  //   reset(medication);
-  // }, [medication]);
+  useEffect(() => {
+    if (selectedProduct) {
+      conceptService
+        .fetchMedication(selectedProduct ? selectedProduct.conceptId : '')
+        .then(mp => {
+          if (mp.productName) {
+            reset(mp);
+          }
+        })
+        .catch(error);
+    }
+  }, [reset, selectedProduct]);
 
   const {
     fields: productFields,
     append: productAppend,
+    replace: productReplace,
     remove: productRemove,
   } = useFieldArray({
     control,
@@ -100,6 +108,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   const {
     fields: packageFields,
     append: packageAppend,
+    replace: packageReplace,
     remove: packageRemove,
   } = useFieldArray({
     control,

@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Ingredient,
-  MedicationPackageDetails,
-} from '../../../types/authoring.ts';
+import { MedicationPackageDetails } from '../../../types/authoring.ts';
 import {
   Accordion,
   AccordionDetails,
@@ -29,7 +26,10 @@ import {
 } from 'react-hook-form';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 import {
+  defaultIngredient,
+  getDefaultUnit,
   ingredientsExpandedStored,
+  isValidConceptName,
   storeIngredientsExpanded,
 } from '../../../utils/helpers/conceptUtils.ts';
 
@@ -75,6 +75,7 @@ function Ingredients(props: IngredientsProps) {
       ? (`containedPackages[${packageIndex}].packageDetails.containedProducts[${containedProductIndex}].productDetails.activeIngredients` as 'containedProducts.0.productDetails.activeIngredients')
       : (`containedProducts[${containedProductIndex}].productDetails.activeIngredients` as 'containedProducts.0.productDetails.activeIngredients'),
   });
+  const [defaultUnit] = useState(getDefaultUnit(units));
 
   const handleDeleteIngredient = () => {
     if (indexToDelete !== undefined) {
@@ -111,8 +112,7 @@ function Ingredients(props: IngredientsProps) {
         <Grid container justifyContent="flex-end">
           <IconButton
             onClick={() => {
-              const ingredient: Ingredient = {};
-              ingredientAppend(ingredient);
+              ingredientAppend(defaultIngredient(defaultUnit as Concept));
             }}
             aria-label="create"
             size="large"
@@ -294,10 +294,12 @@ function IngredientNameWatched({
   return (
     <Typography
       sx={{
-        color: !ingredientName ? 'red' : 'inherit',
+        color: !isValidConceptName(ingredientName) ? 'red' : 'inherit',
       }}
     >
-      {ingredientName ? ingredientName.pt.term : 'Untitled*'}
+      {isValidConceptName(ingredientName)
+        ? ingredientName.pt.term
+        : 'Untitled*'}
     </Typography>
   );
 }

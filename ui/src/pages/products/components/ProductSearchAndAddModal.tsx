@@ -7,7 +7,6 @@ import { Button } from '@mui/material';
 import SearchProduct from './SearchProduct.tsx';
 import { Concept } from '../../../types/concept.ts';
 import ConceptService from '../../../api/ConceptService.ts';
-import { FieldArrayRenderProps } from 'formik';
 import {
   MedicationPackageDetails,
   MedicationProductQuantity,
@@ -15,7 +14,6 @@ import {
 import { ECL_EXISTING_PRODUCT_TO_PACKAGE } from '../../../utils/helpers/EclUtils.ts';
 import { useSnackbar } from 'notistack';
 import { UseFieldArrayAppend } from 'react-hook-form';
-import containedProducts from './ContainedProducts.tsx';
 
 interface ProductSearchAndAddModalProps {
   open: boolean;

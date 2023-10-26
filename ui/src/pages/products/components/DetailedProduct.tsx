@@ -10,7 +10,6 @@ import {
   AccordionSummary,
   Grid,
   IconButton,
-  TextField,
   Tooltip,
   Typography,
 } from '@mui/material';
@@ -25,13 +24,12 @@ import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 import {
   Control,
-  Controller,
-  UseFieldArrayAppend,
   UseFieldArrayRemove,
   UseFormRegister,
   useWatch,
 } from 'react-hook-form';
 import DoseForms from './DoseForm.tsx';
+import { isValidConceptName } from '../../../utils/helpers/conceptUtils.ts';
 
 interface DetailedProductProps {
   index: number;
@@ -234,10 +232,10 @@ function ProductNameWatched({
   return (
     <Typography
       sx={{
-        color: !productName ? 'red' : 'inherit',
+        color: !isValidConceptName(productName) ? 'red' : 'inherit',
       }}
     >
-      {productName ? productName.pt.term : 'Untitled*'}
+      {isValidConceptName(productName) ? productName.pt.term : 'Untitled*'}
     </Typography>
   );
 }

@@ -9,7 +9,6 @@ import { Control, UseFormRegister, Controller } from 'react-hook-form';
 import { MedicationPackageDetails } from '../../../types/authoring.ts';
 interface SpecialDoseFormAutocompleteProps {
   optionValues: Concept[];
-  searchType: ConceptSearchType;
   control: Control<MedicationPackageDetails>;
   register: UseFormRegister<MedicationPackageDetails>;
   name: string;
@@ -19,7 +18,6 @@ interface SpecialDoseFormAutocompleteProps {
 }
 const SpecialDoseFormAutocomplete: FC<SpecialDoseFormAutocompleteProps> = ({
   optionValues,
-  searchType,
   inputValue,
   setInputValue,
   control,
