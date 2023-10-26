@@ -1,7 +1,4 @@
-name: snomio-$(Date:yyyyMMdd)$(Rev:.r)_$(coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranch']))
-
-trigger:
-  - main
+name: snomio-$(Date:yyyyMMdd)$(Rev:.r)_$[ variables['branchName'] ]
 
 pool:
   vmImage: ubuntu-latest
@@ -9,6 +6,11 @@ pool:
 variables:
   mavenCache: $(Pipeline.Workspace)/.m2/repository
   mavenOptions: '-Dmaven.repo.local=$(mavenCache) -Dmaven.settings.security=never'
+  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
+    branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+    branchName: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
+
 
 steps:
 
