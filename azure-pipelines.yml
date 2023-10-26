@@ -1,4 +1,4 @@
-name: snomio-$(Date:yyyyMMdd)$(Rev:.r)_${{ variables.branchName }}
+name: snomio-$(Date:yyyyMMdd)$(Rev:.r)_${{ replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), 'refs/pull/', '') }}
 
 pool:
   vmImage: ubuntu-latest
