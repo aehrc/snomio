@@ -1,4 +1,4 @@
-name: snomio-$(Date:yyyyMMdd)$(Rev:.r)_$(SourceBranch)
+name: snomio-$(Date:yyyyMMdd)$(Rev:.r)_$(coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranch']))
 
 trigger:
   - main
