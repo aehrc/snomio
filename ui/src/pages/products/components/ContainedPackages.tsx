@@ -4,10 +4,7 @@ import {
   getDefaultUnit,
   isValidConceptName,
 } from '../../../utils/helpers/conceptUtils.ts';
-import {
-  MedicationPackageDetails,
-  MedicationPackageQuantity,
-} from '../../../types/authoring.ts';
+import { MedicationPackageDetails } from '../../../types/authoring.ts';
 import { InnerBox, Level1Box, Level2Box } from './style/ProductBoxes.tsx';
 import Box from '@mui/material/Box';
 import { Grid, IconButton, Tab, Tabs, TextField, Tooltip } from '@mui/material';
@@ -22,7 +19,6 @@ import { Concept } from '../../../types/concept.ts';
 import {
   Control,
   FieldArrayWithId,
-  useFieldArray,
   UseFieldArrayAppend,
   UseFieldArrayRemove,
   UseFormRegister,
@@ -72,14 +68,6 @@ function ContainedPackages(props: ContainedPackagesProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [defaultUnit] = useState(getDefaultUnit(units));
 
-  // const {
-  //   fields: packageFields,
-  //   append: packageAppend,
-  //   remove: packageRemove,
-  // } = useFieldArray({
-  //   control,
-  //   name: 'containedPackages',
-  // });
   const handleToggleModal = () => {
     setModalOpen(!modalOpen);
   };
@@ -175,10 +163,7 @@ function ContainedPackages(props: ContainedPackagesProps) {
         </Box>
         {packageFields.map(
           (
-            containedPackage: FieldArrayWithId<
-              MedicationPackageDetails,
-              'containedPackages'
-            >,
+            containedPackage,
             index,
           ) => (
             <CustomTabPanel value={value} index={index} key={index}>
@@ -186,7 +171,9 @@ function ContainedPackages(props: ContainedPackagesProps) {
                 <ConfirmationModal
                   open={deleteModalOpen}
                   content={`Remove the package "${
-                    containedPackage.packageDetails.productName
+                    isValidConceptName(
+                      containedPackage.packageDetails.productName as Concept,
+                    )
                       ? containedPackage.packageDetails.productName?.pt.term
                       : 'Untitled'
                   }" ?`}
@@ -224,7 +211,6 @@ function ContainedPackages(props: ContainedPackagesProps) {
                         searchType={ConceptSearchType.brandProducts}
                         name={`containedPackages[${index}].packageDetails.productName`}
                         control={control}
-                        register={register}
                       />
                     </InnerBox>
                   </Grid>
@@ -237,7 +223,6 @@ function ContainedPackages(props: ContainedPackagesProps) {
                         searchType={ConceptSearchType.containerTypes}
                         name={`containedPackages[${index}].packageDetails.containerType`}
                         control={control}
-                        register={register}
                       />
                     </InnerBox>
                   </Grid>
@@ -276,7 +261,6 @@ function ContainedPackages(props: ContainedPackagesProps) {
                         searchType={ConceptSearchType.units}
                         name={`containedPackages[${index}].unit`}
                         control={control}
-                        register={register}
                       />
                     </Grid>
                   </Stack>

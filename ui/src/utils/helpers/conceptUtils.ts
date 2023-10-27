@@ -139,13 +139,13 @@ export function getECLForSearch(
   }
 }
 export const isValidConceptName = (concept: Concept) => {
-  return concept && concept.pt.term !== '' && concept.pt.term !== 'Untitled';
+  return concept && concept.pt.term !== '' && concept.pt.term !== null;
 };
 
 export const defaultIngredient = (defaultUnit: Concept) => {
   const ingredient: Ingredient = {
     activeIngredient: {
-      pt: { term: 'Untitled' },
+      pt: { term: '' },
     },
     basisOfStrengthSubstance: { pt: { term: '' } },
     // concentrationStrength:{value:0,unit:defaultUnit},
@@ -157,7 +157,7 @@ export const defaultProduct = (defaultUnit: Concept) => {
   const productQuantity: MedicationProductQuantity = {
     productDetails: {
       activeIngredients: [defaultIngredient(defaultUnit)],
-      productName: { pt: { term: 'Untitled' } },
+      productName: { pt: { term: '' } },
       genericForm: {
         pt: { term: '' },
       },
@@ -169,7 +169,6 @@ export const defaultProduct = (defaultUnit: Concept) => {
 };
 export const defaultPackage = (defaultUnit: Concept) => {
   const medicationPackageQty: MedicationPackageQuantity = {
-    productName: { pt: { term: 'Untitled' } },
     unit: defaultUnit,
     value: 1,
     packageDetails: {

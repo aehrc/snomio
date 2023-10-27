@@ -52,7 +52,7 @@ export default function DoseForms(props: DoseFormProps) {
       try {
         // alert(selectedDoseForm);
 
-        if (selectedDoseForm != null) {
+        if (selectedDoseForm != null && selectedDoseForm.conceptId ) {
           const conceptId = selectedDoseForm.conceptId.trim();
           const ecl = '<' + conceptId;
 
@@ -80,7 +80,6 @@ export default function DoseForms(props: DoseFormProps) {
             searchType={ConceptSearchType.doseForms}
             name={`${productsArray}[${index}].productDetails.genericForm`}
             control={control}
-            register={register}
             setval={setSelectedDoseForm}
           />
         </InnerBox>
@@ -91,7 +90,6 @@ export default function DoseForms(props: DoseFormProps) {
             optionValues={specialFormDoses}
             name={`${productsArray}[${index}].productDetails.specificForm`}
             control={control}
-            register={register}
             inputValue={doseFormsearchInputValue}
             setInputValue={setDoseFormsearchInputValue}
             ecl={ecl}
@@ -119,7 +117,6 @@ export default function DoseForms(props: DoseFormProps) {
                 searchType={ConceptSearchType.units}
                 name={`${productsArray}[${index}].productDetails.quantity.unit`}
                 control={control}
-                register={register}
               />
             </Grid>
           </Stack>
@@ -145,7 +142,6 @@ export default function DoseForms(props: DoseFormProps) {
                 searchType={ConceptSearchType.units}
                 name={`${productsArray}[${index}].unit`}
                 control={control}
-                register={register}
               />
             </Grid>
           </Stack>

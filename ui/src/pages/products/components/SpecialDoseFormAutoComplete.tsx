@@ -4,13 +4,12 @@ import { Concept } from '../../../types/concept.ts';
 import useDebounce from '../../../hooks/useDebounce.tsx';
 
 import { useSpecialDoseFormSearch } from '../../../hooks/api/useInitializeConcepts.tsx';
-import { ConceptSearchType } from '../../../types/conceptSearch.ts';
-import { Control, UseFormRegister, Controller } from 'react-hook-form';
+import { Control, Controller } from 'react-hook-form';
 import { MedicationPackageDetails } from '../../../types/authoring.ts';
 interface SpecialDoseFormAutocompleteProps {
   optionValues: Concept[];
   control: Control<MedicationPackageDetails>;
-  register: UseFormRegister<MedicationPackageDetails>;
+
   name: string;
   inputValue: string;
   setInputValue: (val: string) => void;
@@ -21,7 +20,6 @@ const SpecialDoseFormAutocomplete: FC<SpecialDoseFormAutocompleteProps> = ({
   inputValue,
   setInputValue,
   control,
-  register,
   name,
   ecl,
 
@@ -31,7 +29,7 @@ const SpecialDoseFormAutocomplete: FC<SpecialDoseFormAutocompleteProps> = ({
   const [options, setOptions] = useState<Concept[]>(
     optionValues ? optionValues : [],
   );
-  const { isLoading, data } = useSpecialDoseFormSearch(debouncedSearch, ecl);
+  const { data } = useSpecialDoseFormSearch(debouncedSearch, ecl);
   const [open, setOpen] = useState(false);
   useEffect(() => {
     mapDataToOptions();

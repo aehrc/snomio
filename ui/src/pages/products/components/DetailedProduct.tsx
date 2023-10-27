@@ -89,9 +89,6 @@ function DetailedProduct(props: DetailedProductProps) {
       setExpandedProducts([...expandedProducts, key]);
     }
   };
-  const activeIngredientsArray = partOfPackage
-    ? `containedPackages[${packageIndex}].packageDetails.containedProducts[${index}].productDetails.activeIngredients`
-    : `containedProducts[${index}].productDetails.activeIngredients`;
 
   return (
     <div key={productKey(index)} style={{ marginTop: '10px' }}>
@@ -138,7 +135,10 @@ function DetailedProduct(props: DetailedProductProps) {
 
                       setDeleteModalContent(
                         `Remove the product  "${
-                          containedProduct.productDetails?.productName
+                          isValidConceptName(
+                            containedProduct.productDetails
+                              ?.productName as Concept,
+                          )
                             ? containedProduct.productDetails?.productName?.pt
                                 .term
                             : 'Untitled'
@@ -176,7 +176,6 @@ function DetailedProduct(props: DetailedProductProps) {
                       searchType={ConceptSearchType.brandProducts}
                       name={`${productsArray}[${index}].productDetails.productName`}
                       control={control}
-                      register={register}
                     />
                   </InnerBox>
                 </OuterBox>

@@ -5,11 +5,10 @@ import useDebounce from '../../../hooks/useDebounce.tsx';
 
 import { useSearchConcepts } from '../../../hooks/api/useInitializeConcepts.tsx';
 import { ConceptSearchType } from '../../../types/conceptSearch.ts';
-import { Control, Controller, UseFormRegister } from 'react-hook-form';
+import { Control, Controller } from 'react-hook-form';
 import { MedicationPackageDetails } from '../../../types/authoring.ts';
 interface ProductAutocompleteProps {
   control: Control<MedicationPackageDetails>;
-  register: UseFormRegister<MedicationPackageDetails>;
   optionValues: Concept[];
   searchType: ConceptSearchType;
   name: string;

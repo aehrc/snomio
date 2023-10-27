@@ -22,7 +22,7 @@ function ProductAuthoring() {
   };
   const [packageDetails, setPackageDetails] =
     useState<MedicationPackageDetails>(defaultPackage);
-  const [name, setName] = useState<string>('Random');
+
   const theme = useTheme();
   const { conceptsLoading } = useInitializeConcepts();
   const [selectedProduct, setSelectedProduct] = useState<Concept | null>(null);
@@ -37,7 +37,7 @@ function ProductAuthoring() {
     setPackageDetails(defaultPackage);
     setSearchInputValue('');
     storeIngredientsExpanded([]);
-    setIsFormEditted(true);
+    setIsFormEditted(false);
   };
   useEffect(() => {
     if (selectedProduct) {

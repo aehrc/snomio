@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { MedicationPackageDetails } from '../../../types/authoring.ts';
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
-import { Box, Button, Grid, Paper, styled, TextField } from '@mui/material';
+import { Box, Button, Grid, Paper, TextField } from '@mui/material';
 
 import { Stack } from '@mui/system';
 import { Concept } from '../../../types/concept.ts';
-import { useTheme } from '@mui/material/styles';
 import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
 import { ConceptSearchType } from '../../../types/conceptSearch.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
@@ -15,7 +14,7 @@ import ArtgAutoComplete from './ArtgAutoComplete.tsx';
 import conceptService from '../../../api/ConceptService.ts';
 import { Simulate } from 'react-dom/test-utils';
 import error = Simulate.error;
-import {InnerBox, Level1Box} from "./style/ProductBoxes.tsx";
+import { InnerBox, Level1Box } from './style/ProductBoxes.tsx';
 
 export interface ProductAuthoringMainProps {
   selectedProduct: Concept | null;
@@ -41,20 +40,15 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     isFormEdited,
     setIsFormEdited,
   } = productprops;
-  const theme = useTheme();
-
 
   const defaultForm: MedicationPackageDetails = {
     containedProducts: [],
     containedPackages: [],
   };
 
-  const [resetModalDisabled, setResetModalDisabled] = useState(false);
   const [resetModalOpen, setResetModalOpen] = useState(false);
 
-  const [medication, setMedication] = useState(null);
-
-  const { register, unregister, control, handleSubmit, reset } =
+  const { register, control, handleSubmit, reset } =
     useForm<MedicationPackageDetails>({
       defaultValues: {
         containedPackages: [],
@@ -67,7 +61,9 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   useEffect(() => {
     if (selectedProduct) {
       conceptService
-        .fetchMedication(selectedProduct ? selectedProduct.conceptId : '')
+        .fetchMedication(
+          selectedProduct ? (selectedProduct.conceptId as string) : '',
+        )
         .then(mp => {
           if (mp.productName) {
             reset(mp);
@@ -80,7 +76,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   const {
     fields: productFields,
     append: productAppend,
-    replace: productReplace,
     remove: productRemove,
   } = useFieldArray({
     control,
@@ -90,7 +85,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   const {
     fields: packageFields,
     append: packageAppend,
-    replace: packageReplace,
     remove: packageRemove,
   } = useFieldArray({
     control,
@@ -118,7 +112,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                     setResetModalOpen(false);
                   }}
                   title={'Confirm Clear'}
-                  disabled={resetModalDisabled}
+                  disabled={!isFormEdited}
                   action={'Clear'}
                   handleAction={() => {
                     reset(defaultForm);
@@ -170,7 +164,6 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                           searchType={ConceptSearchType.containerTypes}
                           name={'containerType'}
                           control={control}
-                          register={register}
                         />
                       </InnerBox>
                     </Grid>

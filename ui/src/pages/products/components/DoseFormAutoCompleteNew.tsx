@@ -5,14 +5,13 @@ import useDebounce from '../../../hooks/useDebounce.tsx';
 
 import { useSearchConcepts } from '../../../hooks/api/useInitializeConcepts.tsx';
 import { ConceptSearchType } from '../../../types/conceptSearch.ts';
-import { Control, UseFormRegister, Controller } from 'react-hook-form';
+import { Control, Controller } from 'react-hook-form';
 import { MedicationPackageDetails } from '../../../types/authoring.ts';
 interface DoseFormAutocompleteNewProps {
   optionValues: Concept[];
   searchType: ConceptSearchType;
   setval: (val: Concept) => void;
   control: Control<MedicationPackageDetails>;
-  register: UseFormRegister<MedicationPackageDetails>;
   name: string;
 }
 const DoseFormAutocompleteNew: FC<DoseFormAutocompleteNewProps> = ({
@@ -20,7 +19,6 @@ const DoseFormAutocompleteNew: FC<DoseFormAutocompleteNewProps> = ({
   searchType,
   setval,
   control,
-  register,
   name,
 
   ...props

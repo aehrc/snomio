@@ -168,7 +168,9 @@ function Ingredients(props: IngredientsProps) {
                             setIndexToDelete(index);
                             setDeleteModalContent(
                               `Remove the ingredient "${
-                                activeIngredient.activeIngredient
+                                isValidConceptName(
+                                  activeIngredient.activeIngredient as Concept,
+                                )
                                   ? activeIngredient.activeIngredient?.pt.term
                                   : 'Untitled'
                               }" ?`,
@@ -195,7 +197,6 @@ function Ingredients(props: IngredientsProps) {
                       searchType={ConceptSearchType.ingredients}
                       name={`${activeIngredientsArray}[${index}].activeIngredient`}
                       control={control}
-                      register={register}
                       key={activeIngredient.id}
                     />
                   </InnerBox>
@@ -206,7 +207,6 @@ function Ingredients(props: IngredientsProps) {
                       searchType={ConceptSearchType.ingredients}
                       name={`${activeIngredientsArray}[${index}].basisOfStrengthSubstance`}
                       control={control}
-                      register={register}
                       key={activeIngredient.id}
                     />
                   </InnerBox>
@@ -235,7 +235,6 @@ function Ingredients(props: IngredientsProps) {
                           searchType={ConceptSearchType.ingredients}
                           name={`${activeIngredientsArray}[${index}].totalQuantity.unit`}
                           control={control}
-                          register={register}
                         />
                       </Grid>
                     </Stack>
@@ -262,7 +261,6 @@ function Ingredients(props: IngredientsProps) {
                           searchType={ConceptSearchType.ingredients}
                           name={`${activeIngredientsArray}[${index}].concentrationStrength.unit`}
                           control={control}
-                          register={register}
                         />
                       </Grid>
                     </Stack>

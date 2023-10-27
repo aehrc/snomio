@@ -27,7 +27,7 @@ const MainLayout = () => {
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
 
   const { container, miniDrawer, menuOrientation } = useConfig();
-  // useWebSocket();
+  useWebSocket();
   const isHorizontal =
     menuOrientation === MenuOrientation.HORIZONTAL && !downLG;
 

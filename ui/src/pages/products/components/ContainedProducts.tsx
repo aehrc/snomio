@@ -22,7 +22,6 @@ import {
   UseFormRegister,
 } from 'react-hook-form';
 import {
-  defaultIngredient,
   defaultProduct,
   getDefaultUnit,
 } from '../../../utils/helpers/conceptUtils.ts';

@@ -38,11 +38,11 @@ export default function PackageSearchAndAddModal({
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const handleSubmit = () => {
-    if (selectedProduct) {
+    if (selectedProduct && selectedProduct.conceptId) {
       void (async () => {
         try {
           const packageDetails = await ConceptService.fetchMedication(
-            selectedProduct.conceptId,
+            selectedProduct.conceptId as string,
           );
           // packageDetails.containedProducts.map(p => arrayHelpers.push(p));
 
