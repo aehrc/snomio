@@ -92,12 +92,12 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
   });
   const [activePackageTabIndex, setActivePackageTabIndex] = useState(0);
 
-  useEffect(() => {
-    if (!isFormEdited) {
-      const isFormEdited = formState.isDirty;
-      setIsFormEdited(isFormEdited);
-    }
-  }, [packageFields, productFields]);
+  // useEffect(() => {
+  //   if (!isFormEdited) {
+  //     const isFormEdited = formState.isDirty;
+  //     setIsFormEdited(isFormEdited);
+  //   }
+  // }, [packageFields, productFields]);
 
   return (
     <Box sx={{ width: '100%' }}>
