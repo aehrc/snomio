@@ -47,6 +47,8 @@ interface ContainedPackagesProps {
   >;
   packageRemove: UseFieldArrayRemove;
   // watch: UseFormWatch<MedicationPackageDetails>;
+  setActivePackageTabIndex: (value: number) => void;
+  activePackageTabIndex:number
 }
 
 function ContainedPackages(props: ContainedPackagesProps) {
@@ -61,10 +63,11 @@ function ContainedPackages(props: ContainedPackagesProps) {
     packageFields,
     packageRemove,
     packageAppend,
-    // watch,
+    setActivePackageTabIndex,
+    activePackageTabIndex,
   } = props;
 
-  const [value, setValue] = useState(0);
+
   const [modalOpen, setModalOpen] = useState(false);
   const [defaultUnit] = useState(getDefaultUnit(units));
 
@@ -83,17 +86,17 @@ function ContainedPackages(props: ContainedPackagesProps) {
   };
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    setActivePackageTabIndex(newValue);
   };
 
   const handlePackageCreation = () => {
     packageAppend(defaultPackage(defaultUnit as Concept));
-    setValue(packageFields.length);
+    setActivePackageTabIndex(packageFields.length);
   };
 
   const handleSearchAndAddPackage = () => {
     handleToggleModal();
-    setValue(packageFields.length);
+    setActivePackageTabIndex(packageFields.length);
   };
 
   return (
@@ -102,7 +105,7 @@ function ContainedPackages(props: ContainedPackagesProps) {
         <legend>Contained Packages</legend>
 
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={value} onChange={handleChange} aria-label="package tab">
+          <Tabs value={activePackageTabIndex} onChange={handleChange} aria-label="package tab">
             {packageFields.map(
               (
                 containedPackage: FieldArrayWithId<
@@ -166,7 +169,7 @@ function ContainedPackages(props: ContainedPackagesProps) {
             containedPackage,
             index,
           ) => (
-            <CustomTabPanel value={value} index={index} key={index}>
+            <CustomTabPanel value={activePackageTabIndex} index={index} key={index}>
               <Grid container justifyContent="flex-end">
                 <ConfirmationModal
                   open={deleteModalOpen}

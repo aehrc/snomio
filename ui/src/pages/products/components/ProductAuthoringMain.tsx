@@ -90,6 +90,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     control,
     name: 'containedPackages',
   });
+  const [activePackageTabIndex, setActivePackageTabIndex] = useState(0);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -115,6 +116,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                   disabled={!isFormEdited}
                   action={'Clear'}
                   handleAction={() => {
+                    setActivePackageTabIndex(0);
                     reset(defaultForm);
                     handleClearForm();
                     setResetModalOpen(false);
@@ -195,6 +197,8 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
                       packageFields={packageFields}
                       packageAppend={packageAppend}
                       packageRemove={packageRemove}
+                      activePackageTabIndex={activePackageTabIndex}
+                      setActivePackageTabIndex={setActivePackageTabIndex}
                     />
                   </div>
                 ) : (
