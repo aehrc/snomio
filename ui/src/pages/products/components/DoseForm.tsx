@@ -52,7 +52,7 @@ export default function DoseForms(props: DoseFormProps) {
       try {
         // alert(selectedDoseForm);
 
-        if (selectedDoseForm != null && selectedDoseForm.conceptId ) {
+        if (selectedDoseForm != null && selectedDoseForm.conceptId) {
           const conceptId = selectedDoseForm.conceptId.trim();
           const ecl = '<' + conceptId;
 

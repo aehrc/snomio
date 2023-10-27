@@ -48,7 +48,7 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
 
   const [resetModalOpen, setResetModalOpen] = useState(false);
 
-  const { register, control, handleSubmit, reset } =
+  const { register, formState, control, handleSubmit, reset } =
     useForm<MedicationPackageDetails>({
       defaultValues: {
         containedPackages: [],
@@ -91,6 +91,13 @@ function ProductAuthoringMain(productprops: ProductAuthoringMainProps) {
     name: 'containedPackages',
   });
   const [activePackageTabIndex, setActivePackageTabIndex] = useState(0);
+
+  useEffect(() => {
+    if (!isFormEdited) {
+      const isFormEdited = formState.isDirty;
+      setIsFormEdited(isFormEdited);
+    }
+  }, [packageFields, productFields]);
 
   return (
     <Box sx={{ width: '100%' }}>

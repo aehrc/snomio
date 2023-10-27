@@ -48,7 +48,7 @@ interface ContainedPackagesProps {
   packageRemove: UseFieldArrayRemove;
   // watch: UseFormWatch<MedicationPackageDetails>;
   setActivePackageTabIndex: (value: number) => void;
-  activePackageTabIndex:number
+  activePackageTabIndex: number;
 }
 
 function ContainedPackages(props: ContainedPackagesProps) {
@@ -66,7 +66,6 @@ function ContainedPackages(props: ContainedPackagesProps) {
     setActivePackageTabIndex,
     activePackageTabIndex,
   } = props;
-
 
   const [modalOpen, setModalOpen] = useState(false);
   const [defaultUnit] = useState(getDefaultUnit(units));
@@ -105,7 +104,11 @@ function ContainedPackages(props: ContainedPackagesProps) {
         <legend>Contained Packages</legend>
 
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={activePackageTabIndex} onChange={handleChange} aria-label="package tab">
+          <Tabs
+            value={activePackageTabIndex}
+            onChange={handleChange}
+            aria-label="package tab"
+          >
             {packageFields.map(
               (
                 containedPackage: FieldArrayWithId<
@@ -164,126 +167,125 @@ function ContainedPackages(props: ContainedPackagesProps) {
             defaultUnit={defaultUnit as Concept}
           />
         </Box>
-        {packageFields.map(
-          (
-            containedPackage,
-            index,
-          ) => (
-            <CustomTabPanel value={activePackageTabIndex} index={index} key={index}>
-              <Grid container justifyContent="flex-end">
-                <ConfirmationModal
-                  open={deleteModalOpen}
-                  content={`Remove the package "${
-                    isValidConceptName(
-                      containedPackage.packageDetails.productName as Concept,
-                    )
-                      ? containedPackage.packageDetails.productName?.pt.term
-                      : 'Untitled'
-                  }" ?`}
-                  handleClose={() => {
-                    setDeleteModalOpen(false);
-                  }}
-                  title={'Confirm Delete Package'}
-                  disabled={disabled}
-                  action={'Delete'}
-                  handleAction={handleDeletePackage}
-                />
-                <IconButton
-                  onClick={() => {
-                    setIndexToDelete(index);
-                    setDeleteModalOpen(true);
-                  }}
-                  aria-label="delete"
-                  size="small"
-                  color="error"
-                >
-                  <Tooltip title={'Delete Package'}>
-                    <Delete />
-                  </Tooltip>
-                </IconButton>
-              </Grid>
+        {packageFields.map((containedPackage, index) => (
+          <CustomTabPanel
+            value={activePackageTabIndex}
+            index={index}
+            key={index}
+          >
+            <Grid container justifyContent="flex-end">
+              <ConfirmationModal
+                open={deleteModalOpen}
+                content={`Remove the package "${
+                  isValidConceptName(
+                    containedPackage.packageDetails.productName as Concept,
+                  )
+                    ? containedPackage.packageDetails.productName?.pt.term
+                    : 'Untitled'
+                }" ?`}
+                handleClose={() => {
+                  setDeleteModalOpen(false);
+                }}
+                title={'Confirm Delete Package'}
+                disabled={disabled}
+                action={'Delete'}
+                handleAction={handleDeletePackage}
+              />
+              <IconButton
+                onClick={() => {
+                  setIndexToDelete(index);
+                  setDeleteModalOpen(true);
+                }}
+                aria-label="delete"
+                size="small"
+                color="error"
+              >
+                <Tooltip title={'Delete Package'}>
+                  <Delete />
+                </Tooltip>
+              </IconButton>
+            </Grid>
 
-              <Level2Box component="fieldset">
-                <legend>Package Details</legend>
-                <Stack direction="row" spacing={3} alignItems="center">
-                  <Grid item xs={4}>
-                    <InnerBox component="fieldset">
-                      <legend>Brand Name</legend>
-                      <ProductAutocomplete
-                        optionValues={brandProducts}
-                        searchType={ConceptSearchType.brandProducts}
-                        name={`containedPackages[${index}].packageDetails.productName`}
-                        control={control}
-                      />
-                    </InnerBox>
-                  </Grid>
+            <Level2Box component="fieldset">
+              <legend>Package Details</legend>
+              <Stack direction="row" spacing={3} alignItems="center">
+                <Grid item xs={4}>
+                  <InnerBox component="fieldset">
+                    <legend>Brand Name</legend>
+                    <ProductAutocomplete
+                      optionValues={brandProducts}
+                      searchType={ConceptSearchType.brandProducts}
+                      name={`containedPackages[${index}].packageDetails.productName`}
+                      control={control}
+                    />
+                  </InnerBox>
+                </Grid>
 
-                  <Grid item xs={4}>
-                    <InnerBox component="fieldset">
-                      <legend>Container Type</legend>
-                      <ProductAutocomplete
-                        optionValues={containerTypes}
-                        searchType={ConceptSearchType.containerTypes}
-                        name={`containedPackages[${index}].packageDetails.containerType`}
-                        control={control}
-                      />
-                    </InnerBox>
+                <Grid item xs={4}>
+                  <InnerBox component="fieldset">
+                    <legend>Container Type</legend>
+                    <ProductAutocomplete
+                      optionValues={containerTypes}
+                      searchType={ConceptSearchType.containerTypes}
+                      name={`containedPackages[${index}].packageDetails.containerType`}
+                      control={control}
+                    />
+                  </InnerBox>
+                </Grid>
+                <Grid item xs={3}>
+                  <InnerBox component="fieldset">
+                    <legend>ARTG ID</legend>
+                    <ArtgAutoComplete
+                      control={control}
+                      name={`containedPackages[${index}].packageDetails.externalIdentifiers`}
+                      register={register}
+                      optionValues={[]}
+                    />
+                  </InnerBox>
+                </Grid>
+              </Stack>
+
+              <InnerBox component="fieldset">
+                <legend>Quantity</legend>
+
+                <Stack direction="row" spacing={1} alignItems={'center'}>
+                  <Grid item xs={1}>
+                    <TextField
+                      {...register(
+                        `containedPackages.[${index}].value` as 'containedPackages.0.value',
+                      )}
+                      fullWidth
+                      variant="outlined"
+                      margin="dense"
+                      value={containedPackage.value || 1}
+                      InputLabelProps={{ shrink: true }}
+                    />
                   </Grid>
                   <Grid item xs={3}>
-                    <InnerBox component="fieldset">
-                      <legend>ARTG ID</legend>
-                      <ArtgAutoComplete
-                        control={control}
-                        name={`containedPackages[${index}].packageDetails.externalIdentifiers`}
-                        register={register}
-                        optionValues={[]}
-                      />
-                    </InnerBox>
+                    <ProductAutocomplete
+                      optionValues={units}
+                      searchType={ConceptSearchType.units}
+                      name={`containedPackages[${index}].unit`}
+                      control={control}
+                    />
                   </Grid>
                 </Stack>
-
-                <InnerBox component="fieldset">
-                  <legend>Quantity</legend>
-
-                  <Stack direction="row" spacing={1} alignItems={'center'}>
-                    <Grid item xs={1}>
-                      <TextField
-                        {...register(
-                          `containedPackages.[${index}].value` as 'containedPackages.0.value',
-                        )}
-                        fullWidth
-                        variant="outlined"
-                        margin="dense"
-                        value={containedPackage.value || 1}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <ProductAutocomplete
-                        optionValues={units}
-                        searchType={ConceptSearchType.units}
-                        name={`containedPackages[${index}].unit`}
-                        control={control}
-                      />
-                    </Grid>
-                  </Stack>
-                </InnerBox>
-              </Level2Box>
-              <br />
-              <ContainedProducts
-                showTPU={true}
-                partOfPackage={true}
-                packageIndex={index}
-                units={units}
-                doseForms={doseForms}
-                brandProducts={brandProducts}
-                ingredients={ingredients}
-                control={control}
-                register={register}
-              />
-            </CustomTabPanel>
-          ),
-        )}
+              </InnerBox>
+            </Level2Box>
+            <br />
+            <ContainedProducts
+              showTPU={true}
+              partOfPackage={true}
+              packageIndex={index}
+              units={units}
+              doseForms={doseForms}
+              brandProducts={brandProducts}
+              ingredients={ingredients}
+              control={control}
+              register={register}
+            />
+          </CustomTabPanel>
+        ))}
       </Level1Box>
     </>
   );

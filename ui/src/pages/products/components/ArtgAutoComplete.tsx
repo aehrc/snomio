@@ -1,10 +1,6 @@
 import { Autocomplete, TextField } from '@mui/material';
-import React, { FC, useEffect, useState } from 'react';
-import { Concept } from '../../../types/concept.ts';
-import useDebounce from '../../../hooks/useDebounce.tsx';
+import React, { FC } from 'react';
 
-import { useSearchConcepts } from '../../../hooks/api/useInitializeConcepts.tsx';
-import { ConceptSearchType } from '../../../types/conceptSearch.ts';
 import {
   ExternalIdentifier,
   MedicationPackageDetails,
