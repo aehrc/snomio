@@ -1,8 +1,9 @@
 import React, { FC, useState } from 'react';
 import {
-  MedicationPackageDetails,
+  DeviceProductQuantity,
   MedicationProductQuantity,
-} from '../../../types/authoring.ts';
+  ProductType,
+} from '../../../types/product.ts';
 import { Concept } from '../../../types/concept.ts';
 import { Grid, IconButton, Tooltip } from '@mui/material';
 import { Stack } from '@mui/system';
@@ -32,21 +33,18 @@ interface ContainedProductsProps {
   showTPU?: boolean;
 
   units: Concept[];
-  doseForms: Concept[];
+  doseForms?: Concept[];
+  deviceDeviceTypes?: Concept[];
   brandProducts: Concept[];
-  ingredients: Concept[];
-  control: Control<MedicationPackageDetails>;
-  register: UseFormRegister<MedicationPackageDetails>;
-  productFields?: FieldArrayWithId<
-    MedicationPackageDetails,
-    'containedProducts',
-    'id'
-  >[];
-  productAppend?: UseFieldArrayAppend<
-    MedicationPackageDetails,
-    'containedProducts'
-  >;
+  ingredients?: Concept[];
+  medicationDeviceTypes?: Concept[];
+  containerTypes: Concept[];
+  control: Control<any>;
+  register: UseFormRegister<any>;
+  productFields?: FieldArrayWithId<any, 'containedProducts', 'id'>[];
+  productAppend?: UseFieldArrayAppend<any, 'containedProducts'>;
   productRemove?: UseFieldArrayRemove;
+  productType: ProductType;
 }
 const ContainedProducts: FC<ContainedProductsProps> = ({
   packageIndex,
@@ -61,6 +59,10 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   productFields,
   productAppend,
   productRemove,
+  productType,
+  medicationDeviceTypes,
+  containerTypes,
+  deviceDeviceTypes,
 }) => {
   const productsArray = partOfPackage
     ? `containedPackages[${packageIndex}].packageDetails.containedProducts`
@@ -85,7 +87,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
   const handleSearchAndAddProduct = () => {
     handleToggleModal();
   };
-  const append = (value: MedicationProductQuantity) => {
+  const append = (value: MedicationProductQuantity | DeviceProductQuantity) => {
     if (productAppend) {
       productAppend(value);
     } else {
@@ -126,6 +128,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
           open={modalOpen}
           handleClose={handleToggleModal}
           productAppend={productAppend ? productAppend : packageProductAppend}
+          productType={productType}
         />
 
         {(productFields ? productFields : packageProductFields).map(
@@ -143,13 +146,17 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                 packageIndex={packageIndex}
                 key={`product-${containedProduct.id}`}
                 doseForms={doseForms}
+                medicationDeviceTypes={medicationDeviceTypes}
                 brandProducts={brandProducts}
                 ingredients={ingredients}
+                containerTypes={containerTypes}
                 control={control}
                 register={register}
                 productRemove={
                   productRemove ? productRemove : packageProductRemove
                 }
+                productType={productType}
+                deviceDeviceTypes={deviceDeviceTypes}
               />
             );
           },

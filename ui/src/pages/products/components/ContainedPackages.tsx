@@ -4,7 +4,10 @@ import {
   getDefaultUnit,
   isValidConceptName,
 } from '../../../utils/helpers/conceptUtils.ts';
-import { MedicationPackageDetails } from '../../../types/authoring.ts';
+import {
+  MedicationPackageDetails,
+  ProductType,
+} from '../../../types/product.ts';
 import { InnerBox, Level1Box, Level2Box } from './style/ProductBoxes.tsx';
 import Box from '@mui/material/Box';
 import { Grid, IconButton, Tab, Tabs, TextField, Tooltip } from '@mui/material';
@@ -28,12 +31,13 @@ import { ConceptSearchType } from '../../../types/conceptSearch.ts';
 import ProductAutocomplete from './ProductAutocomplete.tsx';
 import ArtgAutoComplete from './ArtgAutoComplete.tsx';
 
-interface ContainedPackagesProps {
+interface ContainedMedicationPackagesProps {
   units: Concept[];
   doseForms: Concept[];
   brandProducts: Concept[];
   ingredients: Concept[];
   containerTypes: Concept[];
+  medicationDeviceTypes: Concept[];
   control: Control<MedicationPackageDetails>;
   register: UseFormRegister<MedicationPackageDetails>;
   packageFields: FieldArrayWithId<
@@ -49,9 +53,10 @@ interface ContainedPackagesProps {
   // watch: UseFormWatch<MedicationPackageDetails>;
   setActivePackageTabIndex: (value: number) => void;
   activePackageTabIndex: number;
+  productType: ProductType;
 }
 
-function ContainedPackages(props: ContainedPackagesProps) {
+function ContainedPackages(props: ContainedMedicationPackagesProps) {
   const {
     units,
     doseForms,
@@ -65,6 +70,8 @@ function ContainedPackages(props: ContainedPackagesProps) {
     packageAppend,
     setActivePackageTabIndex,
     activePackageTabIndex,
+    productType,
+    medicationDeviceTypes,
   } = props;
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -238,7 +245,6 @@ function ContainedPackages(props: ContainedPackagesProps) {
                     <ArtgAutoComplete
                       control={control}
                       name={`containedPackages[${index}].packageDetails.externalIdentifiers`}
-                      register={register}
                       optionValues={[]}
                     />
                   </InnerBox>
@@ -278,11 +284,14 @@ function ContainedPackages(props: ContainedPackagesProps) {
               partOfPackage={true}
               packageIndex={index}
               units={units}
+              containerTypes={containerTypes}
               doseForms={doseForms}
               brandProducts={brandProducts}
               ingredients={ingredients}
               control={control}
               register={register}
+              productType={productType}
+              medicationDeviceTypes={medicationDeviceTypes}
             />
           </CustomTabPanel>
         ))}

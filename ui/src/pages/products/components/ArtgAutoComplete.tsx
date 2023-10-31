@@ -1,15 +1,11 @@
 import { Autocomplete, TextField } from '@mui/material';
 import React, { FC } from 'react';
 
-import {
-  ExternalIdentifier,
-  MedicationPackageDetails,
-} from '../../../types/authoring.ts';
-import { Control, Controller, UseFormRegister } from 'react-hook-form';
+import { ExternalIdentifier } from '../../../types/product.ts';
+import { Control, Controller } from 'react-hook-form';
 
 interface ArtgAutoCompleteProps {
-  control: Control<MedicationPackageDetails>;
-  register: UseFormRegister<MedicationPackageDetails>;
+  control: Control<any>;
   optionValues: ExternalIdentifier[];
   name: string;
 }
@@ -17,9 +13,6 @@ const ArtgAutoComplete: FC<ArtgAutoCompleteProps> = ({
   control,
   optionValues,
   name,
-  register,
-
-  ...props
 }) => {
   return (
     <Controller
