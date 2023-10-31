@@ -98,7 +98,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
 
   const ProductDetails = () => {
     return (
-      <div key={'product-details'}>
+      <div key={'product-details'} style={{ minHeight: '50px' }}>
         <Grid container justifyContent="flex-end">
           <Stack direction="row" spacing={0} alignItems="center">
             <IconButton

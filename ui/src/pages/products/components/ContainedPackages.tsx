@@ -86,7 +86,6 @@ function ContainedPackages(props: ContainedMedicationPackagesProps) {
   const [indexToDelete, setIndexToDelete] = useState(-1);
 
   const handleDeletePackage = () => {
-    // arrayHelpers.remove(indexToDelete);
     packageRemove(indexToDelete);
     setDeleteModalOpen(false);
   };
@@ -106,67 +105,72 @@ function ContainedPackages(props: ContainedMedicationPackagesProps) {
   };
 
   return (
-    <>
+    <div key={'package-details'}>
       <Level1Box component="fieldset">
         <legend>Contained Packages</legend>
 
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs
-            value={activePackageTabIndex}
-            onChange={handleChange}
-            aria-label="package tab"
-          >
-            {packageFields.map(
-              (
-                containedPackage: FieldArrayWithId<
-                  MedicationPackageDetails,
-                  'containedPackages'
-                >,
-                index,
-              ) => {
-                return (
-                  <Tab
-                    label={
-                      <PackageNameWatched control={control} index={index} />
-                    }
-                    sx={{
-                      color: !containedPackage?.packageDetails?.productName
-                        ? 'red'
-                        : 'inherit',
-                    }}
-                    {...a11yProps(index)}
-                    key={index}
-                  />
-                );
-              },
-            )}
-            <Tab
-              icon={
-                <Tooltip title="Create new package">
-                  <AddCircle />
+        <Box
+          sx={{
+            borderBottom: packageFields.length > 0 ? 1 : 0,
+            borderColor: 'divider',
+          }}
+        >
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Grid item xs={10}>
+              <Tabs
+                value={activePackageTabIndex}
+                onChange={handleChange}
+                aria-label="package tab"
+              >
+                {packageFields.map(
+                  (
+                    containedPackage: FieldArrayWithId<
+                      MedicationPackageDetails,
+                      'containedPackages'
+                    >,
+                    index,
+                  ) => {
+                    return (
+                      <Tab
+                        label={
+                          <PackageNameWatched control={control} index={index} />
+                        }
+                        sx={{
+                          color: !containedPackage?.packageDetails?.productName
+                            ? 'red'
+                            : 'inherit',
+                        }}
+                        {...a11yProps(index)}
+                        key={index}
+                      />
+                    );
+                  },
+                )}
+              </Tabs>
+            </Grid>
+            <Grid container justifyContent="flex-end">
+              <IconButton
+                onClick={handlePackageCreation}
+                aria-label="create"
+                size="large"
+              >
+                <Tooltip title={'Create new package'}>
+                  <AddCircle fontSize="medium" />
                 </Tooltip>
-              }
-              onClick={handlePackageCreation}
-              {...a11yProps(
-                packageFields.length ? packageFields.length + 1 : 0,
-              )}
-              key={packageFields.length ? packageFields.length + 1 : 0}
-            />
-            <Tab
-              label={
-                <Tooltip title="Search and add an existing package">
-                  <span>
-                    <SearchAndAddIcon width={'20px'} />
-                  </span>
-                </Tooltip>
-              }
-              onClick={handleSearchAndAddPackage}
-              {...a11yProps(
-                packageFields.length ? packageFields.length + 2 : 1,
-              )}
-              key={packageFields.length ? packageFields.length + 2 : 1}
-            />
-          </Tabs>
+              </IconButton>
+
+              <Tooltip title={'Search and add an existing package'}>
+                <IconButton
+                  aria-label="create"
+                  size="large"
+                  onClick={handleSearchAndAddPackage}
+                >
+                  <SearchAndAddIcon width={'20px'} />
+                </IconButton>
+              </Tooltip>
+            </Grid>
+          </Stack>
+
           <PackageSearchAndAddModal
             open={modalOpen}
             handleClose={handleToggleModal}
@@ -296,7 +300,7 @@ function ContainedPackages(props: ContainedMedicationPackagesProps) {
           </CustomTabPanel>
         ))}
       </Level1Box>
-    </>
+    </div>
   );
 }
 function PackageNameWatched({
