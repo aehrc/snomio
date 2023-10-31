@@ -5,6 +5,7 @@ import { ExternalIdentifier } from '../../../types/product.ts';
 import { Control, Controller } from 'react-hook-form';
 
 interface ArtgAutoCompleteProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   optionValues: ExternalIdentifier[];
   name: string;
@@ -31,6 +32,7 @@ const ArtgAutoComplete: FC<ArtgAutoCompleteProps> = ({
             }
           }}
           renderInput={params => <TextField {...params} />}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onChange={(e, values: any[]) => {
             const tempValues: ExternalIdentifier[] = [];
             values.map(v => {

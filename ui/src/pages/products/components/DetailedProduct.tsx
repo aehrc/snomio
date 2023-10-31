@@ -53,7 +53,9 @@ interface DetailedProductProps {
   brandProducts: Concept[];
   ingredients?: Concept[];
   containerTypes: Concept[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: UseFormRegister<any>;
   productRemove: UseFieldArrayRemove;
   productType: ProductType;

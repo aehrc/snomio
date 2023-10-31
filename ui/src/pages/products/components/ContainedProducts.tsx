@@ -39,9 +39,13 @@ interface ContainedProductsProps {
   ingredients?: Concept[];
   medicationDeviceTypes?: Concept[];
   containerTypes: Concept[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: UseFormRegister<any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   productFields?: FieldArrayWithId<any, 'containedProducts', 'id'>[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   productAppend?: UseFieldArrayAppend<any, 'containedProducts'>;
   productRemove?: UseFieldArrayRemove;
   productType: ProductType;
