@@ -56,8 +56,8 @@ function DeviceAuthoring(productProps: DeviceAuthoringProps) {
     if (selectedProduct) {
       conceptService
         .fetchDevice(
-          // selectedProduct ? (selectedProduct.conceptId as string) : '',
-          '688631000168101',
+          selectedProduct ? (selectedProduct.conceptId as string) : '',
+          // '688631000168101',
         )
         .then(dp => {
           if (dp.productName) {
