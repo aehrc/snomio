@@ -77,7 +77,7 @@ const NavItem = ({ item, level, title }: Props) => {
   ) : (
     false
   );
-  console.log('nav item');
+
   const isSelected = openItem.findIndex(id => id === item.id) > -1;
 
   const { pathname } = useLocation();
@@ -108,9 +108,7 @@ const NavItem = ({ item, level, title }: Props) => {
     theme.palette.mode === ThemeMode.DARK && drawerOpen
       ? 'text.primary'
       : 'primary.main';
-  console.log('menu orientation');
-  console.log(menuOrientation);
-  console.log(downLG);
+
   return (
     <>
       <li>
