@@ -3,7 +3,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Concept } from '../../../types/concept.ts';
 import useDebounce from '../../../hooks/useDebounce.tsx';
 
-import { useSpecialDoseFormSearch } from '../../../hooks/api/useInitializeConcepts.tsx';
+import { useChildConceptSearchUsingEcl } from '../../../hooks/api/useInitializeConcepts.tsx';
 import { Control, Controller } from 'react-hook-form';
 import { filterOptionsForConceptAutocomplete } from '../../../utils/helpers/conceptUtils.ts';
 interface ProductAutoCompleteChildProps {
@@ -30,7 +30,7 @@ const ProductAutoCompleteChild: FC<ProductAutoCompleteChildProps> = ({
   const [options, setOptions] = useState<Concept[]>(
     optionValues ? optionValues : [],
   );
-  const { data } = useSpecialDoseFormSearch(debouncedSearch, ecl, branch);
+  const { data } = useChildConceptSearchUsingEcl(debouncedSearch, ecl, branch);
   const [open, setOpen] = useState(false);
   useEffect(() => {
     mapDataToOptions();
