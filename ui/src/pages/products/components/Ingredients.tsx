@@ -193,7 +193,7 @@ function Ingredients(props: IngredientsProps) {
                 </AccordionSummary>
                 <AccordionDetails>
                   <InnerBox component="fieldset">
-                    <legend>Intended Active Ingredient</legend>
+                    <legend>Has Active Ingredient</legend>
                     <ProductAutocomplete
                       optionValues={ingredients}
                       searchType={ConceptSearchType.ingredients}
@@ -215,7 +215,7 @@ function Ingredients(props: IngredientsProps) {
                     />
                   </InnerBox>
                   <InnerBox component="fieldset">
-                    <legend>Strength</legend>
+                    <legend>Unit Strength</legend>
 
                     <Stack direction="row" spacing={2} alignItems="center">
                       <Grid item xs={4}>

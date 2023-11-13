@@ -7,7 +7,7 @@ import { useSearchConcepts } from '../../../hooks/api/useInitializeConcepts.tsx'
 import { ConceptSearchType } from '../../../types/conceptSearch.ts';
 import { Control, Controller } from 'react-hook-form';
 import { filterOptionsForConceptAutocomplete } from '../../../utils/helpers/conceptUtils.ts';
-interface DoseFormAutocompleteProps {
+interface ProductAutoCompleteParentProps {
   optionValues: Concept[];
   searchType: ConceptSearchType;
   setval: (val: Concept) => void;
@@ -16,7 +16,7 @@ interface DoseFormAutocompleteProps {
   name: string;
   branch: string;
 }
-const DoseFormAutocomplete: FC<DoseFormAutocompleteProps> = ({
+const ProductAutoCompleteParent: FC<ProductAutoCompleteParentProps> = ({
   optionValues,
   searchType,
   setval,
@@ -80,4 +80,4 @@ const DoseFormAutocomplete: FC<DoseFormAutocompleteProps> = ({
     />
   );
 };
-export default DoseFormAutocomplete;
+export default ProductAutoCompleteParent;

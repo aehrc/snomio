@@ -6,7 +6,7 @@ import useDebounce from '../../../hooks/useDebounce.tsx';
 import { useSpecialDoseFormSearch } from '../../../hooks/api/useInitializeConcepts.tsx';
 import { Control, Controller } from 'react-hook-form';
 import { filterOptionsForConceptAutocomplete } from '../../../utils/helpers/conceptUtils.ts';
-interface SpecialDoseFormAutocompleteProps {
+interface ProductAutoCompleteChildProps {
   optionValues: Concept[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
@@ -17,7 +17,7 @@ interface SpecialDoseFormAutocompleteProps {
   ecl: string | undefined;
   branch: string;
 }
-const SpecialDoseFormAutocomplete: FC<SpecialDoseFormAutocompleteProps> = ({
+const ProductAutoCompleteChild: FC<ProductAutoCompleteChildProps> = ({
   optionValues,
   inputValue,
   setInputValue,
@@ -76,4 +76,4 @@ const SpecialDoseFormAutocomplete: FC<SpecialDoseFormAutocompleteProps> = ({
     />
   );
 };
-export default SpecialDoseFormAutocomplete;
+export default ProductAutoCompleteChild;
