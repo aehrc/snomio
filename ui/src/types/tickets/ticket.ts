@@ -31,6 +31,7 @@ export interface Ticket extends VersionedEntity {
   comments?: Comment[];
   attachments?: Attachment[];
   'ticket-additional-fields'?: AdditionalFieldValue[];
+  taskAssociation?: TaskAssocation | null;
 }
 
 export interface PagedTicket extends PagedItem {

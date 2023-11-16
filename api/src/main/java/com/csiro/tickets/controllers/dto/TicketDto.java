@@ -1,13 +1,13 @@
 package com.csiro.tickets.controllers.dto;
 
 import com.csiro.tickets.models.Label;
+import com.csiro.tickets.models.TaskAssociation;
 import com.csiro.tickets.models.Ticket;
 import com.csiro.tickets.models.TicketType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Data;
 
@@ -45,6 +45,8 @@ public class TicketDto {
 
   private Set<ProductDto> products;
 
+  private TaskAssociation taskAssociation;
+
   @JsonProperty("ticket-additional-fields")
   private Set<AdditionalFieldValueDto> additionalFieldValues;
 
@@ -66,16 +68,13 @@ public class TicketDto {
         .state(StateDto.of(ticket.getState()))
         .assignee(ticket.getAssignee())
         .priorityBucket(PriorityBucketDto.of(ticket.getPriorityBucket()))
+        .taskAssociation(ticket.getTaskAssociation())
         // TODO: Instead of this Dto magic (same for State) to get the data
         // filled by TicketRepository findAll() we need to look into changing
         // the findAll() to use JOIN FETCH to get all the fields
         // that are only filled with ids instead of whole resources in the response
-        .additionalFieldValues(AdditionalFieldValueDto.of(ticket.getAdditionalFieldValues()));
-
-    if (ticket.getProducts() != null) {
-      ticketDto.products(
-          ticket.getProducts().stream().map(ProductDto::of).collect(Collectors.toSet()));
-    }
+        .additionalFieldValues(AdditionalFieldValueDto.of(ticket.getAdditionalFieldValues()))
+        .products(ProductDto.of(ticket.getProducts()));
 
     return ticketDto.build();
   }
