@@ -5,7 +5,7 @@ import {
   ConceptSearchResponse,
   ProductModel,
 } from '../types/concept.ts';
-import { mapToConcepts } from '../utils/helpers/conceptUtils.ts';
+import { mapToConceptIds } from '../utils/helpers/conceptUtils.ts';
 import {
   DevicePackageDetails,
   MedicationPackageDetails,
@@ -21,6 +21,7 @@ import {
   ECL_DEVICE_CONCEPT_SEARCH,
   ECL_DEVICE_TYPE,
   ECL_MEDICATION_DEVICE_TYPE,
+  appendIdsToEcl,
 } from '../utils/helpers/EclUtils.ts';
 
 const ConceptService = {
@@ -71,13 +72,13 @@ const ConceptService = {
     return concepts;
   },
 
-  async searchConceptById(
-    id: string,
+  async searchConceptByIds(
+    id: string[],
     branch: string,
     providedEcl?: string,
   ): Promise<Concept[]> {
     if (providedEcl) {
-      providedEcl = `%28${providedEcl}%29%20AND%20${id}`;
+      providedEcl = appendIdsToEcl(providedEcl, id);
     }
     const url = providedEcl
       ? `/snowstorm/${branch}/concepts?ecl=${providedEcl}&activeFilter=true&termActive=true`
@@ -93,10 +94,14 @@ const ConceptService = {
     const concept = [response.data as Concept];
     return concept;
   },
-  async searchConceptByArtgId(id: string, branch: string): Promise<Concept[]> {
+  async searchConceptByArtgId(
+    id: string,
+    branch: string,
+    providedEcl?: string,
+  ): Promise<Concept[]> {
     const searchBody = {
       additionalFields: {
-        schemeValue: id, //need to change to schemeValue
+        mapTarget: id, //need to change to schemeValue
       },
     };
     const response = await axios.post(
@@ -107,7 +112,11 @@ const ConceptService = {
       this.handleErrors();
     }
     const conceptSearchResponse = response.data as ConceptSearchResponse;
-    return mapToConcepts(conceptSearchResponse.items);
+    const conceptIds = mapToConceptIds(conceptSearchResponse.items);
+    if (conceptIds.length > 0) {
+      return this.searchConceptByIds(conceptIds, branch, providedEcl);
+    }
+    return [];
   },
   async getAllUnits(branch: string): Promise<Concept[]> {
     return this.searchConceptByEcl(ECL_UNITS, branch, 100);
