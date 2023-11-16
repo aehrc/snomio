@@ -1,5 +1,6 @@
 import { Embedded, PagedItem } from '../pagesResponse';
 import { ValidationColor } from '../validationColor';
+import {DevicePackageDetails, MedicationPackageDetails} from "../product.ts";
 
 export interface TicketDto extends VersionedEntity {
   id: number;
@@ -14,6 +15,7 @@ export interface TicketDto extends VersionedEntity {
   comments?: Comment[];
   attachments?: Attachment[];
   'ticket-additional-fields'?: AdditionalFieldValue[];
+  products?:TicketProductDto[];
 }
 
 export interface Ticket extends VersionedEntity {
@@ -144,4 +146,17 @@ export interface Comment extends VersionedEntity {
 export interface TaskAssocation extends VersionedEntity {
   ticketId: number;
   taskId: string;
+}
+
+export interface TicketProductDto{
+  id: number;
+  ticketId: number;
+  version: number;
+  created: Date;
+  modified: Date;
+  createdBy: string;
+  modifiedBy: string;
+  name: string;
+  conceptId: string;
+  packageDetails: MedicationPackageDetails | DevicePackageDetails;
 }

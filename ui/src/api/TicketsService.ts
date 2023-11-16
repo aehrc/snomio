@@ -11,7 +11,7 @@ import {
   State,
   TaskAssocation,
   Ticket,
-  TicketDto,
+  TicketDto, TicketProductDto,
 } from '../types/tickets/ticket';
 import { getFileNameFromContentDisposition } from '../utils/helpers/fileUtils';
 import { saveAs } from 'file-saver';
@@ -28,6 +28,13 @@ const TicketsService = {
       this.handleErrors();
     }
     return response.data as TicketDto;
+  },
+  async getTicketProducts(id: number): Promise<TicketProductDto[]> {
+    const response = await axios.get(`/api/tickets/${id}/products`);
+    if (response.status != 200) {
+      this.handleErrors();
+    }
+    return response.data as TicketProductDto[];
   },
   async getPaginatedTickets(page: number, size: number): Promise<PagedTicket> {
     const pageAndSize = `page=${page}&size=${size}`;

@@ -17,6 +17,8 @@ function useTicketById(id: string | undefined, fetch: boolean) {
   useEffect(() => {
     void (async () => {
       const fullTicket = await TicketsService.getIndividualTicket(Number(id));
+      const products = await TicketsService.getTicketProducts(Number(id));
+      fullTicket.products=products;
       sortComments(fullTicket?.comments);
       setTicket(fullTicket);
       mergeTickets(fullTicket);

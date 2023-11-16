@@ -78,7 +78,7 @@ const ConceptService = {
     providedEcl?: string,
   ): Promise<Concept[]> {
     if (providedEcl) {
-      providedEcl += ` and ${id}`;
+      providedEcl = `%28${providedEcl}%29%20AND%20${id}`;
     }
     const url = providedEcl
       ? `/snowstorm/${branch}/concepts?ecl=${providedEcl}&activeFilter=true&termActive=true`
