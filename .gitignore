@@ -6,3 +6,4 @@ package.json
 api/src/main/resources/static
 ui/reports
 setenv.sh
+target/

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ Copyright © 2022 SNOMED International
   ~
@@ -15,53 +14,153 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.1.5</version>
+    <relativePath></relativePath>
+    <!-- lookup parent from repository -->
+  </parent>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.5</version>
-        <relativePath /> <!-- lookup parent from repository -->
-    </parent>
+  <groupId>com.csiro</groupId>
+  <artifactId>snomio</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>2.2</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+  <name>snomio</name>
+  <description>An integration with Snomed International's Authoring Platform that extends functionality to improve authoring of medicinal terminology.</description>
 
-    <groupId>com.csiro</groupId>
-    <artifactId>snomio</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+  <modules>
+    <module>ui</module>
+    <module>api</module>
+  </modules>
 
-    <name>snomio</name>
-    <description>An integration with Snomed International's Authoring Platform that extends functionality to improve authoring of medicinal terminology.</description>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>2.2</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-    <modules>
-        <module>ui</module>
-        <module>api</module>
-    </modules>
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>snomio</id>
+      <url>https://pkgs.dev.azure.com/OD225632-NCTS-ContentAndTooling/Snomio/_packaging/snomio/maven/v1</url>
+    </repository>
+  </repositories>
 
-    <repositories>
-      <repository>
-        <id>snomio</id>
-        <url>https://pkgs.dev.azure.com/OD225632-NCTS-ContentAndTooling/Snomio/_packaging/snomio/maven/v1</url>
-        <releases>
-          <enabled>true</enabled>
-        </releases>
-        <snapshots>
-          <enabled>true</enabled>
-        </snapshots>
-      </repository>
-    </repositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.rudikershaw.gitbuildhook</groupId>
+        <artifactId>git-build-hook-maven-plugin</artifactId>
+        <version>3.4.1</version>
+        <configuration>
+          <installHooks>
+            <commit-msg>hooks/commit-msg</commit-msg>
+            <pre-commit>hooks/pre-commit</pre-commit>
+          </installHooks>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <!-- Sets git config specified under configuration > gitConfig. -->
+              <goal>install</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>2.40.0</version>
+        <configuration>
+          <pom>
+            <!-- These are the defaults, you can override if you want -->
+            <includes>
+              <include>pom.xml</include>
+            </includes>
+
+            <sortPom></sortPom>
+            <!-- has its own section below -->
+
+          </pom>
+          <java>
+            <!-- These are the defaults, you can override if you want -->
+            <includes>
+              <include>src/main/java/**/*.java</include>
+              <include>src/test/java/**/*.java</include>
+            </includes>
+
+            <googleJavaFormat>
+              <version>1.18.1</version>
+              <!-- optional, 1.8 is minimum supported version -->
+              <style>GOOGLE</style>
+              <!-- or AOSP (optional) -->
+              <reflowLongStrings>true</reflowLongStrings>
+              <!-- optional -->
+              <formatJavadoc>false</formatJavadoc>
+              <!-- optional -->
+              <!-- optional: custom group artifact (you probably don't need this) -->
+              <groupArtifact>com.google.googlejavaformat:google-java-format</groupArtifact>
+            </googleJavaFormat>
+
+            <importOrder></importOrder>
+            <!-- standard import order -->
+            <importOrder>
+              <!-- or a custom ordering -->
+              <wildcardsLast>false</wildcardsLast>
+              <!-- Optional, default false. Sort wildcard import after specific imports -->
+              <order>java|javax,org,com,com.diffplug,,\#com.diffplug,\#</order>
+              <!-- or use <file>${project.basedir}/eclipse.importorder</file> -->
+              <!-- you can use an empty string for all the imports you didn't specify explicitly, '|' to join group without blank line, and '\#` prefix for static imports. -->
+              <semanticSort>false</semanticSort>
+              <!-- Optional, default false. Sort by package, then class, then member (for static imports). Splitting is based on common conventions (packages are lower case, classes start with upper case). Use <treatAsPackage> and <treatAsClass> for exceptions. -->
+              <treatAsPackage>
+                <!-- Packages starting with upper case letters. -->
+                <package>com.example.MyPackage</package>
+              </treatAsPackage>
+              <treatAsClass>
+                <!-- Classes starting with lower case letters. -->
+                <class>com.example.myClass</class>
+              </treatAsClass>
+            </importOrder>
+
+            <removeUnusedImports></removeUnusedImports>
+            <!-- self-explanatory -->
+
+            <formatAnnotations></formatAnnotations>
+            <!-- fixes formatting of type annotations, see below -->
+
+            <licenseHeader>
+              <content>/* (C)$YEAR */</content>
+              <!-- or <file>${project.basedir}/license-header</file> -->
+            </licenseHeader>
+          </java>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- ... etc ... -->
+    </plugins>
+  </build>
 </project>
