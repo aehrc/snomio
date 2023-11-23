@@ -1,8 +1,9 @@
 import React from 'react';
 import { ProductModel } from '../../types/concept.ts';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import ProductModelEdit from './ProductModelEdit.tsx';
+import ProductModelView from './ProductModelView.tsx';
 
 interface LocationState {
   productModel: ProductModel;
@@ -10,6 +11,7 @@ interface LocationState {
 }
 function ProductModelReadonly() {
   const location = useLocation();
+  const { id } = useParams();
 
   if (location !== null && location.state) {
     const locationState = location.state as LocationState;
@@ -22,6 +24,8 @@ function ProductModelReadonly() {
         />
       );
     }
+  } else if (id) {
+    return <ProductModelView />;
   }
 }
 

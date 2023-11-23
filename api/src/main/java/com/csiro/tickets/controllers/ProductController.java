@@ -35,9 +35,15 @@ public class ProductController {
     return ticketService.getProductsForTicket(ticketId);
   }
 
-  @DeleteMapping(value = "/api/tickets/{ticketId}/products/{name}")
-  public ResponseEntity getProduct(@PathVariable Long ticketId, @PathVariable String name) {
-    ticketService.deleteProduct(ticketId, name);
+    @DeleteMapping(value = "/api/tickets/{ticketId}/products/{name}")
+    public ResponseEntity getProduct(@PathVariable Long ticketId, @PathVariable String name) {
+      ticketService.deleteProduct(ticketId, name);
+      return ResponseEntity.noContent().build();
+    }
+
+  @DeleteMapping(value = "/api/tickets/{ticketId}/products/id/{id}")
+  public ResponseEntity getProduct(@PathVariable Long ticketId, @PathVariable Long id) {
+    ticketService.deleteProductByConceptId(ticketId, id);
     return ResponseEntity.noContent().build();
   }
 }
