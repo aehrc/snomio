@@ -36,6 +36,7 @@ interface TicketProductsProps {
 interface ProductDto {
   id: number;
   conceptId: string;
+  ctppId: string;
   concept: Concept | undefined;
   status: string;
   ticketId: number;
@@ -53,6 +54,7 @@ function mapToProductDetailsArray(
     const productDto: ProductDto = {
       id: item.id,
       conceptId: item.conceptId,
+      ctppId: item.conceptId,
       concept: item.packageDetails.productName
         ? item.packageDetails.productName
         : undefined,
@@ -115,7 +117,7 @@ function TicketProducts({ ticket }: TicketProductsProps) {
   }
   const columns: GridColDef[] = [
     {
-      field: 'concept',
+      field: 'ctppId',
       headerName: 'Product Name',
       minWidth: 90,
       flex: 1,
@@ -124,22 +126,25 @@ function TicketProducts({ ticket }: TicketProductsProps) {
       sortable: false,
 
       renderCell: (
-        params: GridRenderCellParams<GridValidRowModel, Concept>,
-      ): ReactNode => (
-        <Tooltip
-          title={params.value?.pt.term!.toString()}
-          key={`tooltip-${params.value?.id}`}
-        >
-          <Link
-            to={`product/${params.value?.id}`}
-            className={'product-view-link'}
-            key={`link-${params.value?.id}`}
-            style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+        params: GridRenderCellParams<GridValidRowModel, string>,
+      ): ReactNode => {
+        const filteredProduct = filterProduct(params.value as string);
+        return (
+          <Tooltip
+            title={filteredProduct?.concept?.pt.term}
+            key={`tooltip-${filteredProduct?.id}`}
           >
-            {params.value?.pt.term!.toString()}
-          </Link>
-        </Tooltip>
-      ),
+            <Link
+              to={`product/${filteredProduct?.conceptId}`}
+              className={'product-view-link'}
+              key={`link-${filteredProduct?.id}`}
+              style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+            >
+              {filteredProduct?.concept?.pt.term}
+            </Link>
+          </Tooltip>
+        );
+      },
       sortComparator: (v1: Concept, v2: Concept) =>
         v1.pt.term.localeCompare(v2.pt.term),
     },

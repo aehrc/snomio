@@ -64,7 +64,10 @@ function TaskTicket() {
             path="product"
             element={<ProductAuthoring ticket={ticket} task={task as Task} />}
           />
-          <Route path="product/:id/*" element={<ProductModelReadonly />} />
+          <Route
+            path="product/:id/*"
+            element={<ProductModelReadonly branch={task?.branchPath} />}
+          />
         </Routes>
       </Stack>
     </Stack>

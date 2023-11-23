@@ -6,10 +6,13 @@ import ProductModelEdit from './ProductModelEdit.tsx';
 import ProductModelView from './ProductModelView.tsx';
 
 interface LocationState {
-  productModel: ProductModel;
+  productModel: ProductModel | null;
   branch: string;
 }
-function ProductModelReadonly() {
+interface ProductModelReadonlyProps {
+  branch?: string;
+}
+function ProductModelReadonly({ branch }: ProductModelReadonlyProps) {
   const location = useLocation();
   const { id } = useParams();
 
@@ -25,7 +28,7 @@ function ProductModelReadonly() {
       );
     }
   } else if (id) {
-    return <ProductModelView />;
+    return <ProductModelView branch={branch} />;
   }
 }
 
