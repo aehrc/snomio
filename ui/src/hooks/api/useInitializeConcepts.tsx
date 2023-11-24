@@ -1,4 +1,4 @@
-import {useEffect, useMemo} from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 import useConceptStore from '../../stores/ConceptStore.ts';
@@ -6,7 +6,7 @@ import ConceptService from '../../api/ConceptService.ts';
 import { ConceptSearchType } from '../../types/conceptSearch.ts';
 import { getECLForSearch } from '../../utils/helpers/conceptUtils.ts';
 import { Concept } from '../../types/concept.ts';
-import {errorHandler} from "../../types/ErrorHandler.ts";
+import { errorHandler } from '../../types/ErrorHandler.ts';
 
 export default function useInitializeConcepts(branch: string | undefined) {
   if (branch === undefined) {
