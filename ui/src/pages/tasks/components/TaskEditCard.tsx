@@ -1,9 +1,14 @@
-import { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Card, Tab, Tabs } from '@mui/material';
 
 import TaskDetails from './TaskDetails';
 import TaskTicketList from './TaskTicketList';
 import { useLocation } from 'react-router-dom';
+
+import useTaskById from '../../../hooks/useTaskById.tsx';
+import { Task } from '../../../types/task.ts';
+import { useFetchBranchDetails } from '../../../hooks/api/task/useInitializeBranch.tsx';
+import Loading from '../../../components/Loading.tsx';
 
 interface LocationState {
   openTab: number;
@@ -35,16 +40,26 @@ function TabPanel(props: TabPanelProps) {
 function TaskEditCard() {
   const [openTab, setOpenTab] = useState<number>();
   const locationState = useLocation().state as LocationState;
+  const [branchFound, setBranchFound] = useState<boolean>();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     event.preventDefault();
     setOpenTab(newValue);
   };
+  const task = useTaskById();
+
+  const { isLoading, data } = useFetchBranchDetails(task as Task);
 
   useEffect(() => {
-    console.log('hey');
     setOpenTab(locationState?.openTab ? locationState?.openTab : 0);
+    if (branchFound && data !== null) {
+      setBranchFound(true);
+    }
   }, []);
+
+  if (isLoading) {
+    return <Loading message={`Loading Task details`} />;
+  }
 
   return (
     <Card
