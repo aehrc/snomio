@@ -59,6 +59,8 @@ public class AdditionalFieldType extends BaseAuditableEntity {
     DATE,
     NUMBER,
     STRING,
-    LIST
+    LIST,
+
+    JSON
   }
 }

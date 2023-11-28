@@ -2,6 +2,7 @@ package com.csiro.tickets.controllers.dto;
 
 import com.csiro.tickets.models.AdditionalFieldType;
 import com.csiro.tickets.models.AdditionalFieldValue;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,6 +20,8 @@ public class AdditionalFieldValueDto {
   private AdditionalFieldType additionalFieldType;
 
   private String valueOf;
+
+  private JsonNode jsonValueOf;
 
   public static Set<AdditionalFieldValueDto> of(Set<AdditionalFieldValue> additionalFieldValues) {
     if (additionalFieldValues == null) {
@@ -38,6 +41,7 @@ public class AdditionalFieldValueDto {
             .type(additionalFieldValue.getAdditionalFieldType().getType())
             .build());
     dto.setValueOf(additionalFieldValue.getValueOf());
+    dto.setJsonValueOf(additionalFieldValue.getJsonValueOf());
     return dto;
   }
 }
