@@ -40,7 +40,6 @@ function TabPanel(props: TabPanelProps) {
 function TaskEditCard() {
   const [openTab, setOpenTab] = useState<number>();
   const locationState = useLocation().state as LocationState;
-  const [branchFound, setBranchFound] = useState<boolean>();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     event.preventDefault();
@@ -48,13 +47,10 @@ function TaskEditCard() {
   };
   const task = useTaskById();
 
-  const { isLoading, data } = useFetchBranchDetails(task as Task);
+  const { isLoading } = useFetchBranchDetails(task as Task);
 
   useEffect(() => {
     setOpenTab(locationState?.openTab ? locationState?.openTab : 0);
-    if (branchFound && data !== null) {
-      setBranchFound(true);
-    }
   }, []);
 
   if (isLoading) {
