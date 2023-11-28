@@ -3,7 +3,8 @@ import {
   Classification,
   ClassificationStatus,
   Task,
-  TaskDto, TaskStatus,
+  TaskDto,
+  TaskStatus,
   UserDetails,
 } from '../types/task';
 import {
@@ -174,25 +175,24 @@ const TasksServices = {
     return returnTask;
   },
   async updateTaskStatus(
-      projectKey: string | undefined,
-      taskKey: string | undefined,
-      taskStatus:TaskStatus | undefined
+    projectKey: string | undefined,
+    taskKey: string | undefined,
+    taskStatus: TaskStatus | undefined,
   ): Promise<Task> {
     if (
-        projectKey === undefined ||
-        taskKey === undefined ||
-        (taskStatus === undefined)
+      projectKey === undefined ||
+      taskKey === undefined ||
+      taskStatus === undefined
     ) {
       this.handleErrors();
     }
 
-    const taskRequest =
-        {
-          status: taskStatus?.toUpperCase().replace(/ /g,"_")
-        }
+    const taskRequest = {
+      status: taskStatus?.toUpperCase().replace(/ /g, '_'),
+    };
     const response = await axios.put(
-        `/authoring-services/projects/${projectKey}/tasks/${taskKey}`,
-        taskRequest,
+      `/authoring-services/projects/${projectKey}/tasks/${taskKey}`,
+      taskRequest,
     );
     if (response.status !== 200) {
       this.handleErrors();

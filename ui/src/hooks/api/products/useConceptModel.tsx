@@ -1,8 +1,8 @@
-import {useEffect, useMemo} from 'react';
+import { useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ConceptService from '../../../api/ConceptService';
 import { ProductModel } from '../../../types/concept';
-import {errorHandler} from "../../../types/ErrorHandler.ts";
+import { errorHandler } from '../../../types/ErrorHandler.ts';
 
 export function useConceptModel(
   id: string | undefined,
@@ -10,7 +10,7 @@ export function useConceptModel(
   setProductModel: (data: ProductModel) => void,
   branch: string,
 ) {
-  const { isLoading, data,error } = useQuery(
+  const { isLoading, data, error } = useQuery(
     [`concept-model-${id}`],
     () => {
       return ConceptService.getConceptModel(id as string, branch);
