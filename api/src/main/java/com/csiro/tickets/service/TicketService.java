@@ -2,6 +2,7 @@ package com.csiro.tickets.service;
 
 import com.csiro.snomio.exception.ResourceNotFoundProblem;
 import com.csiro.snomio.exception.TicketImportProblem;
+import com.csiro.tickets.controllers.dto.AdditionalFieldValueDto;
 import com.csiro.tickets.controllers.dto.ProductDto;
 import com.csiro.tickets.controllers.dto.TicketDto;
 import com.csiro.tickets.controllers.dto.TicketImportDto;
@@ -260,6 +261,12 @@ public class TicketService {
         products.add(product);
       }
       newTicketToSave.setProducts(products);
+    }
+
+    Set<AdditionalFieldValueDto> additionalFieldDtos = ticketDto.getAdditionalFieldValues();
+    if(additionalFieldDtos != null){
+      newTicketToSave.setAdditionalFieldValues(
+              AdditionalFieldValue.of(additionalFieldDtos));
     }
 
     ticketRepository.save(newTicketToSave);
