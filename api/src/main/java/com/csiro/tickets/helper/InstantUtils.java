@@ -15,7 +15,7 @@ public class InstantUtils {
     DateTimeFormatter formatter = isValidIso8601Formatter(source);
 
     // Try parsing with "dd/MM/yyyy" format
-    if(formatter == null){
+    if (formatter == null) {
       formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     }
 
@@ -43,7 +43,8 @@ public class InstantUtils {
 
   public static DateTimeFormatter isValidIso8601Formatter(String input) {
     try {
-      DateTimeFormatter iso8601Formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX");
+      DateTimeFormatter iso8601Formatter =
+          DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX");
 
       // Parse the input string
       iso8601Formatter.parse(input);

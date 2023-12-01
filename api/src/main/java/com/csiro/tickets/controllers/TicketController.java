@@ -9,14 +9,8 @@ import com.csiro.tickets.controllers.dto.ImportResponse;
 import com.csiro.tickets.controllers.dto.TicketDto;
 import com.csiro.tickets.controllers.dto.TicketImportDto;
 import com.csiro.tickets.helper.TicketPredicateBuilder;
-import com.csiro.tickets.models.Iteration;
-import com.csiro.tickets.models.State;
-import com.csiro.tickets.models.Ticket;
-import com.csiro.tickets.repository.CommentRepository;
-import com.csiro.tickets.repository.IterationRepository;
-import com.csiro.tickets.repository.PriorityBucketRepository;
-import com.csiro.tickets.repository.StateRepository;
-import com.csiro.tickets.repository.TicketRepository;
+import com.csiro.tickets.models.*;
+import com.csiro.tickets.repository.*;
 import com.csiro.tickets.service.TicketService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,8 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +52,7 @@ public class TicketController {
   protected final Log logger = LogFactory.getLog(getClass());
   final TicketService ticketService;
   final TicketRepository ticketRepository;
+  final AdditionalFieldValueRepository additionalFieldValueRepository;
   final CommentRepository commentRepository;
   final StateRepository stateRepository;
   final IterationRepository iterationRepository;
@@ -68,13 +65,15 @@ public class TicketController {
       CommentRepository commentRepository,
       StateRepository stateRepository,
       IterationRepository iterationRepository,
-      PriorityBucketRepository priorityBucketRepository) {
+      PriorityBucketRepository priorityBucketRepository,
+      AdditionalFieldValueRepository additionalFieldValueRepository) {
     this.ticketService = ticketService;
     this.ticketRepository = ticketRepository;
     this.commentRepository = commentRepository;
     this.stateRepository = stateRepository;
     this.iterationRepository = iterationRepository;
     this.priorityBucketRepository = priorityBucketRepository;
+    this.additionalFieldValueRepository = additionalFieldValueRepository;
   }
 
   @GetMapping("/api/tickets")
@@ -115,9 +114,14 @@ public class TicketController {
   }
 
   @DeleteMapping(value = "/api/tickets/{ticketId}")
-  public ResponseEntity<Void> deleteTicket(@PathVariable Long ticketId){
+  public ResponseEntity<Void> deleteTicket(@PathVariable Long ticketId) {
     Ticket ticket = ticketService.findTicket(ticketId);
-
+    List<AdditionalFieldValue> additionalFieldvalues =
+        ticket.getAdditionalFieldValues().stream()
+            .filter(
+                a -> !a.getAdditionalFieldType().getType().equals(AdditionalFieldType.Type.LIST))
+            .collect(Collectors.toList());
+    ticket.getAdditionalFieldValues().removeAll(additionalFieldvalues);
     ticketRepository.delete(ticket);
     return ResponseEntity.noContent().build();
   }

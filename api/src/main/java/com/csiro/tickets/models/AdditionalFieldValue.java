@@ -68,8 +68,8 @@ public class AdditionalFieldValue extends BaseAuditableEntity {
     return Objects.hash(super.hashCode(), additionalFieldType, valueOf);
   }
 
-  public static AdditionalFieldValue of(AdditionalFieldValueDto additionalFieldValueDto){
-    if(additionalFieldValueDto == null) return null;
+  public static AdditionalFieldValue of(AdditionalFieldValueDto additionalFieldValueDto) {
+    if (additionalFieldValueDto == null) return null;
     return AdditionalFieldValue.builder()
         .additionalFieldType(additionalFieldValueDto.getAdditionalFieldType())
         .jsonValueOf(additionalFieldValueDto.getJsonValueOf())

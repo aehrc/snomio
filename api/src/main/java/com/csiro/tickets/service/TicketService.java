@@ -1,7 +1,6 @@
 package com.csiro.tickets.service;
 
 import com.csiro.snomio.exception.DateFormatProblem;
-import com.csiro.snomio.exception.ResourceAlreadyExists;
 import com.csiro.snomio.exception.ResourceNotFoundProblem;
 import com.csiro.snomio.exception.TicketImportProblem;
 import com.csiro.tickets.controllers.dto.AdditionalFieldValueDto;
@@ -129,10 +128,9 @@ public class TicketService {
   }
 
   public Ticket findTicket(Long id) {
-    return
-        ticketRepository
-            .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundProblem("Ticket not found with id " + id));
+    return ticketRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundProblem("Ticket not found with id " + id));
   }
 
   public Page<TicketDto> findAllTickets(Pageable pageable) {
@@ -269,54 +267,67 @@ public class TicketService {
       newTicketToSave.setProducts(products);
     }
 
-        Set<AdditionalFieldValueDto> additionalFieldDtos = ticketDto.getAdditionalFieldValues();
-        if (additionalFieldDtos != null) {
-          Ticket savedTicket = ticketRepository.save(newTicketToSave);
-          Set<AdditionalFieldValue> additionalFieldValues = new HashSet<>();
+    Set<AdditionalFieldValueDto> additionalFieldDtos = ticketDto.getAdditionalFieldValues();
+    if (additionalFieldDtos != null) {
+      Ticket savedTicket = ticketRepository.save(newTicketToSave);
+      Set<AdditionalFieldValue> additionalFieldValues = new HashSet<>();
 
-          for(AdditionalFieldValueDto additionalFieldValueDto : additionalFieldDtos){
+      for (AdditionalFieldValueDto additionalFieldValueDto : additionalFieldDtos) {
 
-            AdditionalFieldValue additionalFieldValue = AdditionalFieldValue.of(additionalFieldValueDto);
-            // find the existing one
-            if(additionalFieldValue.getAdditionalFieldType().getType().equals(Type.LIST)){
-              Optional<AdditionalFieldValue> additionalFieldValueOptional = additionalFieldValueRepository.findByValueOfAndTypeId(additionalFieldValue.getAdditionalFieldType(), additionalFieldValue.getValueOf());
-              additionalFieldValueOptional.ifPresent(additionalFieldValues::add);
-              // create new
-            } else {
+        AdditionalFieldValue additionalFieldValue =
+            AdditionalFieldValue.of(additionalFieldValueDto);
+        // find the existing one
+        if (additionalFieldValue.getAdditionalFieldType().getType().equals(Type.LIST)) {
+          Optional<AdditionalFieldValue> additionalFieldValueOptional =
+              additionalFieldValueRepository.findByValueOfAndTypeId(
+                  additionalFieldValue.getAdditionalFieldType(), additionalFieldValue.getValueOf());
+          additionalFieldValueOptional.ifPresent(additionalFieldValues::add);
+          // create new
+        } else {
 
-              // if date, convert to instant format
-              if(additionalFieldValue.getAdditionalFieldType().getType().equals(Type.DATE)){
-                Instant time = InstantUtils.convert(additionalFieldValue.getValueOf());
-                if(time == null){
-                  throw new DateFormatProblem(String.format("Incorrectly formatted date '%s'", additionalFieldValue.getValueOf()));
-                }
-                additionalFieldValue.setValueOf(time.toString());
-              }
-
-              Long aftId = additionalFieldValue.getAdditionalFieldType().getId();
-              AdditionalFieldType additionalFieldType = additionalFieldTypeRepository.findById(aftId).orElseThrow(() -> new ResourceNotFoundProblem(String.format("Additional field type with ID %s doesn't exist", aftId)));
-
-              // ensure we don't end up with duplicate ARTGID's
-              // is there a better way to handle this? open to any suggestions.
-              // this is pretty 'us' specific code
-//              if(additionalFieldType.getName().equals("ARTGID")){
-//                additionalFieldValueRepository
-//                    .findByValueOfAndTypeId(additionalFieldType, additionalFieldValue.getValueOf())
-//                    .ifPresent(existingValue -> {
-//                      throw new ResourceAlreadyExists("ARTGID already exists");
-//                    });
-//                }
-
-              additionalFieldValue.setAdditionalFieldType(additionalFieldType);
-              additionalFieldValue.setTickets(List.of(savedTicket));
-              additionalFieldValues.add(additionalFieldValue);
+          // if date, convert to instant format
+          if (additionalFieldValue.getAdditionalFieldType().getType().equals(Type.DATE)) {
+            Instant time = InstantUtils.convert(additionalFieldValue.getValueOf());
+            if (time == null) {
+              throw new DateFormatProblem(
+                  String.format(
+                      "Incorrectly formatted date '%s'", additionalFieldValue.getValueOf()));
             }
+            additionalFieldValue.setValueOf(time.toString());
           }
-          savedTicket.setAdditionalFieldValues(additionalFieldValues);
-          ticketRepository.save(savedTicket);
-        }
 
-//    ticketRepository.save(newTicketToSave);
+          Long aftId = additionalFieldValue.getAdditionalFieldType().getId();
+          AdditionalFieldType additionalFieldType =
+              additionalFieldTypeRepository
+                  .findById(aftId)
+                  .orElseThrow(
+                      () ->
+                          new ResourceNotFoundProblem(
+                              String.format(
+                                  "Additional field type with ID %s doesn't exist", aftId)));
+
+          // ensure we don't end up with duplicate ARTGID's
+          // is there a better way to handle this? open to any suggestions.
+          // this is pretty 'us' specific code
+          //              if(additionalFieldType.getName().equals("ARTGID")){
+          //                additionalFieldValueRepository
+          //                    .findByValueOfAndTypeId(additionalFieldType,
+          // additionalFieldValue.getValueOf())
+          //                    .ifPresent(existingValue -> {
+          //                      throw new ResourceAlreadyExists("ARTGID already exists");
+          //                    });
+          //                }
+
+          additionalFieldValue.setAdditionalFieldType(additionalFieldType);
+          additionalFieldValue.setTickets(List.of(savedTicket));
+          additionalFieldValues.add(additionalFieldValue);
+        }
+      }
+      savedTicket.setAdditionalFieldValues(additionalFieldValues);
+      ticketRepository.save(savedTicket);
+    }
+
+    //    ticketRepository.save(newTicketToSave);
     return newTicketToSave;
   }
 

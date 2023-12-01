@@ -17,7 +17,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,7 +59,7 @@ public class Ticket extends BaseAuditableEntity {
   private List<Label> labels;
 
   // Need EAGER here otherwise api calles like /ticket will fail
-  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
   @JoinTable(
       name = "ticket_additional_field_values",
       joinColumns = @JoinColumn(name = "ticket_id"),
@@ -68,7 +67,7 @@ public class Ticket extends BaseAuditableEntity {
   @JsonProperty("ticket-additional-fields")
   private Set<AdditionalFieldValue> additionalFieldValues;
 
-  @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+  @ManyToOne(cascade = {CascadeType.MERGE})
   private State state;
 
   @OneToMany(
@@ -143,10 +142,11 @@ public class Ticket extends BaseAuditableEntity {
               .collect(Collectors.toSet()));
     }
 
-    if(ticketDto.getAdditionalFieldValues() != null){
+    if (ticketDto.getAdditionalFieldValues() != null) {
       ticket.setAdditionalFieldValues(
-          ticketDto.getAdditionalFieldValues().stream().map(AdditionalFieldValue::of).collect(Collectors.toSet())
-      );
+          ticketDto.getAdditionalFieldValues().stream()
+              .map(AdditionalFieldValue::of)
+              .collect(Collectors.toSet()));
     }
 
     return ticket;
@@ -167,7 +167,5 @@ public class Ticket extends BaseAuditableEntity {
         .build();
   }
 
-  public void removeAdditionalFieldsBaseOnType(){
-
-  }
+  public void removeAdditionalFieldsBaseOnType() {}
 }
