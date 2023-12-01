@@ -5,14 +5,20 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class InstantUtils {
 
   public static Instant convert(String source) {
     if (source.equals("")) return null;
 
+    DateTimeFormatter formatter = isValidIso8601Formatter(source);
+
     // Try parsing with "dd/MM/yyyy" format
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    if(formatter == null){
+      formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    }
+
     try {
       LocalDate localDate = LocalDate.parse(source, formatter);
       return convertLocalDateToInstant(localDate);
@@ -33,5 +39,18 @@ public class InstantUtils {
 
     // Convert ZonedDateTime to Instant
     return zonedDateTime.toInstant();
+  }
+
+  public static DateTimeFormatter isValidIso8601Formatter(String input) {
+    try {
+      DateTimeFormatter iso8601Formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX");
+
+      // Parse the input string
+      iso8601Formatter.parse(input);
+
+      return iso8601Formatter;
+    } catch (DateTimeParseException e) {
+      return null;
+    }
   }
 }

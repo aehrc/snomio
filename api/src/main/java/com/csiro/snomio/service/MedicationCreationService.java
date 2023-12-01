@@ -168,7 +168,7 @@ public class MedicationCreationService {
       @Valid ProductCreationDetails<@Valid MedicationProductDetails> productCreationDetails) {
 
     // validate the ticket exists
-    TicketDto ticket = ticketService.findTicket(productCreationDetails.getTicketId());
+    TicketDto ticket = TicketDto.of(ticketService.findTicket(productCreationDetails.getTicketId()));
 
     ProductSummary productSummary = productCreationDetails.getProductSummary();
     if (productSummary.getNodes().stream().noneMatch(Node::isNewConcept)) {

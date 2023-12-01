@@ -114,6 +114,14 @@ public class TicketController {
     return new ResponseEntity<>(responseTicket, HttpStatus.OK);
   }
 
+  @DeleteMapping(value = "/api/tickets/{ticketId}")
+  public ResponseEntity<Void> deleteTicket(@PathVariable Long ticketId){
+    Ticket ticket = ticketService.findTicket(ticketId);
+
+    ticketRepository.delete(ticket);
+    return ResponseEntity.noContent().build();
+  }
+
   @GetMapping("/api/tickets/artgSearch")
   public ResponseEntity<TicketDto> searchByArtgid(@RequestParam String artgId) {
     TicketDto ticket = ticketService.findByArtgId(artgId);

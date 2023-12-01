@@ -166,4 +166,8 @@ public class Ticket extends BaseAuditableEntity {
         .state(ticketImportDto.getState())
         .build();
   }
+
+  public void removeAdditionalFieldsBaseOnType(){
+
+  }
 }

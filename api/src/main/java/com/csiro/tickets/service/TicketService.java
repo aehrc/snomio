@@ -1,5 +1,6 @@
 package com.csiro.tickets.service;
 
+import com.csiro.snomio.exception.DateFormatProblem;
 import com.csiro.snomio.exception.ResourceAlreadyExists;
 import com.csiro.snomio.exception.ResourceNotFoundProblem;
 import com.csiro.snomio.exception.TicketImportProblem;
@@ -8,6 +9,7 @@ import com.csiro.tickets.controllers.dto.ProductDto;
 import com.csiro.tickets.controllers.dto.TicketDto;
 import com.csiro.tickets.controllers.dto.TicketImportDto;
 import com.csiro.tickets.helper.BaseUrlProvider;
+import com.csiro.tickets.helper.InstantUtils;
 import com.csiro.tickets.models.AdditionalFieldType;
 import com.csiro.tickets.models.AdditionalFieldType.Type;
 import com.csiro.tickets.models.AdditionalFieldValue;
@@ -126,11 +128,11 @@ public class TicketService {
     this.productRepository = productRepository;
   }
 
-  public TicketDto findTicket(Long id) {
-    return TicketDto.of(
+  public Ticket findTicket(Long id) {
+    return
         ticketRepository
             .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundProblem("Ticket not found with id " + id)));
+            .orElseThrow(() -> new ResourceNotFoundProblem("Ticket not found with id " + id));
   }
 
   public Page<TicketDto> findAllTickets(Pageable pageable) {
@@ -182,11 +184,9 @@ public class TicketService {
     Ticket newTicketToAdd = Ticket.of(ticketDto);
     final Ticket newTicketToSave = new Ticket();
     // Generate ID
-//    final Ticket newTicketToSave = ticketRepository.save(tempTicketToSave);
     newTicketToSave.setTitle(newTicketToAdd.getTitle());
     newTicketToSave.setDescription(newTicketToAdd.getDescription());
     newTicketToSave.setAssignee(newTicketToAdd.getAssignee());
-//    newTicketToSave.setComments(new ArrayList<>());
 
     /*
      *  Deal with labels
@@ -286,19 +286,26 @@ public class TicketService {
 
               // if date, convert to instant format
               if(additionalFieldValue.getAdditionalFieldType().getType().equals(Type.DATE)){
-
+                Instant time = InstantUtils.convert(additionalFieldValue.getValueOf());
+                if(time == null){
+                  throw new DateFormatProblem(String.format("Incorrectly formatted date '%s'", additionalFieldValue.getValueOf()));
+                }
+                additionalFieldValue.setValueOf(time.toString());
               }
+
               Long aftId = additionalFieldValue.getAdditionalFieldType().getId();
               AdditionalFieldType additionalFieldType = additionalFieldTypeRepository.findById(aftId).orElseThrow(() -> new ResourceNotFoundProblem(String.format("Additional field type with ID %s doesn't exist", aftId)));
 
               // ensure we don't end up with duplicate ARTGID's
-              if(additionalFieldType.getName().equals("ARTGID")){
-                additionalFieldValueRepository
-                    .findByValueOfAndTypeId(additionalFieldType, additionalFieldValue.getValueOf())
-                    .ifPresent(existingValue -> {
-                      throw new ResourceAlreadyExists("ARTGID already exists");
-                    });
-                }
+              // is there a better way to handle this? open to any suggestions.
+              // this is pretty 'us' specific code
+//              if(additionalFieldType.getName().equals("ARTGID")){
+//                additionalFieldValueRepository
+//                    .findByValueOfAndTypeId(additionalFieldType, additionalFieldValue.getValueOf())
+//                    .ifPresent(existingValue -> {
+//                      throw new ResourceAlreadyExists("ARTGID already exists");
+//                    });
+//                }
 
               additionalFieldValue.setAdditionalFieldType(additionalFieldType);
               additionalFieldValue.setTickets(List.of(savedTicket));
