@@ -1,5 +1,6 @@
 package com.csiro.tickets.models;
 
+import com.csiro.tickets.controllers.dto.AdditionalFieldValueDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.CascadeType;
@@ -65,5 +66,14 @@ public class AdditionalFieldValue extends BaseAuditableEntity {
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), additionalFieldType, valueOf);
+  }
+
+  public static AdditionalFieldValue of(AdditionalFieldValueDto additionalFieldValueDto){
+    if(additionalFieldValueDto == null) return null;
+    return AdditionalFieldValue.builder()
+        .additionalFieldType(additionalFieldValueDto.getAdditionalFieldType())
+        .jsonValueOf(additionalFieldValueDto.getJsonValueOf())
+        .valueOf(additionalFieldValueDto.getValueOf())
+        .build();
   }
 }

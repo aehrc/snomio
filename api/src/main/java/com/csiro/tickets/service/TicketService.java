@@ -1,5 +1,6 @@
 package com.csiro.tickets.service;
 
+import com.csiro.snomio.exception.ResourceAlreadyExists;
 import com.csiro.snomio.exception.ResourceNotFoundProblem;
 import com.csiro.snomio.exception.TicketImportProblem;
 import com.csiro.tickets.controllers.dto.AdditionalFieldValueDto;
@@ -8,6 +9,7 @@ import com.csiro.tickets.controllers.dto.TicketDto;
 import com.csiro.tickets.controllers.dto.TicketImportDto;
 import com.csiro.tickets.helper.BaseUrlProvider;
 import com.csiro.tickets.models.AdditionalFieldType;
+import com.csiro.tickets.models.AdditionalFieldType.Type;
 import com.csiro.tickets.models.AdditionalFieldValue;
 import com.csiro.tickets.models.Attachment;
 import com.csiro.tickets.models.AttachmentType;
@@ -158,6 +160,7 @@ public class TicketService {
     return TicketDto.of(ticket);
   }
 
+  @Transactional
   public Ticket updateTicket(Long ticketId, TicketDto ticketDto) {
     Optional<Ticket> optional = ticketRepository.findById(ticketId);
 
@@ -177,15 +180,18 @@ public class TicketService {
   public Ticket createTicketFromDto(TicketDto ticketDto) {
 
     Ticket newTicketToAdd = Ticket.of(ticketDto);
-    Ticket newTicketToSave = new Ticket();
+    final Ticket newTicketToSave = new Ticket();
     // Generate ID
-    //    Ticket savedTicket = ticketRepository.save(newTicketToSave);
+//    final Ticket newTicketToSave = ticketRepository.save(tempTicketToSave);
     newTicketToSave.setTitle(newTicketToAdd.getTitle());
     newTicketToSave.setDescription(newTicketToAdd.getDescription());
     newTicketToSave.setAssignee(newTicketToAdd.getAssignee());
+//    newTicketToSave.setComments(new ArrayList<>());
+
     /*
      *  Deal with labels
      */
+
     newTicketToSave.setLabels(new ArrayList<>());
     if (newTicketToAdd.getLabels() != null) {
       newTicketToAdd
@@ -263,13 +269,47 @@ public class TicketService {
       newTicketToSave.setProducts(products);
     }
 
-    Set<AdditionalFieldValueDto> additionalFieldDtos = ticketDto.getAdditionalFieldValues();
-    if(additionalFieldDtos != null){
-      newTicketToSave.setAdditionalFieldValues(
-              AdditionalFieldValue.of(additionalFieldDtos));
-    }
+        Set<AdditionalFieldValueDto> additionalFieldDtos = ticketDto.getAdditionalFieldValues();
+        if (additionalFieldDtos != null) {
+          Ticket savedTicket = ticketRepository.save(newTicketToSave);
+          Set<AdditionalFieldValue> additionalFieldValues = new HashSet<>();
 
-    ticketRepository.save(newTicketToSave);
+          for(AdditionalFieldValueDto additionalFieldValueDto : additionalFieldDtos){
+
+            AdditionalFieldValue additionalFieldValue = AdditionalFieldValue.of(additionalFieldValueDto);
+            // find the existing one
+            if(additionalFieldValue.getAdditionalFieldType().getType().equals(Type.LIST)){
+              Optional<AdditionalFieldValue> additionalFieldValueOptional = additionalFieldValueRepository.findByValueOfAndTypeId(additionalFieldValue.getAdditionalFieldType(), additionalFieldValue.getValueOf());
+              additionalFieldValueOptional.ifPresent(additionalFieldValues::add);
+              // create new
+            } else {
+
+              // if date, convert to instant format
+              if(additionalFieldValue.getAdditionalFieldType().getType().equals(Type.DATE)){
+
+              }
+              Long aftId = additionalFieldValue.getAdditionalFieldType().getId();
+              AdditionalFieldType additionalFieldType = additionalFieldTypeRepository.findById(aftId).orElseThrow(() -> new ResourceNotFoundProblem(String.format("Additional field type with ID %s doesn't exist", aftId)));
+
+              // ensure we don't end up with duplicate ARTGID's
+              if(additionalFieldType.getName().equals("ARTGID")){
+                additionalFieldValueRepository
+                    .findByValueOfAndTypeId(additionalFieldType, additionalFieldValue.getValueOf())
+                    .ifPresent(existingValue -> {
+                      throw new ResourceAlreadyExists("ARTGID already exists");
+                    });
+                }
+
+              additionalFieldValue.setAdditionalFieldType(additionalFieldType);
+              additionalFieldValue.setTickets(List.of(savedTicket));
+              additionalFieldValues.add(additionalFieldValue);
+            }
+          }
+          savedTicket.setAdditionalFieldValues(additionalFieldValues);
+          ticketRepository.save(savedTicket);
+        }
+
+//    ticketRepository.save(newTicketToSave);
     return newTicketToSave;
   }
 

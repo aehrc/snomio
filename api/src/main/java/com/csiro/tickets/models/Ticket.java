@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,8 +74,7 @@ public class Ticket extends BaseAuditableEntity {
   @OneToMany(
       mappedBy = "ticket",
       fetch = FetchType.EAGER,
-      cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-      orphanRemoval = true)
+      cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
   @JsonManagedReference(value = "ticket-comment")
   private List<Comment> comments;
 
@@ -114,7 +114,6 @@ public class Ticket extends BaseAuditableEntity {
 
   @OneToMany(
       cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-      orphanRemoval = true,
       fetch = FetchType.EAGER,
       mappedBy = "ticket")
   @JsonManagedReference(value = "ticket-product")
@@ -142,6 +141,12 @@ public class Ticket extends BaseAuditableEntity {
           ticketDto.getProducts().stream()
               .map(productDto -> Product.of(productDto, ticket))
               .collect(Collectors.toSet()));
+    }
+
+    if(ticketDto.getAdditionalFieldValues() != null){
+      ticket.setAdditionalFieldValues(
+          ticketDto.getAdditionalFieldValues().stream().map(AdditionalFieldValue::of).collect(Collectors.toSet())
+      );
     }
 
     return ticket;
