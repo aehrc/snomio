@@ -11,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,7 @@ public class AdditionalFieldValue extends BaseAuditableEntity {
   @ManyToOne(
       cascade = {CascadeType.PERSIST},
       fetch = FetchType.EAGER)
+  @NotNull
   private AdditionalFieldType additionalFieldType;
 
   @Column private String valueOf;

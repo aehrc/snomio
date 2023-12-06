@@ -34,6 +34,9 @@ public class AdditionalFieldValueDto {
 
   public static AdditionalFieldValueDto of(AdditionalFieldValue additionalFieldValue) {
     AdditionalFieldValueDto dto = new AdditionalFieldValueDto();
+    if (additionalFieldValue.getAdditionalFieldType() == null) {
+      return null;
+    }
     dto.setAdditionalFieldType(
         AdditionalFieldType.builder()
             .name(additionalFieldValue.getAdditionalFieldType().getName())

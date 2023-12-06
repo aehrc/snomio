@@ -23,6 +23,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
@@ -115,14 +116,9 @@ public class TicketController {
 
   @DeleteMapping(value = "/api/tickets/{ticketId}")
   public ResponseEntity<Void> deleteTicket(@PathVariable Long ticketId) {
-    Ticket ticket = ticketService.findTicket(ticketId);
-    List<AdditionalFieldValue> additionalFieldvalues =
-        ticket.getAdditionalFieldValues().stream()
-            .filter(
-                a -> !a.getAdditionalFieldType().getType().equals(AdditionalFieldType.Type.LIST))
-            .collect(Collectors.toList());
-    ticket.getAdditionalFieldValues().removeAll(additionalFieldvalues);
-    ticketRepository.delete(ticket);
+    ticketService.deleteTicket(ticketId);
+
+
     return ResponseEntity.noContent().build();
   }
 
@@ -133,22 +129,11 @@ public class TicketController {
   }
 
   @PutMapping(value = "/api/tickets/{ticketId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Ticket> updateTicket(
-      @RequestBody Ticket ticket, @PathVariable Long ticketId) {
+  public ResponseEntity<TicketDto> updateTicket(
+      @RequestBody TicketDto ticketDto, @PathVariable Long ticketId) {
 
-    final Optional<Ticket> optional = ticketRepository.findById(ticketId);
-    if (optional.isPresent()) {
-      Ticket existingTicket = optional.get();
-
-      existingTicket.setAssignee(ticket.getAssignee());
-      existingTicket.setTitle(ticket.getTitle());
-      existingTicket.setDescription(ticket.getDescription());
-
-      Ticket savedTicket = ticketRepository.save(existingTicket);
-      return new ResponseEntity<>(savedTicket, HttpStatus.OK);
-    } else {
-      throw new ResourceNotFoundProblem(String.format("Ticket with Id %s not found", ticketId));
-    }
+    Ticket savedTicket = ticketService.updateTicketFromDto(ticketDto, ticketId);
+    return new ResponseEntity<>(TicketDto.of(savedTicket), HttpStatus.OK);
   }
 
   @GetMapping("/api/tickets/{ticketId}")

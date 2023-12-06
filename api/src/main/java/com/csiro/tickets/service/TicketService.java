@@ -1,6 +1,7 @@
 package com.csiro.tickets.service;
 
 import com.csiro.snomio.exception.DateFormatProblem;
+import com.csiro.snomio.exception.ErrorMessages;
 import com.csiro.snomio.exception.ResourceNotFoundProblem;
 import com.csiro.snomio.exception.TicketImportProblem;
 import com.csiro.tickets.controllers.dto.AdditionalFieldValueDto;
@@ -160,19 +161,10 @@ public class TicketService {
     return TicketDto.of(ticket);
   }
 
-  @Transactional
-  public Ticket updateTicket(Long ticketId, TicketDto ticketDto) {
-    Optional<Ticket> optional = ticketRepository.findById(ticketId);
+  public void deleteTicket(Long ticketId){
+    Ticket ticket = findTicket(ticketId);
 
-    if (optional.isPresent()) {
-      Ticket ticket = optional.get();
-      ticket.setTitle(ticketDto.getTitle());
-      ticket.setDescription(ticketDto.getDescription());
-      ticket.setModified(Instant.now());
-      return ticketRepository.save(ticket);
-    } else {
-      throw new ResourceNotFoundProblem(String.format("Ticket not found with id %s", ticketId));
-    }
+    ticketRepository.delete(ticket);
   }
 
   // TODO: The dto has ID and created date and createdBy - These need to be implemented but in my
@@ -270,65 +262,104 @@ public class TicketService {
     Set<AdditionalFieldValueDto> additionalFieldDtos = ticketDto.getAdditionalFieldValues();
     if (additionalFieldDtos != null) {
       Ticket savedTicket = ticketRepository.save(newTicketToSave);
-      Set<AdditionalFieldValue> additionalFieldValues = new HashSet<>();
-
-      for (AdditionalFieldValueDto additionalFieldValueDto : additionalFieldDtos) {
-
-        AdditionalFieldValue additionalFieldValue =
-            AdditionalFieldValue.of(additionalFieldValueDto);
-        // find the existing one
-        if (additionalFieldValue.getAdditionalFieldType().getType().equals(Type.LIST)) {
-          Optional<AdditionalFieldValue> additionalFieldValueOptional =
-              additionalFieldValueRepository.findByValueOfAndTypeId(
-                  additionalFieldValue.getAdditionalFieldType(), additionalFieldValue.getValueOf());
-          additionalFieldValueOptional.ifPresent(additionalFieldValues::add);
-          // create new
-        } else {
-
-          // if date, convert to instant format
-          if (additionalFieldValue.getAdditionalFieldType().getType().equals(Type.DATE)) {
-            Instant time = InstantUtils.convert(additionalFieldValue.getValueOf());
-            if (time == null) {
-              throw new DateFormatProblem(
-                  String.format(
-                      "Incorrectly formatted date '%s'", additionalFieldValue.getValueOf()));
-            }
-            additionalFieldValue.setValueOf(time.toString());
-          }
-
-          Long aftId = additionalFieldValue.getAdditionalFieldType().getId();
-          AdditionalFieldType additionalFieldType =
-              additionalFieldTypeRepository
-                  .findById(aftId)
-                  .orElseThrow(
-                      () ->
-                          new ResourceNotFoundProblem(
-                              String.format(
-                                  "Additional field type with ID %s doesn't exist", aftId)));
-
-          // ensure we don't end up with duplicate ARTGID's
-          // is there a better way to handle this? open to any suggestions.
-          // this is pretty 'us' specific code
-          //              if(additionalFieldType.getName().equals("ARTGID")){
-          //                additionalFieldValueRepository
-          //                    .findByValueOfAndTypeId(additionalFieldType,
-          // additionalFieldValue.getValueOf())
-          //                    .ifPresent(existingValue -> {
-          //                      throw new ResourceAlreadyExists("ARTGID already exists");
-          //                    });
-          //                }
-
-          additionalFieldValue.setAdditionalFieldType(additionalFieldType);
-          additionalFieldValue.setTickets(List.of(savedTicket));
-          additionalFieldValues.add(additionalFieldValue);
-        }
-      }
+      Set<AdditionalFieldValue> additionalFieldValues =
+          generateAdditionalFields(additionalFieldDtos, savedTicket);
       savedTicket.setAdditionalFieldValues(additionalFieldValues);
       ticketRepository.save(savedTicket);
     }
 
     //    ticketRepository.save(newTicketToSave);
     return newTicketToSave;
+  }
+
+  public Ticket updateTicketFromDto(TicketDto ticketDto, Long ticketId){
+    final Ticket recievedTicket = Ticket.of(ticketDto);
+    final Ticket foundTicket =
+        ticketRepository
+            .findById(ticketId)
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundProblem(
+                        String.format(ErrorMessages.TICKET_ID_NOT_FOUND, ticketId)));
+
+    foundTicket.setAssignee(ticketDto.getAssignee());
+    foundTicket.setTitle(ticketDto.getTitle());
+    foundTicket.setDescription(ticketDto.getDescription());
+
+    if (recievedTicket.getState() != null) {
+      foundTicket.setState(recievedTicket.getState());
+    }
+
+    if (recievedTicket.getAdditionalFieldValues() != null) {
+
+      Set<AdditionalFieldValue> afvSet =
+          generateAdditionalFields(ticketDto.getAdditionalFieldValues(), foundTicket);
+      foundTicket.setAdditionalFieldValues(afvSet);
+    }
+
+    return ticketRepository.save(foundTicket);
+  }
+
+  public Set<AdditionalFieldValue> generateAdditionalFields(
+      Set<AdditionalFieldValueDto> additionalFieldDtos, Ticket savedTicket) {
+    Set<AdditionalFieldValue> additionalFieldValues = new HashSet<>();
+
+    for (AdditionalFieldValueDto additionalFieldValueDto : additionalFieldDtos) {
+
+      AdditionalFieldValue additionalFieldValue = AdditionalFieldValue.of(additionalFieldValueDto);
+      // find the existing one
+      if (additionalFieldValue.getAdditionalFieldType().getType().equals(Type.LIST)) {
+        Optional<AdditionalFieldValue> additionalFieldValueOptional =
+            additionalFieldValueRepository.findByValueOfAndTypeId(
+                additionalFieldValue.getAdditionalFieldType(), additionalFieldValue.getValueOf());
+        additionalFieldValueOptional.ifPresent(additionalFieldValues::add);
+        // create new
+      } else {
+
+        // if date, convert to instant format
+        if (additionalFieldValue.getAdditionalFieldType().getType().equals(Type.DATE)) {
+          Instant time = InstantUtils.convert(additionalFieldValue.getValueOf());
+          if (time == null) {
+            throw new DateFormatProblem(
+                String.format(
+                    "Incorrectly formatted date '%s'", additionalFieldValue.getValueOf()));
+          }
+          additionalFieldValue.setValueOf(time.toString());
+        }
+
+        Long aftId = additionalFieldValue.getAdditionalFieldType().getId();
+
+        AdditionalFieldType additionalFieldType =
+            additionalFieldTypeRepository
+                .findById(aftId)
+                .orElseThrow(
+                    () ->
+                        new ResourceNotFoundProblem(
+                            String.format(
+                                "Additional field type with ID %s doesn't exist", aftId)));
+
+        //         ensure we don't end up with duplicate ARTGID's
+        //         is there a better way to handle this? open to any suggestions.
+        //         this is pretty 'us' specific code
+        Optional<AdditionalFieldValue> afvOptional = Optional.empty();
+        if (additionalFieldType.getName().equals("ARTGID")) {
+          afvOptional = additionalFieldValueRepository
+              .findByValueOfAndTypeId(additionalFieldType, additionalFieldValue.getValueOf());
+
+
+        }
+
+        if( afvOptional.isPresent()){
+          additionalFieldValues.add(afvOptional.get());
+        } else {
+          additionalFieldValue.setAdditionalFieldType(additionalFieldType);
+          additionalFieldValue.setTickets(List.of(savedTicket));
+          additionalFieldValues.add(additionalFieldValue);
+        }
+      }
+    }
+
+    return additionalFieldValues;
   }
 
   @Transactional

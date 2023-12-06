@@ -59,7 +59,9 @@ public class Ticket extends BaseAuditableEntity {
   private List<Label> labels;
 
   // Need EAGER here otherwise api calles like /ticket will fail
-  @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+  @ManyToMany(
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
+      fetch = FetchType.EAGER)
   @JoinTable(
       name = "ticket_additional_field_values",
       joinColumns = @JoinColumn(name = "ticket_id"),
