@@ -1,6 +1,8 @@
 import { loadEnv, defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import basicSsl from '@vitejs/plugin-basic-ssl';
+import federation from '@originjs/vite-plugin-federation';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 
@@ -13,7 +15,17 @@ export default ({ mode }) => {
   const snowstormUrl = `${process.env.VITE_SNOWSTORM_URL}`;
 
   return defineConfig({
-    plugins: [react(), basicSsl()],
+    plugins: [
+      react(),
+      basicSsl(),
+      federation({
+        name: "remote",
+        remotes: {
+          remote: "https://localhost:5001/assets/remoteEntry.js",
+        },
+        shared: ['react'],
+      }),tsconfigPaths(),
+    ],
     test: {
       environment: 'jsdom',
       setupFiles: ['./tests/setup.ts'],
@@ -26,6 +38,7 @@ export default ({ mode }) => {
       outDir: '../api/src/main/resources/static',
     },
     server: {
+      port:5174,
       host: true,
       proxy: {
         '/api': {

@@ -1,11 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
+// import HomePage from "sharedComp/HomePage";
 import ProductModelView from '../pages/products/ProductModelView.tsx';
-import HomePage from "remote/HomePage";
 
 function ProductRoutes() {
   return (
     <Routes>
-      <Route path="/:id" element={<HomePage />} />
+      <Route path="/sergio" element={<ProductModelView />} />
     </Routes>
   );
 }
