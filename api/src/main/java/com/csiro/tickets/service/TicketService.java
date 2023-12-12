@@ -156,7 +156,7 @@ public class TicketService {
             .orElseThrow(
                 () -> new ResourceNotFoundProblem(String.format("ARTGID %s not found", artgid)));
 
-    Ticket ticket = ticketRepository.findByAdditionalFieldValueId(additionalFieldValue.getId());
+    Ticket ticket = ticketRepository.findByAdditionalFieldValueId(additionalFieldValue.getId()).orElseThrow(() -> new ResourceNotFoundProblem("Ticket not found."));
 
     return TicketDto.of(ticket);
   }

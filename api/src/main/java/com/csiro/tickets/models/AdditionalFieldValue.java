@@ -45,10 +45,6 @@ public class AdditionalFieldValue extends BaseAuditableEntity {
 
   @Column private String valueOf;
 
-  @Column
-  @JdbcTypeCode(SqlTypes.JSON)
-  private JsonNode jsonValueOf;
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -74,7 +70,6 @@ public class AdditionalFieldValue extends BaseAuditableEntity {
     if (additionalFieldValueDto == null) return null;
     return AdditionalFieldValue.builder()
         .additionalFieldType(additionalFieldValueDto.getAdditionalFieldType())
-        .jsonValueOf(additionalFieldValueDto.getJsonValueOf())
         .valueOf(additionalFieldValueDto.getValueOf())
         .build();
   }

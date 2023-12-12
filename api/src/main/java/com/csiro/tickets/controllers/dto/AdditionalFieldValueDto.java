@@ -21,8 +21,6 @@ public class AdditionalFieldValueDto {
 
   private String valueOf;
 
-  private JsonNode jsonValueOf;
-
   public static Set<AdditionalFieldValueDto> of(Set<AdditionalFieldValue> additionalFieldValues) {
     if (additionalFieldValues == null) {
       return new HashSet<>();
@@ -44,7 +42,6 @@ public class AdditionalFieldValueDto {
             .type(additionalFieldValue.getAdditionalFieldType().getType())
             .build());
     dto.setValueOf(additionalFieldValue.getValueOf());
-    dto.setJsonValueOf(additionalFieldValue.getJsonValueOf());
     return dto;
   }
 }

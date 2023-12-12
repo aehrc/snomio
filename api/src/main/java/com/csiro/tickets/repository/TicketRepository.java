@@ -45,5 +45,5 @@ public interface TicketRepository
       nativeQuery = true,
       value =
           "select t.* from ticket t JOIN ticket_additional_field_values tafv on t.id = tafv.ticket_id where tafv.additional_field_value_id = :additionalFieldValueId")
-  Ticket findByAdditionalFieldValueId(Long additionalFieldValueId);
+  Optional<Ticket> findByAdditionalFieldValueId(Long additionalFieldValueId);
 }

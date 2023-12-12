@@ -29,6 +29,8 @@ public class AdditionalFieldType extends BaseAuditableEntity {
 
   @Column private String description;
 
+  @Column(columnDefinition = "BOOLEAN DEFAULT true") private boolean display;
+
   @Enumerated(EnumType.STRING)
   @Column
   private Type type;
@@ -59,8 +61,6 @@ public class AdditionalFieldType extends BaseAuditableEntity {
     DATE,
     NUMBER,
     STRING,
-    LIST,
-
-    JSON
+    LIST
   }
 }

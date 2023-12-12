@@ -175,7 +175,6 @@ public class AdditionalFieldController {
     if (additionalFieldValueOptional.isPresent()) {
       AdditionalFieldValue additionalFieldValue = additionalFieldValueOptional.get();
       additionalFieldValue.setValueOf(afv.getValueOf());
-      additionalFieldValue.setJsonValueOf(afv.getJsonValueOf());
       AdditionalFieldValue nafv = additionalFieldValueRepository.save(additionalFieldValue);
       return new ResponseEntity<>(nafv, HttpStatus.OK);
     }
@@ -186,7 +185,6 @@ public class AdditionalFieldController {
             .tickets(List.of(ticket))
             .additionalFieldType(additionalFieldType)
             .valueOf(afv.getValueOf())
-            .jsonValueOf(afv.getJsonValueOf())
             .build();
 
     ticket.getAdditionalFieldValues().add(afvLocal);
