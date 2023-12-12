@@ -1,13 +1,12 @@
 import { Route, Routes } from 'react-router-dom';
-// import HomePage from "sharedComp/HomePage";
-import ProductModelView from '../pages/products/ProductModelView.tsx';
+import SergioView from "../pages/sergio/SergiolView.tsx";
 
-function ProductRoutes() {
+function SergioRoutes() {
   return (
     <Routes>
-      <Route path="/sergio" element={<ProductModelView />} />
+      <Route path="/:id" element={<SergioView />} />
     </Routes>
   );
 }
 
-export default ProductRoutes;
+export default SergioRoutes;

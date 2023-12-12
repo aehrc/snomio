@@ -5,6 +5,7 @@ import ProtectedRoute from './ProtectedRoute';
 import { SnackbarProvider } from 'notistack';
 import ProductRoutes from './ProductRoutes.tsx';
 import TicketsRoutes from './TicketsRoutes.tsx';
+import SergioRoutes from "./SergioRoutes.tsx";
 
 const DashboardRoutes = {
   path: 'dashboard',
@@ -39,6 +40,10 @@ const DashboardRoutes = {
     {
       path: 'products/*',
       element: <ProductRoutes />,
+    },
+    {
+      path: 'sergio/*',
+      element: <SergioRoutes />,
     },
   ],
 };

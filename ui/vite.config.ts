@@ -2,8 +2,11 @@ import { loadEnv, defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import federation from '@originjs/vite-plugin-federation';
+
+import dns from 'dns';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+dns.setDefaultResultOrder('verbatim')
 // https://vitejs.dev/config/
 
 export default ({ mode }) => {
@@ -13,18 +16,27 @@ export default ({ mode }) => {
   const snomioBaseUrl = `${process.env.VITE_SNOMIO_URL}`;
   const apUrl = `${process.env.VITE_AP_URL}`;
   const snowstormUrl = `${process.env.VITE_SNOWSTORM_URL}`;
+  const sergio = `${process.env.VITE_SERGIO_UI_URL}`;
 
   return defineConfig({
     plugins: [
       react(),
       basicSsl(),
       federation({
-        name: "remote",
-        remotes: {
-          remote: "https://localhost:5001/assets/remoteEntry.js",
-        },
-        shared: ['react'],
-      }),tsconfigPaths(),
+        name: 'snomio',
+        remotes: [
+          {
+            sergio: {
+              external: `${sergio}`,
+              from: 'vite',
+              externalType: 'url'
+            },
+          },
+
+        ],
+        shared: ['react', 'react-dom', 'react-router-dom']
+      }),
+      tsconfigPaths(),
     ],
     test: {
       environment: 'jsdom',
@@ -37,6 +49,11 @@ export default ({ mode }) => {
     build: {
       outDir: '../api/src/main/resources/static',
     },
+    // preview: {
+    //   // host: 'snomio.ihtsdotools.org',
+    //   port: 5174,
+    //   strictPort: true,
+    // },
     server: {
       port:5174,
       host: true,
