@@ -55,7 +55,7 @@ export default ({ mode }) => {
     //   strictPort: true,
     // },
     server: {
-      port:5174,
+      port:5173,
       host: true,
       proxy: {
         '/api': {
