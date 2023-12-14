@@ -2,7 +2,6 @@ package com.csiro.tickets.controllers.dto;
 
 import com.csiro.tickets.models.AdditionalFieldType;
 import com.csiro.tickets.models.AdditionalFieldValue;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;

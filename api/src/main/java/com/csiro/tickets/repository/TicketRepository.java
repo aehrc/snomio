@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.data.repository.query.Param;
 
 public interface TicketRepository
     extends JpaRepository<Ticket, Long>, QuerydslPredicateExecutor<Ticket> {
@@ -46,4 +47,13 @@ public interface TicketRepository
       value =
           "select t.* from ticket t JOIN ticket_additional_field_values tafv on t.id = tafv.ticket_id where tafv.additional_field_value_id = :additionalFieldValueId")
   Optional<Ticket> findByAdditionalFieldValueId(Long additionalFieldValueId);
+
+  @Query(
+      nativeQuery = true,
+      value =
+          "SELECT t.* FROM ticket t "
+              + "JOIN ticket_additional_field_values tafv ON t.id = tafv.ticket_id "
+              + "WHERE tafv.additional_field_value_id IN :additionalFieldValueIds")
+  List<Ticket> findByAdditionalFieldValueIds(
+      @Param("additionalFieldValueIds") List<Long> additionalFieldValueIds);
 }

@@ -156,12 +156,31 @@ public class TicketService {
             .orElseThrow(
                 () -> new ResourceNotFoundProblem(String.format("ARTGID %s not found", artgid)));
 
-    Ticket ticket = ticketRepository.findByAdditionalFieldValueId(additionalFieldValue.getId()).orElseThrow(() -> new ResourceNotFoundProblem("Ticket not found."));
+    Ticket ticket =
+        ticketRepository
+            .findByAdditionalFieldValueId(additionalFieldValue.getId())
+            .orElseThrow(() -> new ResourceNotFoundProblem("Ticket not found."));
 
     return TicketDto.of(ticket);
   }
 
-  public void deleteTicket(Long ticketId){
+  public List<TicketDto> findByArtgIds(List<String> artgIds) {
+
+    AdditionalFieldType additionalFieldType =
+        additionalFieldTypeRepository
+            .findByName("ARTGID")
+            .orElseThrow(() -> new ResourceNotFoundProblem("Could not find ARTGID type"));
+
+    List<AdditionalFieldValue> afvs =
+        additionalFieldValueRepository.findByValueOfInAndTypeId(additionalFieldType, artgIds);
+    List<Long> afvIds = afvs.stream().map(AdditionalFieldValue::getId).toList();
+
+    List<Ticket> tickets = ticketRepository.findByAdditionalFieldValueIds(afvIds);
+
+    return tickets.stream().map((TicketDto::of)).toList();
+  }
+
+  public void deleteTicket(Long ticketId) {
     Ticket ticket = findTicket(ticketId);
 
     ticketRepository.delete(ticket);
@@ -272,7 +291,7 @@ public class TicketService {
     return newTicketToSave;
   }
 
-  public Ticket updateTicketFromDto(TicketDto ticketDto, Long ticketId){
+  public Ticket updateTicketFromDto(TicketDto ticketDto, Long ticketId) {
     final Ticket recievedTicket = Ticket.of(ticketDto);
     final Ticket foundTicket =
         ticketRepository
@@ -307,17 +326,26 @@ public class TicketService {
     for (AdditionalFieldValueDto additionalFieldValueDto : additionalFieldDtos) {
 
       AdditionalFieldValue additionalFieldValue = AdditionalFieldValue.of(additionalFieldValueDto);
+      AdditionalFieldType additionalFieldType =
+          additionalFieldTypeRepository
+              .findByName(additionalFieldValue.getAdditionalFieldType().getName())
+              .orElseThrow(
+                  () ->
+                      new ResourceNotFoundProblem(
+                          String.format(
+                              "Additional field type %s not found",
+                              additionalFieldValue.getAdditionalFieldType().getName())));
       // find the existing one
-      if (additionalFieldValue.getAdditionalFieldType().getType().equals(Type.LIST)) {
+      if (additionalFieldType.getType().equals(Type.LIST)) {
         Optional<AdditionalFieldValue> additionalFieldValueOptional =
             additionalFieldValueRepository.findByValueOfAndTypeId(
-                additionalFieldValue.getAdditionalFieldType(), additionalFieldValue.getValueOf());
+                additionalFieldType, additionalFieldValue.getValueOf());
         additionalFieldValueOptional.ifPresent(additionalFieldValues::add);
         // create new
       } else {
 
         // if date, convert to instant format
-        if (additionalFieldValue.getAdditionalFieldType().getType().equals(Type.DATE)) {
+        if (additionalFieldType.getType().equals(Type.DATE)) {
           Instant time = InstantUtils.convert(additionalFieldValue.getValueOf());
           if (time == null) {
             throw new DateFormatProblem(
@@ -327,29 +355,17 @@ public class TicketService {
           additionalFieldValue.setValueOf(time.toString());
         }
 
-        Long aftId = additionalFieldValue.getAdditionalFieldType().getId();
-
-        AdditionalFieldType additionalFieldType =
-            additionalFieldTypeRepository
-                .findById(aftId)
-                .orElseThrow(
-                    () ->
-                        new ResourceNotFoundProblem(
-                            String.format(
-                                "Additional field type with ID %s doesn't exist", aftId)));
-
         //         ensure we don't end up with duplicate ARTGID's
         //         is there a better way to handle this? open to any suggestions.
         //         this is pretty 'us' specific code
         Optional<AdditionalFieldValue> afvOptional = Optional.empty();
         if (additionalFieldType.getName().equals("ARTGID")) {
-          afvOptional = additionalFieldValueRepository
-              .findByValueOfAndTypeId(additionalFieldType, additionalFieldValue.getValueOf());
-
-
+          afvOptional =
+              additionalFieldValueRepository.findByValueOfAndTypeId(
+                  additionalFieldType, additionalFieldValue.getValueOf());
         }
 
-        if( afvOptional.isPresent()){
+        if (afvOptional.isPresent()) {
           additionalFieldValues.add(afvOptional.get());
         } else {
           additionalFieldValue.setAdditionalFieldType(additionalFieldType);

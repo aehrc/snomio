@@ -23,9 +23,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,14 +116,22 @@ public class TicketController {
   public ResponseEntity<Void> deleteTicket(@PathVariable Long ticketId) {
     ticketService.deleteTicket(ticketId);
 
-
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/api/tickets/artgSearch")
+  @GetMapping("/api/tickets/artgSearch/{artgId}")
   public ResponseEntity<TicketDto> searchByArtgid(@RequestParam String artgId) {
     TicketDto ticket = ticketService.findByArtgId(artgId);
     return new ResponseEntity<>(ticket, HttpStatus.OK);
+  }
+
+  @PostMapping(
+      value = "/api/tickets/search/additionalFieldType/{additionalFieldTypeName}",
+      consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<List<TicketDto>> searchByArtgIdList(@RequestBody List<String> artgIds) {
+    List<TicketDto> tickets = ticketService.findByArtgIds(artgIds);
+
+    return new ResponseEntity<>(tickets, HttpStatus.OK);
   }
 
   @PutMapping(value = "/api/tickets/{ticketId}", consumes = MediaType.APPLICATION_JSON_VALUE)
