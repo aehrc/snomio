@@ -4,10 +4,13 @@ snomio:
     - snomio-uat.australiaeast.cloudapp.azure.com
     - uat-snomio.ihtsdotools.org
   snowstorm:
-    host: snowstorm-uat.australiaeast.cloudapp.azure.com
-    apiPath: ""
+#    host: snowstorm-uat.australiaeast.cloudapp.azure.com
+#    apiPath: ""
+#    defaultBranch: MAIN/SNOMEDCT-AU/AUAMT
+#    port: 8080
+    host: dev-au-authoring.ihtsdotools.org
+    apiPath: /snowstorm/snomed-ct
     defaultBranch: MAIN/SNOMEDCT-AU/AUAMT
-    port: 8080
   attachments:
     store:
       shareName: snomio-uat-attachments
