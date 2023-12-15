@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.extern.java.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +46,7 @@ public class SnowstormClient {
   private final ThreadLocal<RefsetMembersApi> refsetMembersApi = new ThreadLocal<>();
   private final String snowstormUrl;
   private final WebClient snowStormApiClient;
+  protected final org.apache.commons.logging.Log logger = LogFactory.getLog(getClass());
 
   @Autowired
   public SnowstormClient(
@@ -112,11 +114,19 @@ public class SnowstormClient {
 
     ConceptsApi api = getConceptsApi();
 
+    long start = System.currentTimeMillis();
+
     SnowstormItemsPageObject page =
         api.findConcepts(
                 branch, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, ecl, null, null, offset, limit, null, "en")
             .block();
+
+    long finish = System.currentTimeMillis();
+    logger.info(
+        String.format(
+            "Snowstorm ecl call, ecl=%s, offset=%s, limit= %s time took= %s ms",
+            ecl, offset, limit, (finish - start)));
 
     if (page != null && page.getTotal() > page.getLimit()) {
       throw new SnomioProblem(
