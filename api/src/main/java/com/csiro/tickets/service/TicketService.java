@@ -145,16 +145,16 @@ public class TicketService {
     return tickets.map(TicketDto::of);
   }
 
-  public TicketDto findByArtgId(String artgid) {
+  public TicketDto findByAdditionalFieldTypeValueOf(String additionalFieldTypeName, String valueOf) {
     AdditionalFieldType additionalFieldType =
         additionalFieldTypeRepository
-            .findByName("ARTGID")
+            .findByName(additionalFieldTypeName)
             .orElseThrow(() -> new ResourceNotFoundProblem("Could not find ARTGID type"));
     AdditionalFieldValue additionalFieldValue =
         additionalFieldValueRepository
-            .findByValueOfAndTypeId(additionalFieldType, artgid)
+            .findByValueOfAndTypeId(additionalFieldType, valueOf)
             .orElseThrow(
-                () -> new ResourceNotFoundProblem(String.format("ARTGID %s not found", artgid)));
+                () -> new ResourceNotFoundProblem(String.format("ARTGID %s not found", valueOf)));
 
     Ticket ticket =
         ticketRepository
@@ -164,12 +164,12 @@ public class TicketService {
     return TicketDto.of(ticket);
   }
 
-  public List<TicketDto> findByArtgIds(List<String> artgIds) {
+  public List<TicketDto> findByAdditionalFieldTypeNameAndListValueOf(String additionalFieldTypeName, List<String> artgIds) {
 
     AdditionalFieldType additionalFieldType =
         additionalFieldTypeRepository
-            .findByName("ARTGID")
-            .orElseThrow(() -> new ResourceNotFoundProblem("Could not find ARTGID type"));
+            .findByName(additionalFieldTypeName)
+            .orElseThrow(() -> new ResourceNotFoundProblem(String.format("Could not find %s type", additionalFieldTypeName)));
 
     List<AdditionalFieldValue> afvs =
         additionalFieldValueRepository.findByValueOfInAndTypeId(additionalFieldType, artgIds);

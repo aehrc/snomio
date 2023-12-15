@@ -119,17 +119,17 @@ public class TicketController {
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/api/tickets/artgSearch/{artgId}")
-  public ResponseEntity<TicketDto> searchByArtgid(@RequestParam String artgId) {
-    TicketDto ticket = ticketService.findByArtgId(artgId);
+  @GetMapping("/api/tickets/{additionalFieldTypeName}/{valueOf}")
+  public ResponseEntity<TicketDto> searchByAdditionalFieldTypeNameValueOf(@PathVariable String additionalFieldTypeName, @PathVariable String valueOf) {
+    TicketDto ticket = ticketService.findByAdditionalFieldTypeValueOf(additionalFieldTypeName, valueOf);
     return new ResponseEntity<>(ticket, HttpStatus.OK);
   }
 
   @PostMapping(
       value = "/api/tickets/search/additionalFieldType/{additionalFieldTypeName}",
       consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<List<TicketDto>> searchByArtgIdList(@RequestBody List<String> artgIds) {
-    List<TicketDto> tickets = ticketService.findByArtgIds(artgIds);
+  public ResponseEntity<List<TicketDto>> searchByAdditionalFieldTypeNameValueOfList(@PathVariable String additionalFieldTypeName, @RequestBody List<String> valueOfs ) {
+    List<TicketDto> tickets = ticketService.findByAdditionalFieldTypeNameAndListValueOf(additionalFieldTypeName, valueOfs);
 
     return new ResponseEntity<>(tickets, HttpStatus.OK);
   }
