@@ -1,5 +1,8 @@
 package com.csiro.snomio.controllers;
 
+import com.csiro.snomio.configuration.FieldBindingConfiguration;
+import com.csiro.snomio.exception.MultipleFieldBindingsProblem;
+import com.csiro.snomio.exception.NoFieldBindingsProblem;
 import com.csiro.snomio.models.product.ProductCreationDetails;
 import com.csiro.snomio.models.product.ProductSummary;
 import com.csiro.snomio.models.product.details.MedicationProductDetails;
@@ -7,6 +10,9 @@ import com.csiro.snomio.models.product.details.PackageDetails;
 import com.csiro.snomio.service.MedicationCreationService;
 import com.csiro.snomio.service.MedicationService;
 import jakarta.validation.Valid;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,12 +34,16 @@ public class MedicationController {
 
   final MedicationService medicationService;
   final MedicationCreationService medicationCreationService;
+  private final FieldBindingConfiguration fieldBindingConfiguration;
 
   @Autowired
   MedicationController(
-      MedicationService medicationService, MedicationCreationService medicationCreationService) {
+      MedicationService medicationService,
+      MedicationCreationService medicationCreationService,
+      FieldBindingConfiguration fieldBindingConfiguration) {
     this.medicationService = medicationService;
     this.medicationCreationService = medicationCreationService;
+    this.fieldBindingConfiguration = fieldBindingConfiguration;
   }
 
   @GetMapping("/{branch}/medications/{productId}")
@@ -46,6 +56,24 @@ public class MedicationController {
   public MedicationProductDetails getMedicationProductAtomioData(
       @PathVariable String branch, @PathVariable Long productId) {
     return medicationService.getProductAtomicData(branch, productId.toString());
+  }
+
+  @GetMapping("/{branch}/medications/field-bindings")
+  public Map<String, String> getMedicationAtomioDataFieldBindings(@PathVariable String branch) {
+    String branchKey = branch.replace("|", "_");
+
+    Set<String> keys =
+        fieldBindingConfiguration.getMappers().keySet().stream()
+            .filter(branchKey::startsWith)
+            .collect(Collectors.toSet());
+
+    if (keys.isEmpty()) {
+      throw new NoFieldBindingsProblem(branchKey, fieldBindingConfiguration.getMappers().keySet());
+    } else if (keys.size() > 1) {
+      throw new MultipleFieldBindingsProblem(branchKey, keys);
+    }
+
+    return fieldBindingConfiguration.getMappers().get(keys.iterator().next());
   }
 
   @PostMapping("/{branch}/medications/product")
