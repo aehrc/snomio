@@ -66,6 +66,7 @@ function TaskEditCard() {
         padding: '1em',
         maxWidth: '450px',
         minWidth: '450px',
+        overflowY: 'scroll'
       }}
     >
       <Tabs
