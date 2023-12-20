@@ -18,6 +18,8 @@ import com.csiro.tickets.models.Product;
 import com.csiro.tickets.models.State;
 import com.csiro.tickets.models.Ticket;
 import com.csiro.tickets.models.TicketType;
+import com.csiro.tickets.models.mappers.ProductMapper;
+import com.csiro.tickets.models.mappers.TicketMapper;
 import com.csiro.tickets.repository.AdditionalFieldTypeRepository;
 import com.csiro.tickets.repository.AdditionalFieldValueRepository;
 import com.csiro.tickets.repository.AttachmentRepository;
@@ -124,7 +126,7 @@ public class TicketService {
   }
 
   public TicketDto findTicket(Long id) {
-    return TicketDto.of(
+    return TicketMapper.mapToDTO(
         ticketRepository
             .findById(id)
             .orElseThrow(() -> new ResourceNotFoundProblem("Ticket not found with id " + id)));
@@ -132,13 +134,13 @@ public class TicketService {
 
   public Page<TicketDto> findAllTickets(Pageable pageable) {
     Page<Ticket> tickets = ticketRepository.findAll(pageable);
-    return tickets.map(TicketDto::of);
+    return tickets.map(TicketMapper::mapToDTO);
   }
 
   public Page<TicketDto> findAllTicketsByQueryParam(Predicate predicate, Pageable pageable) {
     Page<Ticket> tickets = ticketRepository.findAll(predicate, pageable);
 
-    return tickets.map(TicketDto::of);
+    return tickets.map(TicketMapper::mapToDTO);
   }
 
   public TicketDto findByArtgId(String artgid) {
@@ -154,7 +156,7 @@ public class TicketService {
 
     Ticket ticket = ticketRepository.findByAdditionalFieldValueId(additionalFieldValue.getId());
 
-    return TicketDto.of(ticket);
+    return TicketMapper.mapToDTO(ticket);
   }
 
   public Ticket updateTicket(Long ticketId, TicketDto ticketDto) {
@@ -175,7 +177,7 @@ public class TicketService {
   // opinion that's an Update!
   public Ticket createTicketFromDto(TicketDto ticketDto) {
 
-    Ticket newTicketToAdd = Ticket.of(ticketDto);
+    Ticket newTicketToAdd = TicketMapper.mapToEntity(ticketDto);
     Ticket newTicketToSave = new Ticket();
     // Generate ID
     //    Ticket savedTicket = ticketRepository.save(newTicketToSave);
@@ -256,7 +258,7 @@ public class TicketService {
     if (productDtos != null) {
       Set<Product> products = new HashSet<>();
       for (ProductDto productDto : productDtos) {
-        Product product = Product.of(productDto, newTicketToSave);
+        Product product = ProductMapper.mapToEntity(productDto, newTicketToSave);
         products.add(product);
       }
       newTicketToSave.setProducts(products);
@@ -336,7 +338,7 @@ public class TicketService {
         // Load the Ticket to be added.
         // Unfortunately we can't just have this, we have to process it
         // and sort out for existing/duplcated data
-        Ticket newTicketToAdd = Ticket.of(dto);
+        Ticket newTicketToAdd = TicketMapper.mapToEntityFromImportDto(dto);
 
         // This will be the Ticket to save into the DB
         Ticket newTicketToSave = ticketRepository.save(new Ticket());
@@ -825,7 +827,7 @@ public class TicketService {
       }
       product.setPackageDetails(productDto.getPackageDetails());
     } else {
-      product = Product.of(productDto, ticketToUpdate);
+      product = ProductMapper.mapToEntity(productDto, ticketToUpdate);
     }
 
     if (ticketToUpdate.getProducts() == null) {
@@ -840,7 +842,7 @@ public class TicketService {
 
   public Set<ProductDto> getProductsForTicket(Long ticketId) {
     return productRepository.findByTicketId(ticketId).stream()
-        .map(ProductDto::of)
+        .map(ProductMapper::mapToDto)
         .collect(Collectors.toSet());
   }
 

@@ -1,7 +1,5 @@
 package com.csiro.tickets.models;
 
-import com.csiro.tickets.controllers.dto.TicketDto;
-import com.csiro.tickets.controllers.dto.TicketImportDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,7 +17,6 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -120,45 +117,4 @@ public class Ticket extends BaseAuditableEntity {
   @JsonManagedReference(value = "ticket-product")
   @JsonIgnore
   private Set<Product> products;
-
-  public static Ticket of(TicketDto ticketDto) {
-    Ticket ticket =
-        Ticket.builder()
-            .id(ticketDto.getId())
-            .created(ticketDto.getCreated())
-            .createdBy(ticketDto.getCreatedBy())
-            .title(ticketDto.getTitle())
-            .description(ticketDto.getDescription())
-            .ticketType(ticketDto.getTicketType())
-            .state(State.of(ticketDto.getState()))
-            .assignee(ticketDto.getAssignee())
-            .priorityBucket(PriorityBucket.of(ticketDto.getPriorityBucket()))
-            .labels(ticketDto.getLabels())
-            .iteration(Iteration.of(ticketDto.getIteration()))
-            .build();
-
-    if (ticketDto.getProducts() != null) {
-      ticket.setProducts(
-          ticketDto.getProducts().stream()
-              .map(productDto -> Product.of(productDto, ticket))
-              .collect(Collectors.toSet()));
-    }
-
-    return ticket;
-  }
-
-  public static Ticket of(TicketImportDto ticketImportDto) {
-    return Ticket.builder()
-        .title(ticketImportDto.getTitle())
-        .description(ticketImportDto.getDescription())
-        .ticketType(ticketImportDto.getTicketType())
-        .labels(ticketImportDto.getLabels())
-        .assignee(ticketImportDto.getAssignee())
-        .comments(ticketImportDto.getComments())
-        .additionalFieldValues(ticketImportDto.getAdditionalFieldValues())
-        .attachments(ticketImportDto.getAttachments())
-        .comments(ticketImportDto.getComments())
-        .state(ticketImportDto.getState())
-        .build();
-  }
 }
