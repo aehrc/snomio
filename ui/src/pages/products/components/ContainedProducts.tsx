@@ -20,22 +20,17 @@ import {
   useFieldArray,
   UseFieldArrayAppend,
   UseFieldArrayRemove,
+  UseFormGetValues,
   UseFormRegister,
 } from 'react-hook-form';
-import {
-  defaultProduct,
-  getDefaultUnit,
-} from '../../../utils/helpers/conceptUtils.ts';
+import { defaultProduct } from '../../../utils/helpers/conceptUtils.ts';
+import { FieldBindings } from '../../../types/FieldBindings.ts';
 
 interface ContainedProductsProps {
   packageIndex?: number;
   partOfPackage: boolean;
   showTPU?: boolean;
 
-  units: Concept[];
-
-  medicationDeviceTypes?: Concept[];
-  containerTypes: Concept[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,22 +42,26 @@ interface ContainedProductsProps {
   productRemove?: UseFieldArrayRemove;
   productType: ProductType;
   branch: string;
+  fieldBindings: FieldBindings;
+  getValues: UseFormGetValues<any>;
+  defaultUnit: Concept;
 }
 const ContainedProducts: FC<ContainedProductsProps> = ({
   packageIndex,
   partOfPackage,
   showTPU,
-  units,
+
   control,
   register,
   productFields,
   productAppend,
   productRemove,
   productType,
-  medicationDeviceTypes,
-  containerTypes,
+  defaultUnit,
 
   branch,
+  fieldBindings,
+  getValues,
 }) => {
   const productsArray = partOfPackage
     ? `containedPackages[${packageIndex}].packageDetails.containedProducts`
@@ -94,7 +93,6 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
       packageProductAppend(value);
     }
   };
-  const [defaultUnit] = useState(getDefaultUnit(units));
 
   const ProductDetails = () => {
     return (
@@ -103,7 +101,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
           <Stack direction="row" spacing={0} alignItems="center">
             <IconButton
               onClick={() => {
-                append(defaultProduct(defaultUnit as Concept));
+                append(defaultProduct(defaultUnit));
               }}
               aria-label="create"
               size="large"
@@ -130,6 +128,7 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
           productAppend={productAppend ? productAppend : packageProductAppend}
           productType={productType}
           branch={branch}
+          fieldBindings={fieldBindings}
         />
 
         {(productFields ? productFields : packageProductFields).map(
@@ -137,7 +136,6 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
             return (
               <DetailedProduct
                 index={index}
-                units={units}
                 expandedProducts={expandedProducts}
                 setExpandedProducts={setExpandedProducts}
                 containedProduct={containedProduct as MedicationProductQuantity}
@@ -146,8 +144,6 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                 partOfPackage={partOfPackage}
                 packageIndex={packageIndex}
                 key={`product-${containedProduct.id}`}
-                medicationDeviceTypes={medicationDeviceTypes}
-                containerTypes={containerTypes}
                 control={control}
                 register={register}
                 productRemove={
@@ -155,6 +151,9 @@ const ContainedProducts: FC<ContainedProductsProps> = ({
                 }
                 productType={productType}
                 branch={branch}
+                fieldBindings={fieldBindings}
+                getValues={getValues}
+                defaultUnit={defaultUnit}
               />
             );
           },

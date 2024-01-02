@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   defaultPackage,
-  getDefaultUnit,
   isValidConceptName,
 } from '../../../utils/helpers/conceptUtils.ts';
 import {
@@ -24,18 +23,16 @@ import {
   FieldArrayWithId,
   UseFieldArrayAppend,
   UseFieldArrayRemove,
+  UseFormGetValues,
   UseFormRegister,
   useWatch,
 } from 'react-hook-form';
-import { ConceptSearchType } from '../../../types/conceptSearch.ts';
-import ProductAutocomplete from './ProductAutocomplete.tsx';
 import ArtgAutoComplete from './ArtgAutoComplete.tsx';
+import { FieldBindings } from '../../../types/FieldBindings.ts';
+import ProductAutocompleteV2 from './ProductAutocompleteV2.tsx';
+import { generateEclFromBinding } from '../../../utils/helpers/EclUtils.ts';
 
 interface ContainedMedicationPackagesProps {
-  units: Concept[];
-
-  containerTypes: Concept[];
-  medicationDeviceTypes: Concept[];
   control: Control<MedicationPackageDetails>;
   register: UseFormRegister<MedicationPackageDetails>;
   packageFields: FieldArrayWithId<
@@ -53,13 +50,13 @@ interface ContainedMedicationPackagesProps {
   activePackageTabIndex: number;
   productType: ProductType;
   branch: string;
+  fieldBindings: FieldBindings;
+  getValues: UseFormGetValues<MedicationPackageDetails>;
+  defaultUnit: Concept;
 }
 
 function ContainedPackages(props: ContainedMedicationPackagesProps) {
   const {
-    units,
-
-    containerTypes,
     control,
     register,
     packageFields,
@@ -68,12 +65,15 @@ function ContainedPackages(props: ContainedMedicationPackagesProps) {
     setActivePackageTabIndex,
     activePackageTabIndex,
     productType,
-    medicationDeviceTypes,
+
     branch,
+    fieldBindings,
+    getValues,
+    defaultUnit,
   } = props;
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [defaultUnit] = useState(getDefaultUnit(units));
+  // const {defaultUnit} = useInitializeDefaultUnit(branch);
 
   const handleToggleModal = () => {
     setModalOpen(!modalOpen);
@@ -93,7 +93,7 @@ function ContainedPackages(props: ContainedMedicationPackagesProps) {
   };
 
   const handlePackageCreation = () => {
-    packageAppend(defaultPackage(defaultUnit as Concept));
+    packageAppend(defaultPackage(defaultUnit));
     setActivePackageTabIndex(packageFields.length);
   };
 
@@ -173,8 +173,9 @@ function ContainedPackages(props: ContainedMedicationPackagesProps) {
             open={modalOpen}
             handleClose={handleToggleModal}
             packageAppend={packageAppend}
-            defaultUnit={defaultUnit as Concept}
+            defaultUnit={defaultUnit}
             branch={branch}
+            fieldBindings={fieldBindings}
           />
         </Box>
         {packageFields.map((containedPackage, index) => (
@@ -222,12 +223,14 @@ function ContainedPackages(props: ContainedMedicationPackagesProps) {
                 <Grid item xs={4}>
                   <InnerBox component="fieldset">
                     <legend>Brand Name</legend>
-                    <ProductAutocomplete
-                      optionValues={[]}
-                      searchType={ConceptSearchType.brandProducts}
+                    <ProductAutocompleteV2
                       name={`containedPackages[${index}].packageDetails.productName`}
                       control={control}
                       branch={branch}
+                      ecl={generateEclFromBinding(
+                        fieldBindings,
+                        'package.productName',
+                      )}
                     />
                   </InnerBox>
                 </Grid>
@@ -235,12 +238,15 @@ function ContainedPackages(props: ContainedMedicationPackagesProps) {
                 <Grid item xs={4}>
                   <InnerBox component="fieldset">
                     <legend>Container Type</legend>
-                    <ProductAutocomplete
-                      optionValues={containerTypes}
-                      searchType={ConceptSearchType.containerTypes}
+                    <ProductAutocompleteV2
                       name={`containedPackages[${index}].packageDetails.containerType`}
                       control={control}
                       branch={branch}
+                      ecl={generateEclFromBinding(
+                        fieldBindings,
+                        'package.containerType',
+                      )}
+                      showDefaultOptions={true}
                     />
                   </InnerBox>
                 </Grid>
@@ -272,12 +278,15 @@ function ContainedPackages(props: ContainedMedicationPackagesProps) {
                     />
                   </Grid>
                   <Grid item xs={3}>
-                    <ProductAutocomplete
-                      optionValues={units}
-                      searchType={ConceptSearchType.units}
+                    <ProductAutocompleteV2
                       name={`containedPackages[${index}].unit`}
                       control={control}
                       branch={branch}
+                      ecl={generateEclFromBinding(
+                        fieldBindings,
+                        'package.containedPackage.unit',
+                      )}
+                      showDefaultOptions={true}
                     />
                   </Grid>
                 </Stack>
@@ -288,13 +297,13 @@ function ContainedPackages(props: ContainedMedicationPackagesProps) {
               showTPU={true}
               partOfPackage={true}
               packageIndex={index}
-              units={units}
-              containerTypes={containerTypes}
               control={control}
               register={register}
               productType={productType}
-              medicationDeviceTypes={medicationDeviceTypes}
               branch={branch}
+              fieldBindings={fieldBindings}
+              getValues={getValues}
+              defaultUnit={defaultUnit}
             />
           </CustomTabPanel>
         ))}

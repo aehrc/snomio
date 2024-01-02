@@ -90,6 +90,7 @@ export function findRelations(
   });
   return related;
 }
+
 export function findProductUsingId(conceptId: string, nodes: Product[]) {
   const product = nodes.find(function (p) {
     return p.conceptId === conceptId;
@@ -218,6 +219,7 @@ export const defaultPackage = (defaultUnit: Concept) => {
 export const isDeviceType = (productType: ProductType) => {
   return productType === ProductType.device;
 };
+export const defaultUnitID = '732935002';
 
 export const filterKeypress = (e: React.KeyboardEvent<HTMLDivElement>) => {
   if (e.key === 'Enter') {

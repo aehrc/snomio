@@ -3,20 +3,30 @@ import { MedicationPackageDetails } from '../../../types/product.ts';
 
 import { Concept } from '../../../types/concept.ts';
 
-import { Control, useWatch } from 'react-hook-form';
+import { Control, UseFormGetValues, useWatch } from 'react-hook-form';
 
-import { findConceptUsingPT } from '../../../utils/helpers/conceptUtils.ts';
-import ConceptService from '../../../api/ConceptService.ts';
 import ProductAutoCompleteChild from './ProductAutoCompleteChild.tsx';
+
+import { generateEclForMedication } from '../../../utils/helpers/EclUtils.ts';
+import { FieldBindings } from '../../../types/FieldBindings.ts';
 
 interface PreciseIngredientProps {
   ingredientIndex: number;
   activeIngredientsArray: string;
   control: Control<MedicationPackageDetails>;
   branch: string;
+  fieldBindings: FieldBindings;
+  getValues: UseFormGetValues<MedicationPackageDetails>;
 }
 function PreciseIngredient(props: PreciseIngredientProps) {
-  const { ingredientIndex, activeIngredientsArray, control, branch } = props;
+  const {
+    ingredientIndex,
+    activeIngredientsArray,
+    control,
+    branch,
+    fieldBindings,
+    getValues,
+  } = props;
 
   const [preciseIngredient, setPreciseIngredient] = useState<Concept[]>([]);
   const activeIngredientSelected = useWatch({
@@ -31,33 +41,25 @@ function PreciseIngredient(props: PreciseIngredientProps) {
     preciseIngredientWatched ? preciseIngredientWatched.pt.term : '',
   );
 
-  const [ecl, setEcl] = useState(
-    activeIngredientSelected
-      ? `< ${activeIngredientSelected.conceptId}`
-      : undefined,
-  );
+  const [ecl, setEcl] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    async function fetchPreciseIngredients() {
+    function fetchPreciseIngredients() {
       try {
         setIsLoading(true);
-        setPreciseIngredient([]);
 
         if (
           activeIngredientSelected != null &&
           activeIngredientSelected.conceptId
         ) {
-          const conceptId = activeIngredientSelected.conceptId.trim();
-          const ecl = `< ${conceptId} OR (< 410942007 : 738774007 = ${conceptId}) OR (< 410942007 : 738774007 =(< 410942007 : 738774007 = ${conceptId}))`;
-          const concepts = await ConceptService.searchConceptByEcl(ecl, branch);
-          setPreciseIngredient(concepts);
-
-          setEcl(ecl);
-          if (
-            findConceptUsingPT(ingredientSearchInputValue, concepts) === null
-          ) {
-            setIngredientSearchInputValue('');
-          }
+          const fieldEclGenerated = generateEclForMedication(
+            fieldBindings,
+            'medicationProduct.activeIngredients.preciseIngredient',
+            ingredientIndex,
+            activeIngredientsArray,
+            getValues,
+          );
+          setEcl(fieldEclGenerated.generatedEcl);
         } else {
           setIngredientSearchInputValue('');
           setEcl(undefined);
@@ -68,7 +70,7 @@ function PreciseIngredient(props: PreciseIngredientProps) {
         setIsLoading(false);
       }
     }
-    void fetchPreciseIngredients().then(r => r);
+    fetchPreciseIngredients();
   }, [activeIngredientSelected]);
 
   return (
@@ -82,6 +84,7 @@ function PreciseIngredient(props: PreciseIngredientProps) {
         ecl={ecl}
         branch={branch}
         isLoading={isLoading}
+        showDefaultOptions={true}
       />
     </>
   );

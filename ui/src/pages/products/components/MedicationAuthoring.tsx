@@ -7,13 +7,12 @@ import {
   ProductType,
 } from '../../../types/product.ts';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { Box, Button, Grid, Paper, TextField } from '@mui/material';
+import { Box, Button, Grid, Paper } from '@mui/material';
 
 import { Stack } from '@mui/system';
 import { Concept } from '../../../types/concept.ts';
 import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
-import { ConceptSearchType } from '../../../types/conceptSearch.ts';
-import ProductAutocomplete from './ProductAutocomplete.tsx';
+
 import ContainedPackages from './ContainedPackages.tsx';
 import ContainedProducts from './ContainedProducts.tsx';
 import ArtgAutoComplete from './ArtgAutoComplete.tsx';
@@ -24,33 +23,32 @@ import ProductPreview7BoxModal from './ProductPreview7BoxModal.tsx';
 import { isEmptyObjectByValue } from '../../../utils/helpers/conceptUtils.ts';
 import { Ticket } from '../../../types/tickets/ticket.ts';
 import { errorHandler } from '../../../types/ErrorHandler.ts';
+import { FieldBindings } from '../../../types/FieldBindings.ts';
+import ProductAutocompleteV2 from './ProductAutocompleteV2.tsx';
+import { generateEclFromBinding } from '../../../utils/helpers/EclUtils.ts';
 
 export interface MedicationAuthoringProps {
   selectedProduct: Concept | null;
-  units: Concept[];
-  containerTypes: Concept[];
-
-  medicationDeviceTypes: Concept[];
   handleClearForm: () => void;
   isFormEdited: boolean;
   setIsFormEdited: (value: boolean) => void;
   branch: string;
   ticket: Ticket;
+  fieldBindings: FieldBindings;
+  defaultUnit: Concept;
 }
 
 function MedicationAuthoring(productprops: MedicationAuthoringProps) {
   const {
     selectedProduct,
-    units,
-    containerTypes,
-
-    medicationDeviceTypes,
 
     handleClearForm,
     isFormEdited,
     setIsFormEdited,
     branch,
     ticket,
+    fieldBindings,
+    defaultUnit,
   } = productprops;
 
   const defaultForm: MedicationPackageDetails = {
@@ -68,7 +66,7 @@ function MedicationAuthoring(productprops: MedicationAuthoringProps) {
     setPreviewModalOpen(!previewModalOpen);
   };
 
-  const { register, control, handleSubmit, reset } =
+  const { register, control, handleSubmit, reset, getValues } =
     useForm<MedicationPackageDetails>({
       defaultValues: {
         containedPackages: [],
@@ -246,12 +244,14 @@ function MedicationAuthoring(productprops: MedicationAuthoringProps) {
                       <Grid item xs={4}>
                         <InnerBox component="fieldset">
                           <legend>Brand Name</legend>
-                          <TextField
-                            {...register('productName.pt.term')}
-                            fullWidth
-                            variant="outlined"
-                            margin="dense"
-                            InputLabelProps={{ shrink: true }}
+                          <ProductAutocompleteV2
+                            name={`productName`}
+                            control={control}
+                            branch={branch}
+                            ecl={generateEclFromBinding(
+                              fieldBindings,
+                              'package.productName',
+                            )}
                           />
                         </InnerBox>
                       </Grid>
@@ -260,12 +260,15 @@ function MedicationAuthoring(productprops: MedicationAuthoringProps) {
                         <InnerBox component="fieldset">
                           <legend>Container Type</legend>
 
-                          <ProductAutocomplete
-                            optionValues={containerTypes}
-                            searchType={ConceptSearchType.containerTypes}
+                          <ProductAutocompleteV2
+                            ecl={generateEclFromBinding(
+                              fieldBindings,
+                              'package.containerType',
+                            )}
                             name={'containerType'}
                             control={control}
                             branch={branch}
+                            showDefaultOptions={true}
                           />
                         </InnerBox>
                       </Grid>
@@ -286,9 +289,6 @@ function MedicationAuthoring(productprops: MedicationAuthoringProps) {
                   (packageFields.length === 0 && productFields.length === 0) ? (
                     <div>
                       <ContainedPackages
-                        units={units}
-                        containerTypes={containerTypes}
-                        medicationDeviceTypes={medicationDeviceTypes}
                         control={control}
                         register={register}
                         packageFields={packageFields}
@@ -298,6 +298,9 @@ function MedicationAuthoring(productprops: MedicationAuthoringProps) {
                         setActivePackageTabIndex={setActivePackageTabIndex}
                         productType={ProductType.medication}
                         branch={branch}
+                        fieldBindings={fieldBindings}
+                        getValues={getValues}
+                        defaultUnit={defaultUnit}
                       />
                     </div>
                   ) : (
@@ -309,9 +312,6 @@ function MedicationAuthoring(productprops: MedicationAuthoringProps) {
                       <ContainedProducts
                         showTPU={true}
                         partOfPackage={false}
-                        units={units}
-                        containerTypes={containerTypes}
-                        medicationDeviceTypes={medicationDeviceTypes}
                         control={control}
                         register={register}
                         productFields={productFields}
@@ -319,6 +319,9 @@ function MedicationAuthoring(productprops: MedicationAuthoringProps) {
                         productRemove={productRemove}
                         productType={ProductType.medication}
                         branch={branch}
+                        fieldBindings={fieldBindings}
+                        getValues={getValues}
+                        defaultUnit={defaultUnit}
                       />
                     </div>
                   ) : (
