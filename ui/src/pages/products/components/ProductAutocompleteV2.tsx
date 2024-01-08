@@ -3,34 +3,39 @@ import React, { FC, useEffect, useState } from 'react';
 import { Concept } from '../../../types/concept.ts';
 import useDebounce from '../../../hooks/useDebounce.tsx';
 
-import { useSearchConcepts } from '../../../hooks/api/useInitializeConcepts.tsx';
-import { ConceptSearchType } from '../../../types/conceptSearch.ts';
+import { useSearchConceptsByEcl } from '../../../hooks/api/useInitializeConcepts.tsx';
+
 import { Control, Controller } from 'react-hook-form';
 import { filterOptionsForConceptAutocomplete } from '../../../utils/helpers/conceptUtils.ts';
-interface ProductAutocompleteProps {
+interface ProductAutocompleteV2Props {
   // eslint-disable-next-line
   control: Control<any>;
-  optionValues: Concept[];
-  searchType: ConceptSearchType;
+  optionValues?: Concept[];
   name: string;
   branch: string;
+  ecl: string;
+  showDefaultOptions?: boolean;
 }
-const ProductAutocomplete: FC<ProductAutocompleteProps> = ({
+const ProductAutocompleteV2: FC<ProductAutocompleteV2Props> = ({
   control,
   optionValues,
-  searchType,
   name,
   branch,
+  ecl,
+  showDefaultOptions,
 }) => {
   const [inputValue, setInputValue] = useState('');
   const debouncedSearch = useDebounce(inputValue, 1000);
   const [options, setOptions] = useState<Concept[]>(
     optionValues ? optionValues : [],
   );
-  const { isLoading, data } = useSearchConcepts(
+  const { isLoading, data } = useSearchConceptsByEcl(
     debouncedSearch,
-    searchType,
+    ecl,
     branch,
+    showDefaultOptions && !optionValues && inputValue.length === 0
+      ? true
+      : false,
   );
   const [open, setOpen] = useState(false);
   useEffect(() => {
@@ -76,4 +81,4 @@ const ProductAutocomplete: FC<ProductAutocompleteProps> = ({
     />
   );
 };
-export default ProductAutocomplete;
+export default ProductAutocompleteV2;

@@ -4,17 +4,7 @@ import {
   Edge,
   Product,
 } from '../../types/concept.ts';
-import { ConceptSearchType } from '../../types/conceptSearch.ts';
-import {
-  ECL_BRAND_PRODUCTS,
-  ECL_CONTAINER_TYPES,
-  ECL_DEVICE_CONCEPT_SEARCH,
-  ECL_DEVICE_TYPE,
-  ECL_DOSE_FORMS,
-  ECL_INGREDIENTS,
-  ECL_MEDICATION_DEVICE_TYPE,
-  ECL_UNITS,
-} from './EclUtils.ts';
+
 import {
   Ingredient,
   MedicationPackageQuantity,
@@ -22,7 +12,6 @@ import {
   ProductType,
 } from '../../types/product.ts';
 import { createFilterOptions } from '@mui/material';
-import { nanoid } from 'nanoid';
 
 function isNumeric(value: string) {
   return /^\d+$/.test(value);
@@ -69,14 +58,6 @@ export function isFsnToggleOn(): boolean {
   return localStorage.getItem('fsn_toggle') === 'true' ? true : false;
 }
 
-export function ingredientsExpandedStored(): string[] {
-  const stored = localStorage.getItem('ingredients-expanded');
-  return stored ? stored.split(',') : [];
-}
-export function storeIngredientsExpanded(val: string[]) {
-  localStorage.setItem('ingredients-expanded', val.join());
-}
-
 export function findRelations(
   edges: Edge[],
   nodeA: string,
@@ -90,6 +71,7 @@ export function findRelations(
   });
   return related;
 }
+
 export function findProductUsingId(conceptId: string, nodes: Product[]) {
   const product = nodes.find(function (p) {
     return p.conceptId === conceptId;
@@ -116,42 +98,6 @@ export function getDefaultUnit(units: Concept[]) {
   return units.find(unit => unit.pt.term === 'Unit of presentation');
 }
 
-export function getECLForSearch(
-  searchType: ConceptSearchType,
-): string | undefined {
-  switch (searchType) {
-    case ConceptSearchType.brandProducts:
-      return ECL_BRAND_PRODUCTS;
-      break;
-    case ConceptSearchType.ingredients:
-      return ECL_INGREDIENTS;
-      break;
-    case ConceptSearchType.doseForms:
-      return ECL_DOSE_FORMS;
-      break;
-    case ConceptSearchType.units:
-      return ECL_UNITS;
-      break;
-    case ConceptSearchType.containerTypes:
-      return ECL_CONTAINER_TYPES;
-      break;
-
-    case ConceptSearchType.device_device_type:
-      return ECL_DEVICE_TYPE;
-      break;
-
-    case ConceptSearchType.device_brand_products:
-      return ECL_DEVICE_CONCEPT_SEARCH;
-      break;
-
-    case ConceptSearchType.medication_device_type:
-      return ECL_MEDICATION_DEVICE_TYPE;
-      break;
-
-    default:
-      return undefined;
-  }
-}
 export const isValidConceptName = (concept: Concept) => {
   return concept && concept.pt.term !== '' && concept.pt.term !== null;
 };
@@ -181,24 +127,6 @@ export const defaultProduct = (defaultUnit: Concept) => {
   };
   return productQuantity;
 };
-
-export const deafaultProductItem = (defaultUnit: Concept) => {
-  const productQuantity: MedicationProductQuantity = {
-    productDetails: {
-      activeIngredients: [defaultIngredient(defaultUnit)],
-      productName: { pt: { term: '' } },
-      genericForm: {
-        pt: { term: '' },
-      },
-    },
-    value: 1,
-    unit: defaultUnit,
-  };
-  return {
-    id: nanoid(),
-    productQuantity,
-  };
-};
 export const defaultPackage = (defaultUnit: Concept) => {
   const medicationPackageQty: MedicationPackageQuantity = {
     unit: defaultUnit,
@@ -218,6 +146,7 @@ export const defaultPackage = (defaultUnit: Concept) => {
 export const isDeviceType = (productType: ProductType) => {
   return productType === ProductType.device;
 };
+export const defaultUnitID = '732935002';
 
 export const filterKeypress = (e: React.KeyboardEvent<HTMLDivElement>) => {
   if (e.key === 'Enter') {

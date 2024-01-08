@@ -1,39 +1,39 @@
 import { InnerBox, OuterBox } from './style/ProductBoxes.tsx';
-import ProductAutocomplete from './ProductAutocomplete.tsx';
-import { ConceptSearchType } from '../../../types/conceptSearch.ts';
 import { Stack } from '@mui/system';
 import { Grid, TextField } from '@mui/material';
 import React, { useState } from 'react';
-import { Control, UseFormRegister } from 'react-hook-form';
+import { Control, UseFormGetValues, UseFormRegister } from 'react-hook-form';
 
 import { Concept } from '../../../types/concept.ts';
 import { MedicationPackageDetails } from '../../../types/product.ts';
 import ProductAutocompleteWithOpt from './ProductAutocompleteWithOpt.tsx';
 import SpecificDoseForm from './SpecificDoseForm.tsx';
+import { FieldBindings } from '../../../types/FieldBindings.ts';
+import ProductAutocompleteV2 from './ProductAutocompleteV2.tsx';
+import { generateEclFromBinding } from '../../../utils/helpers/EclUtils.ts';
 
 interface DoseFormProps {
   productsArray: string;
   control: Control<MedicationPackageDetails>;
   register: UseFormRegister<MedicationPackageDetails>;
 
-  units: Concept[];
-  medicationDeviceTypes: Concept[];
-  containerTypes: Concept[];
   index: number;
   branch: string;
+  fieldBindings: FieldBindings;
+  getValues: UseFormGetValues<MedicationPackageDetails>;
 }
 
 export default function DoseForms(props: DoseFormProps) {
   const {
     index,
-    units,
 
     productsArray,
     control,
     register,
-    containerTypes,
-    medicationDeviceTypes,
+
     branch,
+    fieldBindings,
+    getValues,
   } = props;
 
   return (
@@ -42,12 +42,14 @@ export default function DoseForms(props: DoseFormProps) {
         <legend>Dose Forms</legend>
         <InnerBox component="fieldset">
           <legend>Generic Dose Form</legend>
-          <ProductAutocomplete
-            optionValues={[]}
-            searchType={ConceptSearchType.doseForms}
+          <ProductAutocompleteV2
             name={`${productsArray}[${index}].productDetails.genericForm`}
             control={control}
             branch={branch}
+            ecl={generateEclFromBinding(
+              fieldBindings,
+              'medicationProduct.genericForm',
+            )}
           />
         </InnerBox>
         <InnerBox component="fieldset">
@@ -58,6 +60,8 @@ export default function DoseForms(props: DoseFormProps) {
             control={control}
             index={index}
             branch={branch}
+            fieldBindings={fieldBindings}
+            getValues={getValues}
           />
         </InnerBox>
 
@@ -77,23 +81,26 @@ export default function DoseForms(props: DoseFormProps) {
               />
             </Grid>
             <Grid item xs={10}>
-              <ProductAutocomplete
-                optionValues={units}
-                searchType={ConceptSearchType.units}
+              <ProductAutocompleteV2
                 name={`${productsArray}[${index}].productDetails.quantity.unit`}
                 control={control}
                 branch={branch}
+                ecl={generateEclFromBinding(
+                  fieldBindings,
+                  'medicationProduct.quantity.unit',
+                )}
+                showDefaultOptions={true}
               />
             </Grid>
           </Stack>
         </InnerBox>
         <DoseFormsDeviceSection
-          medicationDeviceTypes={medicationDeviceTypes}
-          containerTypes={containerTypes}
           control={control}
           index={index}
           productsArray={productsArray}
           branch={branch}
+          fieldBindings={fieldBindings}
+          getValues={getValues}
         />
 
         <InnerBox component="fieldset">
@@ -112,12 +119,15 @@ export default function DoseForms(props: DoseFormProps) {
               />
             </Grid>
             <Grid item xs={10}>
-              <ProductAutocomplete
-                optionValues={units}
-                searchType={ConceptSearchType.units}
+              <ProductAutocompleteV2
                 name={`${productsArray}[${index}].unit`}
                 control={control}
                 branch={branch}
+                ecl={generateEclFromBinding(
+                  fieldBindings,
+                  'package.containedProduct.unit',
+                )}
+                showDefaultOptions={true}
               />
             </Grid>
           </Stack>
@@ -130,10 +140,10 @@ export default function DoseForms(props: DoseFormProps) {
 interface DoseFormsDeviceSectionProps {
   productsArray: string;
   control: Control<MedicationPackageDetails>;
-  medicationDeviceTypes: Concept[];
-  containerTypes: Concept[];
   index: number;
   branch: string;
+  fieldBindings: FieldBindings;
+  getValues: UseFormGetValues<MedicationPackageDetails>;
 }
 
 function DoseFormsDeviceSection(props: DoseFormsDeviceSectionProps) {
@@ -141,9 +151,9 @@ function DoseFormsDeviceSection(props: DoseFormsDeviceSectionProps) {
     index,
     productsArray,
     control,
-    containerTypes,
-    medicationDeviceTypes,
+
     branch,
+    fieldBindings,
   } = props;
 
   const [deviceTypeDisabled, setDeviceTypeDisabled] = useState(false);
@@ -176,14 +186,17 @@ function DoseFormsDeviceSection(props: DoseFormsDeviceSectionProps) {
           <InnerBox component="fieldset">
             <legend>Container Type</legend>
             <ProductAutocompleteWithOpt
-              optionValues={containerTypes}
-              searchType={ConceptSearchType.containerTypes}
               name={`${productsArray}[${index}].productDetails.containerType`}
               control={control}
               handleChange={handleSelectedContainerTypeChange}
               disabled={containerTypeDisabled}
               setDisabled={setContainerTypeDisabled}
               branch={branch}
+              ecl={generateEclFromBinding(
+                fieldBindings,
+                'medicationProduct.containerType',
+              )}
+              showDefaultOptions={true}
             />
           </InnerBox>
         </Grid>
@@ -195,14 +208,17 @@ function DoseFormsDeviceSection(props: DoseFormsDeviceSectionProps) {
           <InnerBox component="fieldset">
             <legend>Device Type</legend>
             <ProductAutocompleteWithOpt
-              optionValues={medicationDeviceTypes}
-              searchType={ConceptSearchType.medication_device_type}
               name={`${productsArray}[${index}].productDetails.deviceType`}
               control={control}
               disabled={deviceTypeDisabled}
               setDisabled={setDeviceTypeDisabled}
               handleChange={handleSelectedDeviceTypeChange}
               branch={branch}
+              ecl={generateEclFromBinding(
+                fieldBindings,
+                'medicationProduct.deviceType',
+              )}
+              showDefaultOptions={true}
             />
           </InnerBox>
         </Grid>

@@ -19,12 +19,10 @@ import { isFsnToggleOn } from '../../../utils/helpers/conceptUtils.ts';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useSearchConcept } from '../../../hooks/api/products/useSearchConcept.tsx';
 import ConfirmationModal from '../../../themes/overrides/ConfirmationModal.tsx';
-import {
-  ECL_DEFAULT_CONCEPT_SEARCH,
-  ECL_DEVICE_CONCEPT_SEARCH,
-  ECL_MEDICATION_CONCEPT_SEARCH,
-} from '../../../utils/helpers/EclUtils.ts';
+
 import { ProductType } from '../../../types/product.ts';
+import { FieldBindings } from '../../../types/FieldBindings.ts';
+import { generateEclFromBinding } from '../../../utils/helpers/EclUtils.ts';
 
 export interface SearchProductProps {
   disableLinkOpen: boolean;
@@ -35,6 +33,7 @@ export interface SearchProductProps {
   showDeviceSearch: boolean;
   showConfirmationModalOnChange?: boolean;
   branch: string;
+  fieldBindings: FieldBindings;
 }
 export default function SearchProduct({
   disableLinkOpen,
@@ -45,6 +44,7 @@ export default function SearchProduct({
   showConfirmationModalOnChange,
   showDeviceSearch,
   branch,
+  fieldBindings,
 }: SearchProductProps) {
   const localFsnToggle = isFsnToggleOn;
   const [results, setResults] = useState<Concept[]>([]);
@@ -147,24 +147,24 @@ export default function SearchProduct({
   };
 
   const debouncedSearch = useDebounce(inputValue, 400);
-  let ecl = ECL_DEFAULT_CONCEPT_SEARCH;
-  if (showDeviceSearch) {
-    if (deviceToggle) {
-      ecl = ECL_DEVICE_CONCEPT_SEARCH;
-    } else {
-      ecl = ECL_MEDICATION_CONCEPT_SEARCH;
-    }
-  }
 
-  if (providedEcl) {
-    ecl = providedEcl;
+  let ecl = providedEcl;
+  if (!providedEcl) {
+    ecl = generateEclFromBinding(fieldBindings, 'product.search');
+    if (showDeviceSearch) {
+      if (deviceToggle) {
+        ecl = generateEclFromBinding(fieldBindings, 'deviceProduct.search');
+      } else {
+        ecl = generateEclFromBinding(fieldBindings, 'medicationProduct.search');
+      }
+    }
   }
   const { isLoading, data } = useSearchConcept(
     searchFilter,
     debouncedSearch,
     checkItemAlreadyExists,
     branch,
-    ecl,
+    encodeURIComponent(ecl as string),
   );
   useEffect(() => {
     if (data !== undefined) {
